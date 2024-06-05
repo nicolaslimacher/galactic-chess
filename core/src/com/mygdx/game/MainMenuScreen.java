@@ -30,20 +30,12 @@ public class MainMenuScreen implements Screen{
     public void render(float delta) {
         ScreenUtils.clear(0, 0, 0.2f, 1);
 
-        //set main menu screen text
-        GlyphLayout welcomeGlyph = new GlyphLayout();
-        GlyphLayout tapGlyph = new GlyphLayout();
-        String welcomeText = "Welcome to Drop!!!";
-        String tapText = "Tap anywhere to begin!";
-        welcomeGlyph.setText(font, welcomeText);
-        tapGlyph.setText(font, tapText);
-
         camera.update();
         game.batch.setProjectionMatrix(camera.combined);
 
         game.batch.begin();
-        game.font.draw(game.batch, welcomeGlyph, (Gdx.graphics.getWidth() - welcomeGlyph.width)/2, 100);
-        game.font.draw(game.batch, tapGlyph, (Gdx.graphics.getWidth() - tapGlyph.width)/2, 100);
+        game.font.draw(game.batch, "Welcome to Chess!!! ", 240, 300);
+        game.font.draw(game.batch, "Tap anywhere to begin!", 240, 250);
         game.batch.end();
 
         if (Gdx.input.isTouched()) {

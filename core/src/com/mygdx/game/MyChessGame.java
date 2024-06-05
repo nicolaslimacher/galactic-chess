@@ -6,10 +6,14 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class MyChessGame extends Game{
     public SpriteBatch batch;
+    public CustomSpriteBatch customBatch;
     public BitmapFont font;
+    public Board board;
 
     public void create() {
         batch = new SpriteBatch();
+        customBatch = new CustomSpriteBatch();
+        board = new Board();
         font = new BitmapFont(); // use libGDX's default Arial font
         this.setScreen(new MainMenuScreen(this));
     }

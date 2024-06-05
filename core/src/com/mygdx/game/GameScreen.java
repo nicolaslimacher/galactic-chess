@@ -21,10 +21,12 @@ public class GameScreen implements Screen {
 	final MyChessGame game;
 	OrthographicCamera camera;
 	SpriteBatch batch;
+	CustomSpriteBatch customBatch;
 	Vector3 touchPos;
 	Array<Rectangle> raindrops;
 	long lastDropTime;
 	int dropsGathered;
+	Board board;
 
 	//Assets
 	Texture dropImage;
@@ -86,52 +88,49 @@ public class GameScreen implements Screen {
 		camera.update();
 
 		// tell the SpriteBatch to render in the coordinate system specified by the camera.
-		game.batch.setProjectionMatrix(camera.combined);
+		game.customBatch.setProjectionMatrix(camera.combined);
 
 		// begin a new batch and draw the bucket and all drops
-		game.batch.begin();
-		game.font.draw(game.batch, "Drops Collected: " + dropsGathered, 0, 480);
-		game.batch.draw(bucketImage, bucket.x, bucket.y, bucket.width, bucket.height);
-		for(Rectangle raindrop: raindrops) {
-			game.batch.draw(dropImage, raindrop.x, raindrop.y);
-		}
-		game.batch.end();
+		game.customBatch.begin();
+		game.font.draw(game.customBatch, "Drops Collected: " + dropsGathered, 0, 480);
+		game.board.render(game.customBatch);
+		game.customBatch.end();
 
-		if(Gdx.input.isTouched()) {
-			touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
-			camera.unproject(touchPos);
-			bucket.x = touchPos.x - 64 / 2;
-		}
-
-		if(Gdx.input.isKeyPressed(Input.Keys.LEFT))
-			bucket.x -= 200 * Gdx.graphics.getDeltaTime();
-		if(Gdx.input.isKeyPressed(Input.Keys.RIGHT))
-			bucket.x += 200 * Gdx.graphics.getDeltaTime();
-
-		// make sure the bucket stays within the screen bounds
-		if(bucket.x < 0)
-			bucket.x = 0;
-		if(bucket.x > 800 - 64)
-			bucket.x = 800 - 64;
-
-		// check if we need to create a new raindrop
-		if(TimeUtils.nanoTime() - lastDropTime > 1000000000) spawnRaindrop();
-
-		// move the raindrops, remove any that are beneath the bottom edge of
-		// the screen or that hit the bucket. In the later case we increase the
-		// value our drops counter and add a sound effect.
-		Iterator<Rectangle> iter = raindrops.iterator();
-		while (iter.hasNext()) {
-			Rectangle raindrop = iter.next();
-			raindrop.y -= 200 * Gdx.graphics.getDeltaTime();
-			if (raindrop.y + 64 < 0)
-				iter.remove();
-			if (raindrop.overlaps(bucket)) {
-				dropsGathered++;
-				dropSound.play();
-				iter.remove();
-			}
-		}
+//		if(Gdx.input.isTouched()) {
+//			touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
+//			camera.unproject(touchPos);
+//			bucket.x = touchPos.x - 64 / 2;
+//		}
+//
+//		if(Gdx.input.isKeyPressed(Input.Keys.LEFT))
+//			bucket.x -= 200 * Gdx.graphics.getDeltaTime();
+//		if(Gdx.input.isKeyPressed(Input.Keys.RIGHT))
+//			bucket.x += 200 * Gdx.graphics.getDeltaTime();
+//
+//		// make sure the bucket stays within the screen bounds
+//		if(bucket.x < 0)
+//			bucket.x = 0;
+//		if(bucket.x > 800 - 64)
+//			bucket.x = 800 - 64;
+//
+//		// check if we need to create a new raindrop
+//		if(TimeUtils.nanoTime() - lastDropTime > 1000000000) spawnRaindrop();
+//
+//		// move the raindrops, remove any that are beneath the bottom edge of
+//		// the screen or that hit the bucket. In the later case we increase the
+//		// value our drops counter and add a sound effect.
+//		Iterator<Rectangle> iter = raindrops.iterator();
+//		while (iter.hasNext()) {
+//			Rectangle raindrop = iter.next();
+//			raindrop.y -= 200 * Gdx.graphics.getDeltaTime();
+//			if (raindrop.y + 64 < 0)
+//				iter.remove();
+//			if (raindrop.overlaps(bucket)) {
+//				dropsGathered++;
+//				dropSound.play();
+//				iter.remove();
+//			}
+//		}
 
 	}
 
