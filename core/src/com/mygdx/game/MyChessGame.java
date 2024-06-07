@@ -2,19 +2,17 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 public class MyChessGame extends Game{
-    public SpriteBatch batch;
     public CustomSpriteBatch customBatch;
     public BitmapFont font;
-    public Board board;
+    public Stage stage;
 
     public void create() {
-        batch = new SpriteBatch();
-        customBatch = new CustomSpriteBatch();
-        board = new Board();
-        font = new BitmapFont(); // use libGDX's default Arial font
+        stage = new Stage(new ScreenViewport());
+        //add methods for creating and disposing screens as needed
         this.setScreen(new MainMenuScreen(this));
     }
 
@@ -23,8 +21,7 @@ public class MyChessGame extends Game{
     }
 
     public void dispose() {
-        batch.dispose();
-        font.dispose();
+        stage.dispose();
     }
 
 }

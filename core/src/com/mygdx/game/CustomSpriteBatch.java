@@ -4,26 +4,23 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class CustomSpriteBatch extends SpriteBatch {
-    public void draw(Texture texture, float x, float y, boolean flipX, boolean flipY) {
-        this.draw(texture, x, y,
-                Constants.TILE_SIZE / 2, Constants.TILE_SIZE / 2,
-                Constants.TILE_SIZE, Constants.TILE_SIZE,
-                1.0f, 1.0f,
-                0.0f,
-                0, 0,
-                (int) Constants.TILE_SIZE, (int) Constants.TILE_SIZE,
-                flipX, flipY);
-
+    public void drawObjectOnBoard(Texture texture, Board board, float objectPositionX, float objectPositionY){
+        this.draw(texture, //texture to draw
+                objectPositionX, //the x-coordinate in screen space to draw
+                objectPositionY, //the y-coordinate in screen space to draw
+                Constants.TILE_SIZE / 2, //originX
+                Constants.TILE_SIZE / 2, //originY
+                Constants.TILE_SIZE, //the width in pixels to draw
+                Constants.TILE_SIZE, //the height in pixels to draw
+                1.0f, //scaleX
+                1.0f, //scaleY
+                0, //rotation
+                0, //the x-coordinate in texel space
+                0, //the y-coordinate in texel space
+                (int) Constants.TILE_SIZE, //srcWidth - the source width in texels
+                (int) Constants.TILE_SIZE, //srcHeight - the source height in texels
+                false, //flipX
+                false); //flipY
     }
 
-    public void draw(Texture texture, float x, float y, float rotation) {
-        this.draw(texture, x, y,
-                Constants.TILE_SIZE / 2, Constants.TILE_SIZE / 2,
-                Constants.TILE_SIZE, Constants.TILE_SIZE,
-                1.0f, 1.0f,
-                rotation,
-                0, 0,
-                (int) Constants.TILE_SIZE, (int) Constants.TILE_SIZE,
-                false, false);
-    }
 }

@@ -12,10 +12,13 @@ public class MainMenuScreen implements Screen{
     final MyChessGame game;
     OrthographicCamera camera;
     BitmapFont font;
-    SpriteBatch spriteBatch;
+    CustomSpriteBatch customBatch;
 
     public MainMenuScreen(final MyChessGame game) {
         this.game = game;
+        customBatch = new CustomSpriteBatch();
+
+        font = new BitmapFont(); // use libGDX's default Arial font
 
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 800, 480);
@@ -31,15 +34,16 @@ public class MainMenuScreen implements Screen{
         ScreenUtils.clear(0, 0, 0.2f, 1);
 
         camera.update();
-        game.batch.setProjectionMatrix(camera.combined);
+        customBatch.setProjectionMatrix(camera.combined);
 
-        game.batch.begin();
-        game.font.draw(game.batch, "Welcome to Chess!!! ", 240, 300);
-        game.font.draw(game.batch, "Tap anywhere to begin!", 240, 250);
-        game.batch.end();
+        //begin new sprite batch and draw welcome (need game. before methods)
+        customBatch.begin();
+        font.draw(customBatch, "Welcome to Chess!!! ", 240, 300);
+        font.draw(customBatch, "Tap anywhere to begin!", 240, 250);
+        customBatch.end();
 
         if (Gdx.input.isTouched()) {
-            game.setScreen(new GameScreen(game));
+            game.setScreen(new GameScreen(game, game.stage));
             dispose();
         }
     }
