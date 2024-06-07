@@ -7,7 +7,10 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
@@ -17,7 +20,7 @@ public class GameScreen implements Screen {
 	final MyChessGame game;
 	final Stage stage;
 	OrthographicCamera camera;
-	CustomSpriteBatch customBatch;
+	SpriteBatch batch;
 	Vector3 touchPos;
 	Board board;
 
@@ -32,28 +35,28 @@ public class GameScreen implements Screen {
 
 		// load the drop sound effect and the rain background "music"
 		// dropSound = Gdx.audio.newSound(Gdx.files.internal("drop.wav"));
-		rainMusic = Gdx.audio.newMusic(Gdx.files.internal("rain.mp3"));
-		rainMusic.setLooping(true);
+//		rainMusic = Gdx.audio.newMusic(Gdx.files.internal("rain.mp3"));
+//		rainMusic.setLooping(true);
 
 
 		board = new Board(5, 5);
-		pawn = new Pawn(2, 0);
-		Gdx.app.log("MyTag", pawn.position.toString());
-		System.out.println(pawn.position.toString());
-		customBatch = new CustomSpriteBatch();
-
+		pawn = new Pawn(board, new CoordinatePair(3,2) );
 		stage.addActor(board);
 		stage.addActor(pawn);
+		System.out.println(pawn.GetPossibleMoves());
+		pawn.addListener(new InputListener());
+		batch = new SpriteBatch();
+
 	}
 	@Override
 	public void render(float deltaTime) {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		stage.act(deltaTime);
 		// begin a new batch and draw board
-		customBatch.begin();
+		batch.begin();
 		//pawn.render(customBatch, board);
 		stage.draw();
-		customBatch.end();
+		batch.end();
 	}
 
 
@@ -66,7 +69,7 @@ public class GameScreen implements Screen {
 	@Override
 	public void show(){
 		//start the playback of background music when the screen is shown
-		rainMusic.play();
+		//rainMusic.play();
 	}
 
 	@Override
