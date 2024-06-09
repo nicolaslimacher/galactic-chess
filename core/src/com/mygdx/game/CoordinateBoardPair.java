@@ -1,11 +1,11 @@
 package com.mygdx.game;
 
-public class CoordinatePair {
+public class CoordinateBoardPair {
     // Ideally, name the class after whatever you're actually using
     // the int pairs *for.*
-    final int x;
-    final int y;
-    public CoordinatePair(int x, int y) {
+    public final int x;
+    public final int y;
+    public CoordinateBoardPair(int x, int y) {
         this.x=x;
         this.y=y;
     }

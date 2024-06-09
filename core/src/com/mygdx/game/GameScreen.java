@@ -3,25 +3,18 @@ package com.mygdx.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.ScreenUtils;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.mygdx.game.Board.Board;
+import com.mygdx.game.Pawn.Pawn;
 
 public class GameScreen implements Screen {
 	final MyChessGame game;
 	final Stage stage;
-	OrthographicCamera camera;
 	SpriteBatch batch;
-	Vector3 touchPos;
 	Board board;
 
 	//Assets
@@ -40,11 +33,10 @@ public class GameScreen implements Screen {
 
 
 		board = new Board(5, 5);
-		pawn = new Pawn(board, new CoordinatePair(3,2) );
+		pawn = new Pawn(board, new CoordinateBoardPair(3,2) );
 		stage.addActor(board);
 		stage.addActor(pawn);
 		System.out.println(pawn.GetPossibleMoves());
-		pawn.addListener(new InputListener());
 		batch = new SpriteBatch();
 
 	}
@@ -54,7 +46,6 @@ public class GameScreen implements Screen {
 		stage.act(deltaTime);
 		// begin a new batch and draw board
 		batch.begin();
-		//pawn.render(customBatch, board);
 		stage.draw();
 		batch.end();
 	}
@@ -63,7 +54,8 @@ public class GameScreen implements Screen {
     @Override
 	public void resize (int width, int height) {
 		// See https://libgdx.com/wiki/graphics/2d/scene2d/scene2d for what true means.
-		this.stage.getViewport().update(width, height, true);
+		stage.getViewport().update(width, height, true);
+		//todo: add method to resize board to new screen size
 	}
 
 	@Override

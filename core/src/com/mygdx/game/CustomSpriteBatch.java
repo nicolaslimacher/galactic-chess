@@ -2,6 +2,7 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.mygdx.game.Board.Board;
 
 public class CustomSpriteBatch extends SpriteBatch {
     public void drawObjectOnBoard(Texture texture, Board board, float objectPositionX, float objectPositionY){
