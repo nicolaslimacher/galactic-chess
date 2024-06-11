@@ -1,22 +1,22 @@
-package com.mygdx.game;
+package com.mygdx.game.Screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.mygdx.game.MyChessGame;
 
 public class MainMenuScreen implements Screen{
     final MyChessGame game;
     OrthographicCamera camera;
     BitmapFont font;
-    CustomSpriteBatch customBatch;
+    SpriteBatch batch;
 
     public MainMenuScreen(final MyChessGame game) {
         this.game = game;
-        customBatch = new CustomSpriteBatch();
+        batch = new SpriteBatch();
 
         font = new BitmapFont(); // use libGDX's default Arial font
 
@@ -34,13 +34,13 @@ public class MainMenuScreen implements Screen{
         ScreenUtils.clear(0, 0, 0.2f, 1);
 
         camera.update();
-        customBatch.setProjectionMatrix(camera.combined);
+        batch.setProjectionMatrix(camera.combined);
 
         //begin new sprite batch and draw welcome (need game. before methods)
-        customBatch.begin();
-        font.draw(customBatch, "Welcome to Chess!!! ", 240, 300);
-        font.draw(customBatch, "Tap anywhere to begin!", 240, 250);
-        customBatch.end();
+        batch.begin();
+        font.draw(batch, "Welcome to Chess!!! ", 240, 300);
+        font.draw(batch, "Tap anywhere to begin!", 240, 250);
+        batch.end();
 
         if (Gdx.input.isTouched()) {
             game.setScreen(new GameScreen(game, game.stage));

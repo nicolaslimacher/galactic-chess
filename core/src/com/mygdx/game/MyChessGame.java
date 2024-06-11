@@ -1,13 +1,11 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.Game;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.mygdx.game.Screens.MainMenuScreen;
 
 public class MyChessGame extends Game{
-    public CustomSpriteBatch customBatch;
-    public BitmapFont font;
     public Stage stage;
 
     public void create() {

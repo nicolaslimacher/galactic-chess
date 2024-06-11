@@ -1,0 +1,321 @@
+[{
+  "class": com.mygdx.game.MoveSets.MoveSet,
+  "index": 0,
+  "name": "Benzoxamide (Bo)",
+  "possibleMoves": [
+    {
+      "class": com.mygdx.game.Utils.IntPair,
+      "xVal": 0,
+      "yVal": 2
+    },{
+      "class": com.mygdx.game.Utils.IntPair,
+      "xVal": 0,
+      "yVal": -1
+    }
+  ]
+},{
+  "class": com.mygdx.game.MoveSets.MoveSet,
+  "index": 1,
+  "name":  "Chromadryl (Ch)",
+  "possibleMoves": [
+    {
+      "class": com.mygdx.game.Utils.IntPair,
+      "xVal": -2,
+      "yVal": 1
+    },{
+      "class": com.mygdx.game.Utils.IntPair,
+      "xVal": 2,
+      "yVal": 1
+    },{
+      "class": com.mygdx.game.Utils.IntPair,
+      "xVal": -1,
+      "yVal": -1
+    },{
+      "class": com.mygdx.game.Utils.IntPair,
+      "xVal": 1,
+      "yVal": -1
+    }
+  ]
+},{
+  "class": com.mygdx.game.MoveSets.MoveSet,
+  "index": 2,
+  "name":  "Neurostane (N)",
+  "possibleMoves": [
+    {
+      "class": com.mygdx.game.Utils.IntPair,
+      "xVal": -2,
+      "yVal": 0
+    },{
+      "class": com.mygdx.game.Utils.IntPair,
+      "xVal": -1,
+      "yVal": 1
+    },{
+      "class": com.mygdx.game.Utils.IntPair,
+      "xVal": 1,
+      "yVal": -1
+    }
+  ]
+},{
+  "class": com.mygdx.game.MoveSets.MoveSet,
+  "index": 3,
+  "name":  "Synthium Chloride (SyCl)",
+  "possibleMoves": [
+    {
+      "class": com.mygdx.game.Utils.IntPair,
+      "xVal": -1,
+      "yVal": -1
+    },{
+      "class": com.mygdx.game.Utils.IntPair,
+      "xVal": 1,
+      "yVal": 1
+    },{
+      "class": com.mygdx.game.Utils.IntPair,
+      "xVal": 2,
+      "yVal": 0
+    }
+  ]
+},{
+  "class": com.mygdx.game.MoveSets.MoveSet,
+  "index": 4,
+  "name":  "Pyridoxylate (Po)",
+  "possibleMoves": [
+    {
+      "class": com.mygdx.game.Utils.IntPair,
+      "xVal": -2,
+      "yVal": 0
+    },{
+      "class": com.mygdx.game.Utils.IntPair,
+      "xVal": 2,
+      "yVal": 0
+    },{
+      "class": com.mygdx.game.Utils.IntPair,
+      "xVal": 0,
+      "yVal": 1
+    }
+  ]
+},{
+  "class": com.mygdx.game.MoveSets.MoveSet,
+  "index": 5,
+  "name":  "Aurantine Sulfate (ArSo2)",
+  "possibleMoves": [
+    {
+      "class": com.mygdx.game.Utils.IntPair,
+      "xVal": -1,
+      "yVal": 1
+    },{
+      "class": com.mygdx.game.Utils.IntPair,
+      "xVal": -1,
+      "yVal": 0
+    },{
+      "class": com.mygdx.game.Utils.IntPair,
+      "xVal": 1,
+      "yVal": 0
+    },{
+      "class": com.mygdx.game.Utils.IntPair,
+      "xVal": 1,
+      "yVal": 1
+    }
+  ]
+},{
+  "class": com.mygdx.game.MoveSets.MoveSet,
+  "index": 6,
+  "name":  "Thioxanide (Th)",
+  "possibleMoves": [
+    {
+      "class": com.mygdx.game.Utils.IntPair,
+      "xVal": -1,
+      "yVal": 1
+    },{
+      "class": com.mygdx.game.Utils.IntPair,
+      "xVal": -1,
+      "yVal": 0
+    },{
+      "class": com.mygdx.game.Utils.IntPair,
+      "xVal": 1,
+      "yVal": 0
+    },{
+      "class": com.mygdx.game.Utils.IntPair,
+      "xVal": 1,
+      "yVal": -1
+    }
+  ]
+},{
+  "class": com.mygdx.game.MoveSets.MoveSet,
+  "index": 7,
+  "name":  "Cerulium Nitrate (CeNo3)",
+  "possibleMoves": [
+    {
+      "class": com.mygdx.game.Utils.IntPair,
+      "xVal": 1,
+      "yVal": 1
+    },{
+      "class": com.mygdx.game.Utils.IntPair,
+      "xVal": 1,
+      "yVal": 0
+    },{
+      "class": com.mygdx.game.Utils.IntPair,
+      "xVal": -1,
+      "yVal": 0
+    },{
+      "class": com.mygdx.game.Utils.IntPair,
+      "xVal": -1,
+      "yVal": -1
+    }
+  ]
+},{
+  "class": com.mygdx.game.MoveSets.MoveSet,
+  "index": 8,
+  "name":  "Fluoromethane (Fm)",
+  "possibleMoves": [
+    {
+      "class": com.mygdx.game.Utils.IntPair,
+      "xVal": 1,
+      "yVal": 1
+    },{
+      "class": com.mygdx.game.Utils.IntPair,
+      "xVal": 1,
+      "yVal": -1
+    },{
+      "class": com.mygdx.game.Utils.IntPair,
+      "xVal": -1,
+      "yVal": -1
+    },{
+      "class": com.mygdx.game.Utils.IntPair,
+      "xVal": -1,
+      "yVal": 1
+    }
+  ]
+},{
+  "class": com.mygdx.game.MoveSets.MoveSet,
+  "index": 9,
+  "name":  "Vasoprene (V)",
+  "possibleMoves": [
+    {
+      "class": com.mygdx.game.Utils.IntPair,
+      "xVal": -1,
+      "yVal": 1
+    },{
+      "class": com.mygdx.game.Utils.IntPair,
+      "xVal": 1,
+      "yVal": 1
+    },{
+      "class": com.mygdx.game.Utils.IntPair,
+      "xVal": 0,
+      "yVal": -1
+    }
+  ]
+},{
+  "class": com.mygdx.game.MoveSets.MoveSet,
+  "index": 10,
+  "name":  "Cobaltate (Ct)",
+  "possibleMoves": [
+    {
+      "class": com.mygdx.game.Utils.IntPair,
+      "xVal": 0,
+      "yVal": 1
+    },{
+      "class": com.mygdx.game.Utils.IntPair,
+      "xVal": -1,
+      "yVal": 0
+    },{
+      "class": com.mygdx.game.Utils.IntPair,
+      "xVal": 0,
+      "yVal": -1
+    }
+  ]
+},{
+  "class": com.mygdx.game.MoveSets.MoveSet,
+  "index": 11,
+  "name":  "Silvarine (Sa)",
+  "possibleMoves": [
+    {
+      "class": com.mygdx.game.Utils.IntPair,
+      "xVal": 0,
+      "yVal": 1
+    },{
+      "class": com.mygdx.game.Utils.IntPair,
+      "xVal": 1,
+      "yVal": 0
+    },{
+      "class": com.mygdx.game.Utils.IntPair,
+      "xVal": 0,
+      "yVal": -1
+    }
+  ]
+},{
+  "class": com.mygdx.game.MoveSets.MoveSet,
+  "index": 12,
+  "name":  "Nitrosylate (Ny)",
+  "possibleMoves": [
+    {
+      "class": com.mygdx.game.Utils.IntPair,
+      "xVal": -1,
+      "yVal": -1
+    },{
+      "class": com.mygdx.game.Utils.IntPair,
+      "xVal": 1,
+      "yVal": -1
+    },{
+      "class": com.mygdx.game.Utils.IntPair,
+      "xVal": 0,
+      "yVal": 1
+    }
+  ]
+},{
+  "class": com.mygdx.game.MoveSets.MoveSet,
+  "index": 13,
+  "name":  "Erythroline (Er)",
+  "possibleMoves": [
+    {
+      "class": com.mygdx.game.Utils.IntPair,
+      "xVal": -1,
+      "yVal": 1
+    },{
+      "class": com.mygdx.game.Utils.IntPair,
+      "xVal": 0,
+      "yVal": 1
+    },{
+      "class": com.mygdx.game.Utils.IntPair,
+      "xVal": 1,
+      "yVal": 0
+    }
+  ]
+},{
+  "class": com.mygdx.game.MoveSets.MoveSet,
+  "index": 14,
+  "name":  "Tetracyline (Cy4)",
+  "possibleMoves": [
+    {
+      "class": com.mygdx.game.Utils.IntPair,
+      "xVal": -1,
+      "yVal": 1
+    },{
+      "class": com.mygdx.game.Utils.IntPair,
+      "xVal": -1,
+      "yVal": -1
+    },{
+      "class": com.mygdx.game.Utils.IntPair,
+      "xVal": 1,
+      "yVal": 0
+    }
+  ]
+},{
+  "class": com.mygdx.game.MoveSets.MoveSet,
+  "index": 15,
+  "name":  "Palladate (Pd)",
+  "possibleMoves": [
+    {
+      "class": com.mygdx.game.Utils.IntPair,
+      "xVal": -1,
+      "yVal": 0
+    },{
+      "class": com.mygdx.game.Utils.IntPair,
+      "xVal": 1,
+      "yVal": -1
+    },{
+      "class": com.mygdx.game.Utils.IntPair,
+      "xVal": 1,
+      "yVal": 1
+    }
+  ]
+}]

@@ -17,7 +17,7 @@
       <directory>data</directory>
     </resource>
   </resources>
-  <forceLinkClasses>
+  <FforceLinkClasses>
     <pattern>com.badlogic.gdx.scenes.scene2d.ui.*</pattern>
     <pattern>com.badlogic.gdx.graphics.g3d.particles.**</pattern>
     <pattern>com.android.okhttp.HttpHandler</pattern>
@@ -31,7 +31,7 @@
     <pattern>com.android.org.bouncycastle.crypto.digests.AndroidDigestFactoryOpenSSL</pattern>
     <pattern>org.apache.harmony.security.provider.cert.DRLCertFactory</pattern>
     <pattern>org.apache.harmony.security.provider.crypto.CryptoProvider</pattern>
-  </forceLinkClasses>
+  </FforceLinkClasses>
   <libs>
       <lib>z</lib>   
   </libs>

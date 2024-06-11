@@ -1,19 +1,22 @@
 package com.mygdx.game.Board;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.mygdx.game.Constants;
-import com.mygdx.game.CoordinateBoardPair;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.mygdx.game.Pawn.Pawn;
+import com.mygdx.game.Utils.Constants;
+import com.mygdx.game.Utils.CoordinateBoardPair;
 
 public class BoardTile extends Actor {
 
     public final CoordinateBoardPair CoordinateBoardPair;
     private final TextureRegion boardTileTextureRegion;
-    Vector2 localPos= new Vector2();
 
     public BoardTile(float positionX, float positionY, CoordinateBoardPair CoordinateBoardPair) {
         Texture boardTileTexture = new Texture("light_internal.png");
