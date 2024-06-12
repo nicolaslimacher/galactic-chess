@@ -73,17 +73,12 @@ public class GameScreen implements Screen {
 				stage.addActor(pawn);
 			}
 		}
-		board.selectedMoveSet = moveSets[8];
 		stage.addListener(stageInputListener);
 
-		MoveSet[] availableMoveSets = new MoveSet[]{moveSets[1], moveSets[2]};
+		MoveSet[] availableMoveSets = new MoveSet[]{moveSets[1], moveSets[2], moveSets[3], moveSets[4]};
 		MoveSelectButtonMenu menuTable = new MoveSelectButtonMenu(board, availableMoveSets);
-		board.menuTable = menuTable;
-		MoveConfirmationMenu confirmationMenu = new MoveConfirmationMenu(board);
-		board.confirmationMenu = confirmationMenu;
 
 		stage.addActor(menuTable);
-		stage.addActor(confirmationMenu);
 		batch = new SpriteBatch();
 	}
 	@Override

@@ -24,11 +24,13 @@ public class MoveSelectButton extends TextButton {
     private final ClickListener MoveSelectButtonListener = new ClickListener(){
         public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
             MoveSelectButton thisButton = (MoveSelectButton) event.getListenerActor();
-            thisButton.board.selectedMoveSet = thisButton.moveSet;
-            thisButton.getParent().setVisible(false);
-            thisButton.getStage().getRoot().findActor("MoveConfirmationMenu").setVisible(true);
+            thisButton.board.selectedMoveSet = thisButton.moveSet; //make this move active allowed moveset
+            thisButton.getParent().setVisible(false); //make select menu non-visible
+            //create new confirmation menu
+            MoveConfirmationMenu moveConfirmationMenu = new MoveConfirmationMenu(thisButton.board);
+            thisButton.getStage().addActor(moveConfirmationMenu);
+            thisButton.board.confirmationMenu = moveConfirmationMenu;
             thisButton.board.confirmationMenu.AddConfirmationButton(thisButton.moveSet);
-            System.out.println("selecting: " + thisButton.moveSet);
             return true;
         }
     };

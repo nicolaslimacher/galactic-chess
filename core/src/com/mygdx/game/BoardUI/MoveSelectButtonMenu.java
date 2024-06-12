@@ -17,5 +17,8 @@ public class MoveSelectButtonMenu extends Table {
         this.setBounds(Gdx.graphics.getWidth()*0.025f, 0, Gdx.graphics.getWidth()*0.25f, Gdx.graphics.getHeight());
         this.defaults().padRight(10); // All cells have a padding of 10px to the right
         this.setName("MoveSelectButtonMenu");
+        this.board = board;
+        board.menuTable = this;
+
     }
 }

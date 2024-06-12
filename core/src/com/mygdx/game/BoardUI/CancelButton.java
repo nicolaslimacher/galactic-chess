@@ -17,13 +17,12 @@ public class CancelButton extends TextButton{
         }
     private final ClickListener MoveConfirmationCancelButtonListener = new ClickListener(){
         public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-            System.out.println("I've been clicked");
             CancelButton thisButton = (CancelButton) event.getListenerActor();
             thisButton.board.selectedMoveSet = null;
-            thisButton.getParent().setVisible(false);
-            System.out.println(thisButton.getParent());
-            thisButton.board.menuTable.setVisible(true);
-            System.out.println(thisButton.board.menuTable);
+            thisButton.getStage().getRoot().findActor("MoveSelectButtonMenu").setVisible(true);
+            thisButton.getParent().remove();
+            thisButton.board.menuTable = null;
+
             return true;
         }
     };
