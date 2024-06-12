@@ -64,13 +64,22 @@ public class GameScreen implements Screen {
 
 
 		//adding actors
-		board = new Board(5, 5);
+		board = new Board(5, 6);
 		stage.addActor(board);
 		if (board.boardColumns > 0) {
 			for (int i = 0; i < board.boardColumns; i++) {
-				Pawn pawn = new Pawn(board, new CoordinateBoardPair(i, 0));
+				Pawn pawn = new Pawn(board, new CoordinateBoardPair(i, 0), true, 10, 1);
 				pawn.setName("Pawn"+String.valueOf(i)+",0");
 				stage.addActor(pawn);
+				pawn.addHPandAttackLabels();
+			}
+		}
+		if (board.boardColumns > 0) {
+			for (int i = 0; i < board.boardColumns; i++) {
+				Pawn pawn = new Pawn(board, new CoordinateBoardPair(i, board.boardRows-1), false, 1, 1);
+				pawn.setName("Pawn"+String.valueOf(i)+",0");
+				stage.addActor(pawn);
+				pawn.addHPandAttackLabels();
 			}
 		}
 		stage.addListener(stageInputListener);

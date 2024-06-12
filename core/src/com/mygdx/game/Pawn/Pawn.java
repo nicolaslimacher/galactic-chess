@@ -2,6 +2,7 @@ package com.mygdx.game.Pawn;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -10,6 +11,11 @@ import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.Null;
 import com.mygdx.game.Board.Board;
 import com.mygdx.game.MoveSets.MoveSet;
 import com.mygdx.game.Utils.Constants;
@@ -26,17 +32,46 @@ public class Pawn extends Actor{
     public final Board pawnBoard;
     public CoordinateBoardPair indexOnBoard;
     private final TextureRegion textureRegion;
-    public Boolean isSelected;
+    public boolean isSelected;
+    public boolean isFriendly;
 
-    public Pawn(Board board, CoordinateBoardPair CoordinateBoardPair){
+    public int getHitPoints() {
+        return hitPoints;
+    }
+
+    public void setHitPoints(int hitPoints) {
+        this.hitPoints = hitPoints;
+        this.hitPointsLabel = new Label(String.valueOf(hitPoints), skin);
+    }
+
+    public int getAttackPoints() {
+        return attackPoints;
+    }
+
+    public void setAttackPoints(int attackPoints) {
+        this.attackPoints = attackPoints;
+        this.hitPointsLabel = new Label(String.valueOf(attackPoints), skin);
+    }
+
+    private int hitPoints;
+    private int attackPoints;
+    private Label hitPointsLabel;
+    private Label attackPointsLabel;
+    Skin skin = new Skin(Gdx.files.internal("buttons/uiskin.json"));
+
+    public Pawn(Board board, CoordinateBoardPair CoordinateBoardPair, boolean isFriendly, int hitPoints, int attackPoints){
         Texture pawnTexture = new Texture(Gdx.files.internal("black_player.png"));
         pawnBoard = board;
-        isSelected = false;
+        this.isSelected = false;
+        this.isFriendly = isFriendly;
+        this.setAttackPoints(attackPoints);
+        this.setHitPoints(hitPoints);
+        this.indexOnBoard = CoordinateBoardPair;
         this.textureRegion = new TextureRegion(pawnTexture, (int) Constants.TILE_SIZE, (int)Constants.TILE_SIZE);
         this.setBounds(textureRegion.getRegionX(), textureRegion.getRegionY(),
                 textureRegion.getRegionWidth(), textureRegion.getRegionHeight());
         this.setPosition(board.GetBoardTilePosition(CoordinateBoardPair).x, board.GetBoardTilePosition(CoordinateBoardPair).y);
-        this.indexOnBoard = CoordinateBoardPair;
+        Label hpLabel = new Label(String.valueOf(this.attackPoints), skin);
         addListener(pawnInputListener);
     }
 
@@ -49,7 +84,6 @@ public class Pawn extends Actor{
     }
 
     public void drawPossibleMoves(List<CoordinateBoardPair> possibleMoves){
-        if (!possibleMoves.isEmpty()) {
             Stage stageToAdd = this.getStage();
             Group possibleMovesGroup = new Group();
             possibleMovesGroup.setName("possibleMovesGroup" + this.getName());
@@ -59,7 +93,7 @@ public class Pawn extends Actor{
                 possiblePawnMove.setName("possiblePawnMove" + String.valueOf(possibleMoveCoordinateBoardPair.GetX()) + "," + String.valueOf(possibleMoveCoordinateBoardPair.GetY()));
                 possibleMovesGroup.addActor(possiblePawnMove);
             }
-        }
+
     }
 
 
@@ -77,9 +111,9 @@ public class Pawn extends Actor{
 
     public boolean isValidMove(IntPair intPair) {
         boolean isValid = false;
-        ValueRange boardXRange = ValueRange.of(0,this.pawnBoard.boardColumns-1);
-        ValueRange boardYRange = ValueRange.of(0,this.pawnBoard.boardRows-1);
-        if (boardXRange.isValidIntValue(this.indexOnBoard.x + intPair.xVal) && boardYRange.isValidIntValue(this.indexOnBoard.y + intPair.yVal)){
+        boolean xIsValid = 0 <= this.indexOnBoard.x + intPair.xVal && this.indexOnBoard.x + intPair.xVal <= this.pawnBoard.boardColumns-1;
+        boolean yIsValid = 0 <= this.indexOnBoard.y + intPair.yVal && this.indexOnBoard.y + intPair.yVal <= this.pawnBoard.boardRows-1;
+        if (xIsValid && yIsValid){
             isValid = true;
         }
         return isValid;
@@ -89,14 +123,17 @@ public class Pawn extends Actor{
         this.setPosition(pawnBoard.GetBoardTilePosition(coordinateBoardPair).x, pawnBoard.GetBoardTilePosition(coordinateBoardPair).y);
         this.indexOnBoard = coordinateBoardPair;
         this.setName("Pawn"+String.valueOf(coordinateBoardPair.x)+","+String.valueOf(coordinateBoardPair.y));
+        this.SetLabelPositions();
     }
 
     //Input method overrides NOTE: GameScreen stage input listeners will set pawn isSelected to false
     private final InputListener pawnInputListener = new InputListener(){
         public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
             Pawn actor = (Pawn) event.getListenerActor();
-            actor.drawPossibleMoves(GetPossibleMoves(pawnBoard.selectedMoveSet));
-            isSelected = true;
+            if (pawnBoard.selectedMoveSet != null) {
+                actor.drawPossibleMoves(GetPossibleMoves(pawnBoard.selectedMoveSet));
+                isSelected = true;
+            }
             return true;
         }
     };
@@ -116,5 +153,28 @@ public class Pawn extends Actor{
 
     public void resetStageCoordinatesFromBoardLocation(){
         this.setPosition(pawnBoard.GetBoardTilePosition(this.indexOnBoard).x, pawnBoard.GetBoardTilePosition(this.indexOnBoard).y);
+        this.SetLabelPositions();
+    }
+
+    public void addHPandAttackLabels(){
+        this.hitPointsLabel = new Label(String.valueOf(this.hitPoints), skin);
+        this.attackPointsLabel = new Label(String.valueOf(this.attackPoints), skin);
+        this.SetLabelPositions();
+
+        Pixmap labelColor = new Pixmap((int) hitPointsLabel.getWidth(), (int) hitPointsLabel.getHeight(), Pixmap.Format.RGB888);
+        labelColor.setColor(Color.RED);
+        labelColor.fill();
+        Image backgroundColor = new Image(new Texture(labelColor));
+        hitPointsLabel.getStyle().background = backgroundColor.getDrawable();
+
+        this.getStage().addActor(hitPointsLabel);
+        this.getStage().addActor(attackPointsLabel);
+    }
+
+    private void SetLabelPositions (){
+        hitPointsLabel.setBounds(this.getX() + 2, this.getY() + 2, 20, 20);
+        hitPointsLabel.setAlignment(Align.center);
+        attackPointsLabel.setBounds(this.getX()+this.getWidth()-attackPointsLabel.getWidth() - 5,this.getY() + 2, 20, 20);
+        attackPointsLabel.setAlignment(Align.center);
     }
 }

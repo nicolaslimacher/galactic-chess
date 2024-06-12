@@ -13,8 +13,8 @@ public class MoveConfirmationButton extends Button {
     public MoveConfirmationButton(MoveSet moveSet, Skin skin) {
         super(skin);
         Label buttonText = new Label(GetButtonText(moveSet), this.getSkin());
-        buttonText.setDebug(true);
         buttonText.setWrap(true);
+        buttonText.setWidth(200);
         buttonText.setAlignment(Align.center);
         this.add(buttonText).fillX().prefWidth(200);
     }
