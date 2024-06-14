@@ -1,5 +1,9 @@
 {
-BitmapFont: { default-font: { file: default.fnt } },
+BitmapFont: { default-font: { file: default.fnt},
+	small-font: { file: small.fnt},
+	medium-font: { file: medium.fnt},
+	large-font: { file: large.fnt}
+},
 Color: {
 	green: { a: 1, b: 0, g: 1, r: 0 },
 	white: { a: 1, b: 1, g: 1, r: 1 },
@@ -15,7 +19,7 @@ ButtonStyle: {
 	toggle: { parent: default, checked: default-round-down }
 },
 TextButtonStyle: {
-	default: { parent: default, font: default-font, fontColor: white, disabledFontColor: gray },
+	default: { parent: default, font: medium-font, fontColor: white, disabledFontColor: gray },
 	toggle: { parent: default, checked: default-round-down, downFontColor: red }
 },
 ScrollPaneStyle: {
@@ -45,7 +49,19 @@ SliderStyle: {
 	default-vertical: { parent: default-vertical }
 },
 LabelStyle: {
-	default: { font: default-font, fontColor: white }
+	default: { font: medium-font, fontColor: white },
+	small: {
+		font: small-font, fontColor: white
+	},
+	large: {
+		font: large-font, fontColor: white
+	},
+	hpStatsLabel: {
+		font: small-font, fontColor: white
+	},
+	atkStatsLabel: {
+		font: small-font, fontColor: white
+	}
 },
 TextFieldStyle: {
 	default: { selection: selection, background: textfield, font: default-font, fontColor: white, cursor: cursor }

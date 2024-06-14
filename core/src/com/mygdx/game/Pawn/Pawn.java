@@ -34,9 +34,15 @@ public class Pawn extends Actor{
     private final TextureRegion textureRegion;
     public boolean isSelected;
     public boolean isFriendly;
+    public Group possibleMovesAndTargets;
 
     public int getHitPoints() {
         return hitPoints;
+    }
+
+    public void getHit(int AtkDmg){
+        System.out.println(this.getName() + ": i've been hit");
+        this.setHitPoints(this.getAttackPoints() - AtkDmg);
     }
 
     public void setHitPoints(int hitPoints) {
@@ -83,26 +89,46 @@ public class Pawn extends Actor{
                 getWidth(), getHeight(), getScaleX(), getScaleY(), getRotation());
     }
 
+    //TODO: split draw into possible moves and possible target
     public void drawPossibleMoves(List<CoordinateBoardPair> possibleMoves){
-            Stage stageToAdd = this.getStage();
-            Group possibleMovesGroup = new Group();
-            possibleMovesGroup.setName("possibleMovesGroup" + this.getName());
-            stageToAdd.addActor(possibleMovesGroup);
-            for (CoordinateBoardPair possibleMoveCoordinateBoardPair : possibleMoves) {
-                PossiblePawnMove possiblePawnMove = new PossiblePawnMove(this, possibleMoveCoordinateBoardPair, this.pawnBoard);
-                possiblePawnMove.setName("possiblePawnMove" + String.valueOf(possibleMoveCoordinateBoardPair.GetX()) + "," + String.valueOf(possibleMoveCoordinateBoardPair.GetY()));
-                possibleMovesGroup.addActor(possiblePawnMove);
-            }
+        for (CoordinateBoardPair possibleMoveCoordinateBoardPair : possibleMoves) {
+            PossiblePawnMove possiblePawnMove = new PossiblePawnMove(this, possibleMoveCoordinateBoardPair, this.pawnBoard);
+            possiblePawnMove.setName("possiblePawnMove" + String.valueOf(possibleMoveCoordinateBoardPair.GetX()) + "," + String.valueOf(possibleMoveCoordinateBoardPair.GetY()));
+            this.possibleMovesAndTargets.addActor(possiblePawnMove);
+        }
 
     }
 
+    public void drawPossibleTargets(MoveSet moveSet){
+        List<CoordinateBoardPair> possibleMoves = new ArrayList<CoordinateBoardPair>();
+        for (IntPair possibleMove : moveSet.possibleMoves){
+            CoordinateBoardPair newMove = new CoordinateBoardPair(this.indexOnBoard.x + possibleMove.xVal, this.indexOnBoard.y + possibleMove.yVal);
+            if (isValidMove(possibleMove) && IsEnemyPawnAtBoardLocation(newMove)){
+                if (IsPawnAtBoardLocation(newMove)) {
+                    Target target = new Target(this, newMove, this.pawnBoard, pawnBoard.GetPawnAtCoordinate(newMove));
+                    this.possibleMovesAndTargets.addActor(target);
+                }
+            }
+        }
+    }
 
-    //todo: get possible moves based off a list of
+
     public List<CoordinateBoardPair> GetPossibleMoves(MoveSet moveSet){
         List<CoordinateBoardPair> possibleMoves = new ArrayList<CoordinateBoardPair>();
         for (IntPair possibleMove : moveSet.possibleMoves){
             CoordinateBoardPair newMove = new CoordinateBoardPair(this.indexOnBoard.x + possibleMove.xVal, this.indexOnBoard.y + possibleMove.yVal);
             if (isValidMove(possibleMove) && !IsPawnAtBoardLocation(newMove)){
+                possibleMoves.add(newMove);
+            }
+        }
+        return possibleMoves;
+    }
+
+    public List<CoordinateBoardPair> GetPossibleTargets(MoveSet moveSet){
+        List<CoordinateBoardPair> possibleMoves = new ArrayList<CoordinateBoardPair>();
+        for (IntPair possibleMove : moveSet.possibleMoves){
+            CoordinateBoardPair newMove = new CoordinateBoardPair(this.indexOnBoard.x + possibleMove.xVal, this.indexOnBoard.y + possibleMove.yVal);
+            if (isValidMove(possibleMove) && IsEnemyPawnAtBoardLocation(newMove)){
                 possibleMoves.add(newMove);
             }
         }
@@ -124,14 +150,24 @@ public class Pawn extends Actor{
         this.indexOnBoard = coordinateBoardPair;
         this.setName("Pawn"+String.valueOf(coordinateBoardPair.x)+","+String.valueOf(coordinateBoardPair.y));
         this.SetLabelPositions();
+
+        //set move select menu back to visible
+        this.pawnBoard.selectedMoveSet = null;
+        this.getStage().getRoot().findActor("MoveSelectButtonMenu").setVisible(true);
+        this.getStage().getRoot().findActor("cancelButton").getParent().remove();
+        this.pawnBoard.menuTable = null;
     }
 
-    //Input method overrides NOTE: GameScreen stage input listeners will set pawn isSelected to false
+    //Input method overrides NOTE: GameScreen stage input listeners will set pawn.isSelected to false
     private final InputListener pawnInputListener = new InputListener(){
         public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
             Pawn actor = (Pawn) event.getListenerActor();
             if (pawnBoard.selectedMoveSet != null) {
+                actor.possibleMovesAndTargets = new Group();
+                actor.possibleMovesAndTargets.setName("possibleMovesGroup" + actor.getName());
                 actor.drawPossibleMoves(GetPossibleMoves(pawnBoard.selectedMoveSet));
+                actor.drawPossibleTargets(pawnBoard.selectedMoveSet);
+                actor.getStage().addActor(actor.possibleMovesAndTargets);
                 isSelected = true;
             }
             return true;
@@ -139,42 +175,37 @@ public class Pawn extends Actor{
     };
 
     public Boolean IsPawnAtBoardLocation(CoordinateBoardPair coordinateBoardPair) {
-        Boolean pawnAtLocation = false;
-        for(Actor actor:this.getStage().getActors()){
-            if(actor.getClass() == Pawn.class) {
-                Pawn pawn = (Pawn) actor;
-                if (pawn.indexOnBoard.equals(coordinateBoardPair)) {
-                    return true;
-                }
-            }
-        }
-        return pawnAtLocation;
+        return pawnBoard.GetPawnAtCoordinate(coordinateBoardPair) != null;
+    }
+    public Boolean IsEnemyPawnAtBoardLocation(CoordinateBoardPair coordinateBoardPair) {
+        return pawnBoard.GetPawnAtCoordinate(coordinateBoardPair) != null && !pawnBoard.GetPawnAtCoordinate(coordinateBoardPair).isFriendly;
     }
 
-    public void resetStageCoordinatesFromBoardLocation(){
-        this.setPosition(pawnBoard.GetBoardTilePosition(this.indexOnBoard).x, pawnBoard.GetBoardTilePosition(this.indexOnBoard).y);
-        this.SetLabelPositions();
+    public void HitPawn (Pawn enemyPawn){
+        System.out.println(this.getName()+ ": I'm hitting you!");
+        enemyPawn.getHit(this.attackPoints);
     }
+
 
     public void addHPandAttackLabels(){
-        this.hitPointsLabel = new Label(String.valueOf(this.hitPoints), skin);
-        this.attackPointsLabel = new Label(String.valueOf(this.attackPoints), skin);
+        this.hitPointsLabel = new Label(String.valueOf(this.hitPoints), skin, "hpStatsLabel");
+        this.attackPointsLabel = new Label(String.valueOf(this.attackPoints), skin, "atkStatsLabel");
         this.SetLabelPositions();
 
-        Pixmap labelColor = new Pixmap((int) hitPointsLabel.getWidth(), (int) hitPointsLabel.getHeight(), Pixmap.Format.RGB888);
-        labelColor.setColor(Color.RED);
-        labelColor.fill();
-        Image backgroundColor = new Image(new Texture(labelColor));
-        hitPointsLabel.getStyle().background = backgroundColor.getDrawable();
+        Image hpBackground = new Image(new Texture(Gdx.files.internal("hpLabelBackground.png")));
+        hitPointsLabel.getStyle().background = hpBackground.getDrawable();
+
+        Image atkBackground = new Image(new Texture(Gdx.files.internal("atkLabelBackground.png")));
+        attackPointsLabel.getStyle().background = atkBackground.getDrawable();
 
         this.getStage().addActor(hitPointsLabel);
         this.getStage().addActor(attackPointsLabel);
     }
 
     private void SetLabelPositions (){
-        hitPointsLabel.setBounds(this.getX() + 2, this.getY() + 2, 20, 20);
-        hitPointsLabel.setAlignment(Align.center);
-        attackPointsLabel.setBounds(this.getX()+this.getWidth()-attackPointsLabel.getWidth() - 5,this.getY() + 2, 20, 20);
+        attackPointsLabel.setBounds(this.getX() + 2, this.getY() + 2, 20, 20);
         attackPointsLabel.setAlignment(Align.center);
+        hitPointsLabel.setBounds(this.getX()+this.getWidth()-hitPointsLabel.getWidth() - 5,this.getY() + 2, 20, 20);
+        hitPointsLabel.setAlignment(Align.center);
     }
 }

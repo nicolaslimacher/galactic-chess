@@ -18,6 +18,7 @@ import com.mygdx.game.BoardUI.MoveSelectButton;
 import com.mygdx.game.BoardUI.MoveSelectButtonMenu;
 import com.mygdx.game.MoveSets.MoveSet;
 import com.mygdx.game.Pawn.PossiblePawnMove;
+import com.mygdx.game.Pawn.Target;
 import com.mygdx.game.Utils.CoordinateBoardPair;
 import com.mygdx.game.MyChessGame;
 import com.mygdx.game.Pawn.Pawn;
@@ -32,18 +33,18 @@ public class GameScreen implements Screen {
 	//Assets
 
 	//stage level input listener
+	//TODO: when clicking on target
 	private final InputListener stageInputListener = new InputListener(){
 		public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
 			Object selectedObject = event.getTarget();
 				for(Actor actor:stage.getActors()){
-					if(actor.getClass()== Pawn.class) {
+					if(actor.getClass() == Pawn.class) {
 						Pawn pawn = (Pawn) actor;
 						if (!pawn.equals(selectedObject) && pawn.isSelected) {
-							pawn.isSelected = Boolean.FALSE;
+							pawn.isSelected = false;
 							Gdx.app.log("stageListener", pawn.getName());
-							if (selectedObject.getClass() != PossiblePawnMove.class) {
-								stage.getRoot().findActor("possibleMovesGroup" + pawn.getName()).remove();
-							}
+							stage.getRoot().findActor("possibleMovesGroup" + pawn.getName()).remove();
+
 						}
 					}
 				}
@@ -60,11 +61,10 @@ public class GameScreen implements Screen {
 		Json json = new Json();
 		// De-serialize to an object
 		MoveSet[] moveSets = json.fromJson(MoveSet[].class, Gdx.files.internal("MoveSet.json"));
-		//System.out.println("moveSet: " + moveSets.get(15).name + " index: " + moveSets.get(15).index + " possibleMoves" + moveSets.get(15).possibleMoves);
 
 
 		//adding actors
-		board = new Board(5, 6);
+		board = new Board(5, 5);
 		stage.addActor(board);
 		if (board.boardColumns > 0) {
 			for (int i = 0; i < board.boardColumns; i++) {
@@ -77,7 +77,7 @@ public class GameScreen implements Screen {
 		if (board.boardColumns > 0) {
 			for (int i = 0; i < board.boardColumns; i++) {
 				Pawn pawn = new Pawn(board, new CoordinateBoardPair(i, board.boardRows-1), false, 1, 1);
-				pawn.setName("Pawn"+String.valueOf(i)+",0");
+				pawn.setName("Pawn"+String.valueOf(i)+"," + String.valueOf(board.boardRows-1));
 				stage.addActor(pawn);
 				pawn.addHPandAttackLabels();
 			}
@@ -103,21 +103,21 @@ public class GameScreen implements Screen {
 
     @Override
 	public void resize (int width, int height) {
-		stage.getViewport().update(width, height, true);
-		board.sizeAndAddBoardTiles();
-		for(Actor actor:stage.getActors()){
-			//move pawns to new board locations based on board coordinates
-			if(actor.getClass()== Pawn.class) {
-				((Pawn) actor).resetStageCoordinatesFromBoardLocation();
-			}
-			//move possible pawn moves if shown to new board locations
-			if(actor.getClass()== Group.class && actor.getName().contains("possibleMovesGroup")) {
-				for (Actor possiblePawnMoveActor : ((Group) actor).getChildren()) {
-					PossiblePawnMove possiblePawnMove = (PossiblePawnMove) possiblePawnMoveActor;
-					possiblePawnMove.resetStageCoordinatesFromBoardLocation();
-				}
-			}
-		}
+//		stage.getViewport().update(width, height, true);
+//		board.sizeAndAddBoardTiles();
+//		for(Actor actor:stage.getActors()){
+//			//move pawns to new board locations based on board coordinates
+//			if(actor.getClass()== Pawn.class) {
+//				((Pawn) actor).resetStageCoordinatesFromBoardLocation();
+//			}
+//			//move possible pawn moves if shown to new board locations
+//			if(actor.getClass()== Group.class && actor.getName().contains("possibleMovesGroup")) {
+//				for (Actor possiblePawnMoveActor : ((Group) actor).getChildren()) {
+//					PossiblePawnMove possiblePawnMove = (PossiblePawnMove) possiblePawnMoveActor;
+//					possiblePawnMove.resetStageCoordinatesFromBoardLocation();
+//				}
+//			}
+//		}
 	}
 
 	@Override

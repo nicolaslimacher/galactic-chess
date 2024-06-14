@@ -2,10 +2,12 @@ package com.mygdx.game.Board;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.mygdx.game.BoardUI.MoveConfirmationMenu;
 import com.mygdx.game.BoardUI.MoveSelectButtonMenu;
 import com.mygdx.game.MoveSets.MoveSet;
+import com.mygdx.game.Pawn.Pawn;
 import com.mygdx.game.Utils.Constants;
 import com.mygdx.game.Utils.CoordinateBoardPair;
 
@@ -24,20 +26,18 @@ public class Board extends Group {
         boardGrid = new int[rows][columns];
         this.boardRows = rows;
         this.boardColumns = columns;
-        this.screenWidth = Gdx.graphics.getWidth();
-        this.screenHeight = Gdx.graphics.getHeight();
         this.setSize(screenWidth*0.8f, screenHeight*0.8f);
         sizeAndAddBoardTiles();
     }//end constructor
 
     //using right 4/5s of screen to leave room for menus
     private float GetTileXPosition (int columnIndex, int columnTotal){
-        float columnWidth = (screenWidth*Constants.SCREEN_BOARD_RATION *.8f) / (float)columnTotal;
-        return ((screenWidth*Constants.SCREEN_BOARD_RATION *.2f) + (1-Constants.SCREEN_BOARD_RATION)/2*screenWidth) + (columnWidth * columnIndex) + (columnWidth / 2f) - (Constants.TILE_SIZE /2f);
+        float columnWidth = (Constants.SCREEN_WIDTH*Constants.SCREEN_BOARD_WIDTH_RATIO) / (float)columnTotal;
+        return Constants.SCREEN_BOARD_WIDTH_LEFT_OFFSET + ((1-Constants.SCREEN_BOARD_WIDTH_RATIO)/2*Constants.SCREEN_WIDTH) + (columnWidth * columnIndex) + (columnWidth / 2f) - (Constants.TILE_SIZE /2f);
     }
     private float GetTileYPosition (int rowIndex, int rowTotal){
-        float rowHeight = (screenHeight*Constants.SCREEN_BOARD_RATION) / (float)rowTotal;
-        return ((1-Constants.SCREEN_BOARD_RATION)/2*screenHeight) + (rowHeight * rowIndex) + (rowHeight / 2f) - (Constants.TILE_SIZE /2f);
+        float rowHeight = (Constants.SCREEN_HEIGHT*Constants.SCREEN_BOARD_HEIGHT_RATIO) / (float)rowTotal;
+        return ((1-Constants.SCREEN_BOARD_HEIGHT_RATIO)/2*Constants.SCREEN_HEIGHT) + (rowHeight * rowIndex) + (rowHeight / 2f) - (Constants.TILE_SIZE /2f);
     }
 
     public Vector2 GetBoardTilePosition (CoordinateBoardPair CoordinateBoardPair){
@@ -62,5 +62,18 @@ public class Board extends Group {
                 this.addActor(boardTile);
             }
         }
+    }
+
+    public Pawn GetPawnAtCoordinate(CoordinateBoardPair coordinateBoardPair){
+        Pawn pawnAtCoordinate = null;
+        for(Actor actor:this.getStage().getActors()){
+            if(actor.getClass() == Pawn.class) {
+                Pawn pawn = (Pawn) actor;
+                if (pawn.indexOnBoard.equals(coordinateBoardPair)) {
+                    pawnAtCoordinate = pawn;
+                }
+            }
+        }
+        return pawnAtCoordinate;
     }
 }//end Board class

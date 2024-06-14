@@ -13,6 +13,7 @@ public class CancelButton extends TextButton{
         public CancelButton(Skin skin, Board board) {
             super("Cancel", skin);
             this.setColor(1,0,0,1);
+            this.setName("cancelButton");
             this.board = board;
             this.addListener(MoveConfirmationCancelButtonListener);
         }

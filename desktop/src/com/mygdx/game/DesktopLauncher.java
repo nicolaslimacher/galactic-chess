@@ -11,6 +11,7 @@ public class DesktopLauncher {
 		config.setTitle("Drop");
 		config.setWindowedMode(800,480); //landscape mode on Android
 		config.useVsync(true);
+		//config.setResizable(false);
 		config.setForegroundFPS(60);
 		config.setTitle("galactic-chess");
 		new Lwjgl3Application(new MyChessGame(), config);
