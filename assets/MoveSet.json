@@ -1,7 +1,8 @@
 [{
   "class": com.mygdx.game.MoveSets.MoveSet,
   "index": 0,
-  "name": "Benzoxamide (Bo)",
+  "name": "Benzoxamide",
+  "symbol": "Bo",
   "possibleMoves": [
     {
       "class": com.mygdx.game.Utils.IntPair,
@@ -16,7 +17,8 @@
 },{
   "class": com.mygdx.game.MoveSets.MoveSet,
   "index": 1,
-  "name":  "Chromadryl (Ch)",
+  "name":  "Chromadryl",
+  "symbol": "Ch",
   "possibleMoves": [
     {
       "class": com.mygdx.game.Utils.IntPair,
@@ -39,7 +41,8 @@
 },{
   "class": com.mygdx.game.MoveSets.MoveSet,
   "index": 2,
-  "name":  "Neurostane (N)",
+  "name":  "Neurostane",
+  "symbol": "N",
   "possibleMoves": [
     {
       "class": com.mygdx.game.Utils.IntPair,
@@ -58,7 +61,8 @@
 },{
   "class": com.mygdx.game.MoveSets.MoveSet,
   "index": 3,
-  "name":  "Synthium Chloride (SyCl)",
+  "name":  "Synthium Chloride",
+  "symbol": "SyCl",
   "possibleMoves": [
     {
       "class": com.mygdx.game.Utils.IntPair,
@@ -77,7 +81,8 @@
 },{
   "class": com.mygdx.game.MoveSets.MoveSet,
   "index": 4,
-  "name":  "Pyridoxylate (Po)",
+  "name":  "Pyridoxylate",
+  "symbol": "Po",
   "possibleMoves": [
     {
       "class": com.mygdx.game.Utils.IntPair,
@@ -96,7 +101,8 @@
 },{
   "class": com.mygdx.game.MoveSets.MoveSet,
   "index": 5,
-  "name":  "Aurantine Sulfate (ArSo2)",
+  "name":  "Aurantine Sulfate",
+  "symbol": "ArSo2",
   "possibleMoves": [
     {
       "class": com.mygdx.game.Utils.IntPair,
@@ -119,7 +125,8 @@
 },{
   "class": com.mygdx.game.MoveSets.MoveSet,
   "index": 6,
-  "name":  "Thioxanide (Th)",
+  "name":  "Thioxanide",
+  "symbol": "Th",
   "possibleMoves": [
     {
       "class": com.mygdx.game.Utils.IntPair,
@@ -142,7 +149,8 @@
 },{
   "class": com.mygdx.game.MoveSets.MoveSet,
   "index": 7,
-  "name":  "Cerulium Nitrate (CeNo3)",
+  "name":  "Cerulium Nitrate",
+  "symbol": "CeNo3",
   "possibleMoves": [
     {
       "class": com.mygdx.game.Utils.IntPair,
@@ -165,7 +173,8 @@
 },{
   "class": com.mygdx.game.MoveSets.MoveSet,
   "index": 8,
-  "name":  "Fluoromethane (Fm)",
+  "name":  "Fluoromethane",
+  "symbol": "Fm",
   "possibleMoves": [
     {
       "class": com.mygdx.game.Utils.IntPair,
@@ -188,7 +197,8 @@
 },{
   "class": com.mygdx.game.MoveSets.MoveSet,
   "index": 9,
-  "name":  "Vasoprene (V)",
+  "name":  "Vasoprene",
+  "symbol": "V",
   "possibleMoves": [
     {
       "class": com.mygdx.game.Utils.IntPair,
@@ -207,7 +217,8 @@
 },{
   "class": com.mygdx.game.MoveSets.MoveSet,
   "index": 10,
-  "name":  "Cobaltate (Ct)",
+  "name":  "Cobaltate",
+  "symbol": "Ct",
   "possibleMoves": [
     {
       "class": com.mygdx.game.Utils.IntPair,
@@ -226,7 +237,8 @@
 },{
   "class": com.mygdx.game.MoveSets.MoveSet,
   "index": 11,
-  "name":  "Silvarine (Sa)",
+  "name":  "Silvarine",
+  "symbol": "Sa",
   "possibleMoves": [
     {
       "class": com.mygdx.game.Utils.IntPair,
@@ -245,7 +257,8 @@
 },{
   "class": com.mygdx.game.MoveSets.MoveSet,
   "index": 12,
-  "name":  "Nitrosylate (Ny)",
+  "name":  "Nitrosylate",
+  "symbol": "Ny",
   "possibleMoves": [
     {
       "class": com.mygdx.game.Utils.IntPair,
@@ -264,7 +277,8 @@
 },{
   "class": com.mygdx.game.MoveSets.MoveSet,
   "index": 13,
-  "name":  "Erythroline (Er)",
+  "name":  "Erythroline",
+  "symbol": "Er",
   "possibleMoves": [
     {
       "class": com.mygdx.game.Utils.IntPair,
@@ -283,7 +297,8 @@
 },{
   "class": com.mygdx.game.MoveSets.MoveSet,
   "index": 14,
-  "name":  "Tetracyline (Cy4)",
+  "name":  "Tetracyline",
+  "symbol": "Cy4",
   "possibleMoves": [
     {
       "class": com.mygdx.game.Utils.IntPair,
@@ -302,7 +317,8 @@
 },{
   "class": com.mygdx.game.MoveSets.MoveSet,
   "index": 15,
-  "name":  "Palladate (Pd)",
+  "name":  "Palladate",
+  "symbol": "Pd",
   "possibleMoves": [
     {
       "class": com.mygdx.game.Utils.IntPair,

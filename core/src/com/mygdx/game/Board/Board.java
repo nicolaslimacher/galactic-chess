@@ -7,7 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.Group;
 import com.mygdx.game.BoardUI.MoveConfirmationMenu;
 import com.mygdx.game.BoardUI.MoveSelectButtonMenu;
 import com.mygdx.game.MoveSets.MoveSet;
-import com.mygdx.game.Pawn.Pawn;
+import com.mygdx.game.GamePiece.GamePiece;
 import com.mygdx.game.Utils.Constants;
 import com.mygdx.game.Utils.CoordinateBoardPair;
 
@@ -16,7 +16,6 @@ public class Board extends Group {
     public int[][] boardGrid; // boardGrid[r][c] is the contents of row r, column c.
     public float screenWidth, screenHeight;
     public int boardRows, boardColumns;
-    public MoveSet selectedMoveSet = null;
     //menus
     public MoveSelectButtonMenu menuTable;
     public MoveConfirmationMenu confirmationMenu;
@@ -48,7 +47,6 @@ public class Board extends Group {
         return tileCoordinates;
     }
 
-    //TODO: research viewport keep ratio and add minimum window size (can i stop desktop user from making it too small?)
     public void sizeAndAddBoardTiles(){
         this.clearChildren(); //removes already drawn board tiles
         this.screenWidth = Gdx.graphics.getWidth();
@@ -64,16 +62,16 @@ public class Board extends Group {
         }
     }
 
-    public Pawn GetPawnAtCoordinate(CoordinateBoardPair coordinateBoardPair){
-        Pawn pawnAtCoordinate = null;
+    public GamePiece GetPawnAtCoordinate(CoordinateBoardPair coordinateBoardPair){
+        GamePiece gamePieceAtCoordinate = null;
         for(Actor actor:this.getStage().getActors()){
-            if(actor.getClass() == Pawn.class) {
-                Pawn pawn = (Pawn) actor;
-                if (pawn.indexOnBoard.equals(coordinateBoardPair)) {
-                    pawnAtCoordinate = pawn;
+            if(actor.getClass() == GamePiece.class) {
+                GamePiece gamePiece = (GamePiece) actor;
+                if (gamePiece.indexOnBoard.equals(coordinateBoardPair)) {
+                    gamePieceAtCoordinate = gamePiece;
                 }
             }
         }
-        return pawnAtCoordinate;
+        return gamePieceAtCoordinate;
     }
 }//end Board class

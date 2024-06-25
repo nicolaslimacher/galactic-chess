@@ -1,4 +1,4 @@
-package com.mygdx.game.Pawn;
+package com.mygdx.game.GamePiece;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -9,26 +9,23 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.mygdx.game.Board.Board;
+import com.mygdx.game.Command.HitCommand;
+import com.mygdx.game.Command.MoveCommand;
 import com.mygdx.game.Utils.Constants;
 import com.mygdx.game.Utils.CoordinateBoardPair;
-
-import java.awt.Graphics;
-import java.awt.Image;
-import java.awt.image.ImageObserver;
-import java.awt.image.ImageProducer;
 
 public class Target extends Actor {
     public final Board board;
     private final TextureRegion textureRegion;
     public CoordinateBoardPair indexOnBoard;
-    public Pawn parentPawn;
-    public Pawn targetPawn;
+    public GamePiece parentGamePiece;
+    public GamePiece targetGamePiece;
 
-    public Target(Pawn parentPawn, CoordinateBoardPair CoordinateBoardPair, Board board, Pawn targetPawn){
+    public Target(GamePiece parentGamePiece, CoordinateBoardPair CoordinateBoardPair, Board board, GamePiece targetGamePiece){
         Texture texture = new Texture(Gdx.files.internal("target.png"));
         this.board = board;
-        this.parentPawn = parentPawn;
-        this.targetPawn = targetPawn;
+        this.parentGamePiece = parentGamePiece;
+        this.targetGamePiece = targetGamePiece;
         this.textureRegion = new TextureRegion(texture, (int) Constants.TILE_SIZE, (int)Constants.TILE_SIZE);
         this.setBounds(textureRegion.getRegionX(), textureRegion.getRegionY(),
                 textureRegion.getRegionWidth(), textureRegion.getRegionHeight());
@@ -48,8 +45,9 @@ public class Target extends Actor {
         public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
             System.out.println("target has been selected");
             Target target = (Target) event.getListenerActor();
-            parentPawn.HitPawn(target.targetPawn);
-            parentPawn.isSelected = false;
+            //parentGamePiece.HitPawn(target.targetGamePiece);
+            //TODO: targetgamepiece doesnt work - find gamepiece at that location?
+            parentGamePiece.gameManager.latestGamePieceCommand = new HitCommand(parentGamePiece, target.indexOnBoard, target.targetGamePiece);
             event.getListenerActor().getParent().remove(); //disposes group with targets and possible moves drawn
             return true;
         }

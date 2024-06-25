@@ -7,6 +7,7 @@ public class MoveSet{
     public int index;
     public String name;
     public Array<IntPair> possibleMoves;
+    public String symbol;
 
     public MoveSet() {
     }
@@ -15,20 +16,12 @@ public class MoveSet{
         return index;
     }
 
-    public void setIndex(int index) {
-        this.index = index;
-    }
-
     public String getName() {
         return name;
     }
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public Array<IntPair> getMoveSets() {
-        return possibleMoves;
     }
 
     public void setMoveSets(Array<IntPair> possibleMoves) {
