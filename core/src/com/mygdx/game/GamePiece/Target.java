@@ -9,8 +9,8 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.mygdx.game.Board.Board;
-import com.mygdx.game.Command.HitCommand;
-import com.mygdx.game.Command.MoveCommand;
+import com.mygdx.game.Command.Command;
+import com.mygdx.game.Command.CommandType;
 import com.mygdx.game.Utils.Constants;
 import com.mygdx.game.Utils.CoordinateBoardPair;
 
@@ -47,7 +47,8 @@ public class Target extends Actor {
             Target target = (Target) event.getListenerActor();
             //parentGamePiece.HitPawn(target.targetGamePiece);
             //TODO: targetgamepiece doesnt work - find gamepiece at that location?
-            parentGamePiece.gameManager.latestGamePieceCommand = new HitCommand(parentGamePiece, target.indexOnBoard, target.targetGamePiece);
+            parentGamePiece.gameManager.latestGamePieceCommand = new Command(parentGamePiece, target.indexOnBoard, CommandType.HIT);
+            parentGamePiece.gameManager.latestGamePieceCommand.Execute();
             event.getListenerActor().getParent().remove(); //disposes group with targets and possible moves drawn
             return true;
         }

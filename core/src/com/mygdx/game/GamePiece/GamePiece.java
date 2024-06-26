@@ -57,6 +57,7 @@ public class GamePiece extends Actor{
     //Input method overrides NOTE: GameScreen stage input listeners will handle selecting and deselecting pawns
     private final InputListener pawnInputListener = new InputListener(){
         public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+            System.out.println("Pawn Listener Fired");
             GamePiece actor = (GamePiece) event.getListenerActor();
             if (gameManager.selectedMoveSet != null) {
                 actor.possibleMovesAndTargets = new Group();
@@ -138,15 +139,9 @@ public class GamePiece extends Actor{
     public void Move(CoordinateBoardPair coordinateBoardPair) {
         this.setPosition(pawnBoard.GetBoardTilePosition(coordinateBoardPair).x, pawnBoard.GetBoardTilePosition(coordinateBoardPair).y);
         this.indexOnBoard = coordinateBoardPair;
-        this.setName("Pawn"+String.valueOf(coordinateBoardPair.x)+","+String.valueOf(coordinateBoardPair.y));
+        this.setName("Pawn"+coordinateBoardPair.x+","+coordinateBoardPair.y);
         //TODO: set label positions is not setting hp labels correctly
         this.SetLabelPositions();
-
-        //set move select menu back to visible
-        this.gameManager.selectedMoveSet = null;
-        this.getStage().getRoot().findActor("MoveSelectButtonMenu").setVisible(true);
-        this.getStage().getRoot().findActor("MoveConfirmationMenu").remove();
-        this.pawnBoard.menuTable = null;
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////

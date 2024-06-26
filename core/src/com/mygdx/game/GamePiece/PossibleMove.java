@@ -8,7 +8,8 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.mygdx.game.Board.Board;
-import com.mygdx.game.Command.MoveCommand;
+import com.mygdx.game.Command.Command;
+import com.mygdx.game.Command.CommandType;
 import com.mygdx.game.GameManager.GameManager;
 import com.mygdx.game.Utils.Constants;
 import com.mygdx.game.Utils.CoordinateBoardPair;
@@ -43,11 +44,13 @@ public class PossibleMove extends Actor {
 
     private final InputListener possiblePawnInputListener = new InputListener(){
         public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+            System.out.println("Possible Move Listener Fired");
             PossibleMove possibleMove = (PossibleMove) event.getListenerActor();
             GamePiece parentGamePiece = possibleMove.parentGamePiece;
             //move piece by creating new move command
-            parentGamePiece.gameManager.latestGamePieceCommand = new MoveCommand(parentGamePiece, possibleMove.indexOnBoard);
-            event.getListenerActor().getParent().remove(); //removes possible move drawings
+            parentGamePiece.gameManager.latestGamePieceCommand = new Command(parentGamePiece, possibleMove.indexOnBoard, CommandType.MOVE);
+            parentGamePiece.gameManager.latestGamePieceCommand.Execute();
+            event.getListenerActor().getParent().remove();//removes possible move drawings
             return true;
         }
     };
