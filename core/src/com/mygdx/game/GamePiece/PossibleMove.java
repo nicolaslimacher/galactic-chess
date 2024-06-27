@@ -1,6 +1,5 @@
-package com.mygdx.game.Pawn;
+package com.mygdx.game.GamePiece;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -9,18 +8,24 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.mygdx.game.Board.Board;
+import com.mygdx.game.Command.Command;
+import com.mygdx.game.Command.CommandType;
+import com.mygdx.game.GameManager.GameManager;
 import com.mygdx.game.Utils.Constants;
 import com.mygdx.game.Utils.CoordinateBoardPair;
 
-public class PossiblePawnMove extends Actor {
+public class PossibleMove extends Actor {
     public final Board possiblePawnMoveBoard;
     private final TextureRegion textureRegion;
     public CoordinateBoardPair indexOnBoard;
-    public Pawn parentPawn;
-    public PossiblePawnMove(Pawn parentPawn, CoordinateBoardPair CoordinateBoardPair, Board board){
-        Texture pawnTexture = new Texture(Gdx.files.internal("white_player.png"));
+    public GamePiece parentGamePiece;
+    final GameManager gameManager;
+
+    public PossibleMove(GamePiece parentGamePiece, CoordinateBoardPair CoordinateBoardPair, Board board){
         possiblePawnMoveBoard = board;
-        this.parentPawn = parentPawn;
+        this.parentGamePiece = parentGamePiece;
+        this.gameManager = parentGamePiece.gameManager;
+        Texture pawnTexture = parentGamePiece.textureRegion.getTexture();
         this.textureRegion = new TextureRegion(pawnTexture, (int) Constants.TILE_SIZE, (int)Constants.TILE_SIZE);
         this.setBounds(textureRegion.getRegionX(), textureRegion.getRegionY(),
                 textureRegion.getRegionWidth(), textureRegion.getRegionHeight());
@@ -32,23 +37,21 @@ public class PossiblePawnMove extends Actor {
     @Override
     public void draw(Batch batch, float parentAlpha){
         Color color = getColor();
-        batch.setColor(color.r, color.g, color.b, color.a * parentAlpha);
+        batch.setColor(color.r, color.g, color.b, 0.60f);
         batch.draw(textureRegion, getX(), getY(), getOriginX(), getOriginY(),
                 getWidth(), getHeight(), getScaleX(), getScaleY(), getRotation());
     }
 
     private final InputListener possiblePawnInputListener = new InputListener(){
         public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-            PossiblePawnMove possiblePawnMove = (PossiblePawnMove) event.getListenerActor();
-            Pawn parentPawn = possiblePawnMove.parentPawn;
-            parentPawn.move(possiblePawnMove.indexOnBoard);
-            event.getListenerActor().getParent().remove();
-            parentPawn.isSelected = false;
+            System.out.println("Possible Move Listener Fired");
+            PossibleMove possibleMove = (PossibleMove) event.getListenerActor();
+            GamePiece parentGamePiece = possibleMove.parentGamePiece;
+            //move piece by creating new move command
+            parentGamePiece.gameManager.latestGamePieceCommand = new Command(parentGamePiece, possibleMove.indexOnBoard, CommandType.MOVE);
+            parentGamePiece.gameManager.latestGamePieceCommand.Execute();
+            event.getListenerActor().getParent().remove();//removes possible move drawings
             return true;
         }
     };
-
-    public void resetStageCoordinatesFromBoardLocation(){
-        this.setPosition(possiblePawnMoveBoard.GetBoardTilePosition(this.indexOnBoard).x, possiblePawnMoveBoard.GetBoardTilePosition(this.indexOnBoard).y);
-    }
 }
