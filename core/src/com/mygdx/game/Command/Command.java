@@ -54,6 +54,7 @@ public class Command {
         }
         //set move select menu back to visible
         this.gameManager.selectedMoveSet = null;
+        this.gameManager.movedThisTurn = true;
         this.gameManager.menuTable.setVisible(true);
         if (this.gameManager.getStage().getRoot().findActor("MoveConfirmationMenu") != null) {
             System.out.println("MoveConfirmationMenu is not null");
@@ -78,6 +79,8 @@ public class Command {
             replacedGamePiece.addHPandAttackLabels();
             gameManager.selectedGamePiece = this.gamePiece;
         }
+
+        this.gameManager.movedThisTurn = false;
 
     }
 }

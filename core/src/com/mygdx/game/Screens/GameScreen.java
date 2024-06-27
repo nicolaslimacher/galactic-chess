@@ -10,6 +10,7 @@ import com.badlogic.gdx.utils.Json;
 import com.mygdx.game.Board.Board;
 import com.mygdx.game.BoardUI.MoveSelectButtonMenu;
 import com.mygdx.game.BoardUI.PossibleMoveImageCreator;
+import com.mygdx.game.EnemyAI.EnemyAI;
 import com.mygdx.game.GameManager.GameManager;
 import com.mygdx.game.GameManager.Team;
 import com.mygdx.game.MoveSets.MoveSet;
@@ -25,6 +26,7 @@ public class GameScreen implements Screen {
 	SpriteBatch batch;
 	GameManager gameManager;
 	Board board;
+	EnemyAI enemyAI;
 
 
 	public GameScreen(final MyChessGame game, final Stage stage) {
@@ -61,6 +63,8 @@ public class GameScreen implements Screen {
 		gameManager = new GameManager(stage, board, friendlyPieces, enemyPieces, availableMoveSets);
 		stage.addActor(gameManager);
 
+		enemyAI = new EnemyAI(gameManager);
+		gameManager.enemyAI = enemyAI;
 
 		batch = new SpriteBatch();
 	}

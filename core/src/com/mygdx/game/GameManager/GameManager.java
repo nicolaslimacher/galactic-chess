@@ -8,6 +8,7 @@ import com.mygdx.game.Board.Board;
 import com.mygdx.game.BoardUI.MoveSelectButtonMenu;
 import com.mygdx.game.BoardUI.UndoEndTurnMenu;
 import com.mygdx.game.Command.Command;
+import com.mygdx.game.EnemyAI.EnemyAI;
 import com.mygdx.game.GamePiece.GamePiece;
 import com.mygdx.game.MoveSets.MoveSet;
 import com.mygdx.game.Utils.CoordinateBoardPair;
@@ -17,13 +18,18 @@ import java.util.ArrayList;
 public class GameManager extends Actor{
     Stage stage;
     Board board;
-    Team currentTurn;
+
+    //turn
+    public int turnNumber = 1;
+    public Team currentTurn;
+    public boolean movedThisTurn = false;
 
     //game pieces
     public ArrayList<GamePiece> friendlyGamePieces;
     public ArrayList<GamePiece> enemyGamePieces;
     public GamePiece selectedGamePiece = null;
     public Command latestGamePieceCommand;
+    public EnemyAI enemyAI;
 
     //selected Moves and GamePiece
     public MoveSet[] availableMoveSets;

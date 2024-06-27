@@ -55,11 +55,16 @@ public class GamePiece extends Actor{
     }
 
     //Input method overrides NOTE: GameScreen stage input listeners will handle selecting and deselecting pawns
+    //
     private final InputListener pawnInputListener = new InputListener(){
         public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
             System.out.println("Pawn Listener Fired");
             GamePiece actor = (GamePiece) event.getListenerActor();
-            if (gameManager.selectedMoveSet != null) {
+            //skip input if already moved this turn
+            if (actor.gameManager.movedThisTurn){
+                return true;
+            }
+            if (actor.team == Team.FRIENDLY && gameManager.selectedMoveSet != null) {
                 actor.possibleMovesAndTargets = new Group();
                 actor.possibleMovesAndTargets.setName("possibleMovesGroup" + actor.getName());
                 actor.drawPossibleMoves(GetPossibleMoves(gameManager.selectedMoveSet));
@@ -126,10 +131,31 @@ public class GamePiece extends Actor{
         return possibleMoves;
     }
 
+    public List<CoordinateBoardPair> GetEnemyPossibleMoves(MoveSet moveSet){
+        List<CoordinateBoardPair> possibleMoves = new ArrayList<CoordinateBoardPair>();
+        for (IntPair possibleMove : moveSet.possibleMoves){
+            CoordinateBoardPair newMove = new CoordinateBoardPair(this.indexOnBoard.x + (-1 * possibleMove.xVal), this.indexOnBoard.y + (-1 *  possibleMove.yVal));
+            if (isValidEnemyMove(possibleMove) && !gameManager.IsPawnAtBoardLocation(newMove)){
+                possibleMoves.add(newMove);
+            }
+        }
+        return possibleMoves;
+    }
+
     public boolean isValidMove(IntPair intPair) {
         boolean isValid = false;
         boolean xIsValid = 0 <= this.indexOnBoard.x + intPair.xVal && this.indexOnBoard.x + intPair.xVal <= this.pawnBoard.boardColumns-1;
         boolean yIsValid = 0 <= this.indexOnBoard.y + intPair.yVal && this.indexOnBoard.y + intPair.yVal <= this.pawnBoard.boardRows-1;
+        if (xIsValid && yIsValid){
+            isValid = true;
+        }
+        return isValid;
+    }
+
+    public boolean isValidEnemyMove(IntPair intPair) {
+        boolean isValid = false;
+        boolean xIsValid = 0 <= this.indexOnBoard.x + (-1 * intPair.xVal) && this.indexOnBoard.x + (-1 * intPair.xVal) <= this.pawnBoard.boardColumns-1;
+        boolean yIsValid = 0 <= this.indexOnBoard.y + (-1 * intPair.yVal) && this.indexOnBoard.y + (-1 * intPair.yVal) <= this.pawnBoard.boardRows-1;
         if (xIsValid && yIsValid){
             isValid = true;
         }
