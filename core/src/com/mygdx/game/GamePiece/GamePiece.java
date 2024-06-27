@@ -131,17 +131,6 @@ public class GamePiece extends Actor{
         return possibleMoves;
     }
 
-    public List<CoordinateBoardPair> GetEnemyPossibleMoves(MoveSet moveSet){
-        List<CoordinateBoardPair> possibleMoves = new ArrayList<CoordinateBoardPair>();
-        for (IntPair possibleMove : moveSet.possibleMoves){
-            CoordinateBoardPair newMove = new CoordinateBoardPair(this.indexOnBoard.x + (-1 * possibleMove.xVal), this.indexOnBoard.y + (-1 *  possibleMove.yVal));
-            if (isValidEnemyMove(possibleMove) && !gameManager.IsPawnAtBoardLocation(newMove)){
-                possibleMoves.add(newMove);
-            }
-        }
-        return possibleMoves;
-    }
-
     public boolean isValidMove(IntPair intPair) {
         boolean isValid = false;
         boolean xIsValid = 0 <= this.indexOnBoard.x + intPair.xVal && this.indexOnBoard.x + intPair.xVal <= this.pawnBoard.boardColumns-1;

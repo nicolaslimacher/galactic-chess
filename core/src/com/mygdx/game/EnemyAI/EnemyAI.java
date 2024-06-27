@@ -1,6 +1,8 @@
 package com.mygdx.game.EnemyAI;
 
+import com.mygdx.game.Command.CommandType;
 import com.mygdx.game.GameManager.GameManager;
+import com.mygdx.game.GameManager.Team;
 import com.mygdx.game.GamePiece.GamePiece;
 import com.mygdx.game.MoveSets.MoveSet;
 import com.mygdx.game.Utils.CoordinateBoardPair;
@@ -24,21 +26,32 @@ public class EnemyAI {
 
     public void MakeMove(){
         //TODO: add targets to possible moves. could update IsPawnAtLocation to only have "friendly"
-        HashMap<GamePiece, CoordinateBoardPair> allPossibleMoves = GetAllPossibleMoves();
+        List<EnemyAIMove> allPossibleMoves = GetAllPossibleMoves();
         int rnd = getRandomNumber(0, allPossibleMoves.size());
-        List<GamePiece> keysAsArray = new ArrayList<GamePiece>(allPossibleMoves.keySet());
-        GamePiece gamePieceToMove = keysAsArray.get(rnd);
-        gamePieceToMove.Move(allPossibleMoves.get(gamePieceToMove));
+        EnemyAIMove enemyAIMove = allPossibleMoves.get(rnd);
+        if(enemyAIMove.commandType == CommandType.MOVE) {
+            System.out.println("Enemy executing move to: " + enemyAIMove.coordinateBoardPair);
+            enemyAIMove.gamePiece.Move(enemyAIMove.coordinateBoardPair);
+        }else{
+            System.out.println("Enemy executing hit to:  " + enemyAIMove.coordinateBoardPair);
+            if (enemyAIMove.gamePiece.HitPawn(gameManager.GetPawnAtCoordinate(enemyAIMove.coordinateBoardPair))) {
+                enemyAIMove.gamePiece.Move(enemyAIMove.coordinateBoardPair);
+            }
+        }
     }
 
-    private HashMap<GamePiece, CoordinateBoardPair> GetAllPossibleMoves(){
-        HashMap<GamePiece, CoordinateBoardPair> allPossibleMoves = new HashMap<GamePiece, CoordinateBoardPair>();
+    private List<EnemyAIMove> GetAllPossibleMoves(){
+        List<EnemyAIMove> allPossibleMoves = new ArrayList<>();
         for (GamePiece gamePieceToMove :  gameManager.enemyGamePieces) {
             for (MoveSet moveSet : gameManager.availableMoveSets) {
                 for (IntPair possibleMove : moveSet.possibleMoves){
                     CoordinateBoardPair newMove = new CoordinateBoardPair(gamePieceToMove.indexOnBoard.x + (-1 * possibleMove.xVal), gamePieceToMove.indexOnBoard.y + (-1 *  possibleMove.yVal));
-                    if (gamePieceToMove.isValidEnemyMove(possibleMove) && !gameManager.IsPawnAtBoardLocation(newMove)){
-                        allPossibleMoves.put(gamePieceToMove, newMove);
+                    if (gamePieceToMove.isValidEnemyMove(possibleMove)){
+                        if (gameManager.IsPawnAtBoardLocation(newMove) && gameManager.GetPawnAtCoordinate(newMove).team == Team.FRIENDLY){
+                            allPossibleMoves.add(new EnemyAIMove(CommandType.HIT, newMove, gamePieceToMove));
+                        }else if (!gameManager.IsPawnAtBoardLocation(newMove)){
+                            allPossibleMoves.add(new EnemyAIMove(CommandType.MOVE, newMove, gamePieceToMove));
+                        }
                     }
                 }
             }
