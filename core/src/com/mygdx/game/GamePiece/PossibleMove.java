@@ -44,7 +44,6 @@ public class PossibleMove extends Actor {
 
     private final InputListener possiblePawnInputListener = new InputListener(){
         public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-            System.out.println("Possible Move Listener Fired");
             PossibleMove possibleMove = (PossibleMove) event.getListenerActor();
             GamePiece parentGamePiece = possibleMove.parentGamePiece;
             //move piece by creating new move command

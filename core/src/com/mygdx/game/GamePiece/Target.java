@@ -43,7 +43,6 @@ public class Target extends Actor {
 
     private final InputListener targetListener = new InputListener(){
         public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-            System.out.println("target has been selected");
             Target target = (Target) event.getListenerActor();
             //parentGamePiece.HitPawn(target.targetGamePiece);
             //TODO: targetgamepiece doesnt work - find gamepiece at that location?

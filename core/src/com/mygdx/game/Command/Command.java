@@ -39,13 +39,11 @@ public class Command {
     }
 
     public void Execute() {
-        System.out.println("CommandType: " + commandType);
         if (commandType == CommandType.MOVE) {
-            System.out.println("executing Move");
             this.gamePiece.Move(this.targetPosition);
             gameManager.selectedGamePiece = null;
         }else {
-                System.out.println("executing Hit");
+
                 if (this.gamePiece.HitPawn(this.targetGamePiece)) {
                     this.gamePiece.Move(this.targetPosition);
                 }
@@ -54,22 +52,20 @@ public class Command {
         }
         //set move select menu back to visible
         this.gameManager.selectedMoveSet = null;
+        this.gameManager.movedThisTurn = true;
         this.gameManager.menuTable.setVisible(true);
         if (this.gameManager.getStage().getRoot().findActor("MoveConfirmationMenu") != null) {
-            System.out.println("MoveConfirmationMenu is not null");
             this.gameManager.getStage().getRoot().findActor("MoveConfirmationMenu").remove();
-            //this.pawnBoard.menuTable = null;
+        this.gameManager.undoEndTurnMenu.EnableUndoButton();
         }
 
     }
 
     public void Undo() {
         if (commandType == CommandType.MOVE) {
-            System.out.println("Move Command: undo fired");
             this.gamePiece.Move(this.previousPosition);
             gameManager.selectedGamePiece = this.gamePiece;
         }else{
-            System.out.println("Hit Command: undo fired");
             //TODO: do i need to re-add pawn to GameManager.enemyGamePieces? printScreen list of enemyGamePieces to check if duplicated
             this.gamePiece.Move(this.previousPosition);
             GamePiece replacedGamePiece = new GamePiece(this.board, this.targetPosition, this.targetTeam, this.targetGamePiecePreviousHealth, this.targetGamePiecePreviousAtk, this.gameManager);
@@ -78,6 +74,9 @@ public class Command {
             replacedGamePiece.addHPandAttackLabels();
             gameManager.selectedGamePiece = this.gamePiece;
         }
+
+        this.gameManager.movedThisTurn = false;
+        this.gameManager.undoEndTurnMenu.DisableUndoButton();
 
     }
 }
