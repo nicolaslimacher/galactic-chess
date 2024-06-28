@@ -6,6 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.mygdx.game.Board.Board;
 import com.mygdx.game.BoardUI.MoveSelectButtonMenu;
+import com.mygdx.game.BoardUI.TurnCounterMenu;
 import com.mygdx.game.BoardUI.UndoEndTurnMenu;
 import com.mygdx.game.Command.Command;
 import com.mygdx.game.EnemyAI.EnemyAI;
@@ -21,6 +22,7 @@ public class GameManager extends Actor{
 
     //turn
     public int turnNumber = 1;
+    public TurnCounterMenu turnCounterMenu;
     public Team currentTurn;
     public boolean movedThisTurn = false;
 
@@ -46,7 +48,8 @@ public class GameManager extends Actor{
         this.enemyGamePieces = enemyGamePieces;
         this.availableMoveSets = availableMoveSets;
         this.menuTable = new MoveSelectButtonMenu(board, availableMoveSets);
-        this.undoEndTurnMenu = new UndoEndTurnMenu(this);
+        this.undoEndTurnMenu = new UndoEndTurnMenu();
+        this.turnCounterMenu = new TurnCounterMenu(this);
 
         //adding actors to the stage
         stage.addActor(board);
@@ -64,20 +67,18 @@ public class GameManager extends Actor{
         this.setName("GameManager");
         stage.addActor(this.menuTable);
         stage.addActor(this.undoEndTurnMenu);
+        stage.addActor(this.turnCounterMenu);
         stage.addListener(stageInputListener);
     }
 
     private final InputListener stageInputListener = new InputListener(){
         public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-            System.out.println("Stage Listener Fired");
             Object selectedObject = event.getTarget();
-            System.out.println("selectedObject: " + selectedObject);
             GameManager gameManager = event.getStage().getRoot().findActor("GameManager");
             for(Actor actor:stage.getActors()){
                 if(actor.getClass() == GamePiece.class) {
                     GamePiece gamePiece = (GamePiece) actor;
                     if (!gamePiece.equals(selectedObject) && gamePiece == gameManager.selectedGamePiece) {
-                        System.out.println("Clicked on: " + gameManager.selectedGamePiece + " and if statement met");
                         gameManager.selectedGamePiece = null;
                         if (stage.getRoot().findActor("possibleMovesGroup" + gamePiece.getName()) != null){
                             stage.getRoot().findActor("possibleMovesGroup" + gamePiece.getName()).remove();

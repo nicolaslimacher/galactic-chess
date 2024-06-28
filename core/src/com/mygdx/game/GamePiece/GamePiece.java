@@ -58,7 +58,6 @@ public class GamePiece extends Actor{
     //
     private final InputListener pawnInputListener = new InputListener(){
         public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-            System.out.println("Pawn Listener Fired");
             GamePiece actor = (GamePiece) event.getListenerActor();
             //skip input if already moved this turn
             if (actor.gameManager.movedThisTurn){
@@ -101,18 +100,18 @@ public class GamePiece extends Actor{
     }
 
     public boolean HitPawn (GamePiece enemyGamePiece){
-        System.out.println(this.getName()+ ": I'm hitting you!");
         return enemyGamePiece.GetHitAndIsFatal(this.attackPoints);
     }
 
     //TODO: I retured bool for something? to move pawn to enemy location?
     public boolean GetHitAndIsFatal(int AtkDmg){
-        System.out.println(this.getName() + ": i've been hit with " + AtkDmg + " dmg");
-        System.out.println(this.getName() + ": my hp is " + this.GetHitPoints());
         this.SetHitPoints(this.GetHitPoints() - AtkDmg);
-        System.out.println(this.getName() + ": my hp is " + this.GetHitPoints());
+        this.hitPointsLabel.remove();
+        this.attackPointsLabel.remove();
         this.addHPandAttackLabels();
         if (this.hitPoints == 0){
+            this.hitPointsLabel.remove();
+            this.attackPointsLabel.remove();
             this.statsLabels.remove();
             this.remove();
             return true;
@@ -155,7 +154,7 @@ public class GamePiece extends Actor{
         this.setPosition(pawnBoard.GetBoardTilePosition(coordinateBoardPair).x, pawnBoard.GetBoardTilePosition(coordinateBoardPair).y);
         this.indexOnBoard = coordinateBoardPair;
         this.setName("Pawn"+coordinateBoardPair.x+","+coordinateBoardPair.y);
-        //TODO: set label positions is not setting hp labels correctly
+        //TODO: Cap
         this.SetLabelPositions();
     }
 
@@ -192,16 +191,24 @@ public class GamePiece extends Actor{
     }
 
     public void addHPandAttackLabels(){
+        //TODO: try using TextButton and setDisabled
         this.hitPointsLabel = new Label(String.valueOf(this.hitPoints), skin, "hpStatsLabel");
         this.attackPointsLabel = new Label(String.valueOf(this.attackPoints), skin, "atkStatsLabel");
-        this.SetLabelPositions();
 
-        Image hpBackground = new Image(new Texture(Gdx.files.internal("hpLabelBackground.png")));
+        Image hpBackground;
+        if (this.team == Team.FRIENDLY){
+            hpBackground = new Image(new Texture(Gdx.files.internal("green_hp_background.png")));
+            hitPointsLabel.getStyle().fontColor = Color.BLACK;
+        }else{
+            hpBackground = new Image(new Texture(Gdx.files.internal("red_hp_background.png")));
+        }
         hitPointsLabel.getStyle().background = hpBackground.getDrawable();
 
-        Image atkBackground = new Image(new Texture(Gdx.files.internal("atkLabelBackground.png")));
+        Image atkBackground = new Image(new Texture(Gdx.files.internal("atk_background.png")));
         attackPointsLabel.getStyle().background = atkBackground.getDrawable();
+        attackPointsLabel.getStyle().fontColor = Color.BLACK;
 
+        this.SetLabelPositions();
         this.statsLabels.addActor(hitPointsLabel);
         this.statsLabels.addActor(attackPointsLabel);
         this.getStage().addActor(this.statsLabels);
@@ -210,7 +217,7 @@ public class GamePiece extends Actor{
     private void SetLabelPositions (){
         attackPointsLabel.setBounds(this.getX() + 2, this.getY() + 2, 20, 20);
         attackPointsLabel.setAlignment(Align.center);
-        hitPointsLabel.setBounds(this.getX()+this.getWidth()-hitPointsLabel.getWidth() - 12,this.getY() + 2, 20, 20);
+        hitPointsLabel.setBounds(this.getX()+this.getWidth() - 22,this.getY() + 2, 20, 20);
         hitPointsLabel.setAlignment(Align.center);
     }
 }

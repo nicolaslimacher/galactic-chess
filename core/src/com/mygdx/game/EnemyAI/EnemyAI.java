@@ -30,10 +30,8 @@ public class EnemyAI {
         int rnd = getRandomNumber(0, allPossibleMoves.size());
         EnemyAIMove enemyAIMove = allPossibleMoves.get(rnd);
         if(enemyAIMove.commandType == CommandType.MOVE) {
-            System.out.println("Enemy executing move to: " + enemyAIMove.coordinateBoardPair);
             enemyAIMove.gamePiece.Move(enemyAIMove.coordinateBoardPair);
         }else{
-            System.out.println("Enemy executing hit to:  " + enemyAIMove.coordinateBoardPair);
             if (enemyAIMove.gamePiece.HitPawn(gameManager.GetPawnAtCoordinate(enemyAIMove.coordinateBoardPair))) {
                 enemyAIMove.gamePiece.Move(enemyAIMove.coordinateBoardPair);
             }
