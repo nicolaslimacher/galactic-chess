@@ -3,6 +3,7 @@ package com.mygdx.game.Screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
@@ -13,6 +14,7 @@ public class MainMenuScreen implements Screen{
     OrthographicCamera camera;
     BitmapFont font;
     SpriteBatch batch;
+    Texture backgroundImage;
 
     public MainMenuScreen(final MyChessGame game) {
         this.game = game;
@@ -22,6 +24,8 @@ public class MainMenuScreen implements Screen{
 
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 800, 480);
+
+        backgroundImage = new Texture(Gdx.files.internal("loading_screen.png"));
     }
 
     @Override
@@ -38,8 +42,7 @@ public class MainMenuScreen implements Screen{
 
         //begin new sprite batch and draw welcome (need game. before methods)
         batch.begin();
-        font.draw(batch, "Welcome to Chess!!! ", 240, 300);
-        font.draw(batch, "Tap anywhere to begin!", 240, 250);
+        batch.draw(backgroundImage, 0, 0);
         batch.end();
 
         if (Gdx.input.isTouched()) {
