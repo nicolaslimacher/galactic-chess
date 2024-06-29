@@ -25,7 +25,7 @@ public class EnemyAI {
     }
 
     public void MakeMove(){
-        //TODO: add targets to possible moves. could update IsPawnAtLocation to only have "friendly"
+        //TODO: might still be selecting killed pawn as possible move?
         List<EnemyAIMove> allPossibleMoves = GetAllPossibleMoves();
         int rnd = getRandomNumber(0, allPossibleMoves.size());
         EnemyAIMove enemyAIMove = allPossibleMoves.get(rnd);
