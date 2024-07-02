@@ -5,7 +5,8 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.mygdx.game.Board.Board;
-import com.mygdx.game.BoardUI.MoveSelectButtonMenu;
+import com.mygdx.game.BoardUI.MoveConfirmation;
+import com.mygdx.game.BoardUI.MoveSelectCards;
 import com.mygdx.game.BoardUI.TurnCounterMenu;
 import com.mygdx.game.BoardUI.UndoEndTurnMenu;
 import com.mygdx.game.Command.Command;
@@ -15,6 +16,9 @@ import com.mygdx.game.MoveSets.MoveSet;
 import com.mygdx.game.Utils.CoordinateBoardPair;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public class GameManager extends Actor{
     Stage stage;
@@ -35,11 +39,15 @@ public class GameManager extends Actor{
 
     //selected Moves and GamePiece
     public MoveSet[] availableMoveSets;
+    public MoveSet[] enemyMoves = new MoveSet[2];
+    public MoveSet[] freeMoves = new MoveSet[1];
+    public MoveSet[] myMoves = new MoveSet[2];
     public MoveSet selectedMoveSet = null;
 
     //menu
-    public MoveSelectButtonMenu menuTable;
+    public MoveSelectCards menuTable;
     public UndoEndTurnMenu undoEndTurnMenu;
+    public MoveConfirmation moveConfirmation;
 
     public GameManager(Stage stage, Board board, ArrayList<GamePiece> friendlyGamePieces, ArrayList<GamePiece> enemyGamePieces, MoveSet[] availableMoveSets) {
         this.stage = stage;
@@ -47,7 +55,8 @@ public class GameManager extends Actor{
         this.friendlyGamePieces = friendlyGamePieces;
         this.enemyGamePieces = enemyGamePieces;
         this.availableMoveSets = availableMoveSets;
-        this.menuTable = new MoveSelectButtonMenu(board, availableMoveSets);
+        AssignStartingChemicals();
+        this.menuTable = new MoveSelectCards(this);
         this.undoEndTurnMenu = new UndoEndTurnMenu();
         this.turnCounterMenu = new TurnCounterMenu(this);
 
@@ -107,5 +116,24 @@ public class GameManager extends Actor{
             }
         }
         return null;
+    }
+
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    //                                       MoveSet Management                                   //
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    public void AssignStartingChemicals () {
+        List<MoveSet> availableMoveSetsAsList = Arrays.asList(availableMoveSets);
+        Collections.shuffle(availableMoveSetsAsList);
+        enemyMoves[0] = availableMoveSetsAsList.get(0);
+        enemyMoves[1] = availableMoveSetsAsList.get(1);
+        freeMoves[0] = availableMoveSetsAsList.get(2);
+        myMoves[0] = availableMoveSetsAsList.get(3);
+        myMoves[1] = availableMoveSetsAsList.get(4);
+
+        System.out.println("AssignStartingChemicals() fired");
+        System.out.println(enemyMoves[0].getName());
+
     }
 }

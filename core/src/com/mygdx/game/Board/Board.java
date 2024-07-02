@@ -4,9 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
-import com.mygdx.game.BoardUI.MoveConfirmationMenu;
-import com.mygdx.game.BoardUI.MoveSelectButtonMenu;
-import com.mygdx.game.MoveSets.MoveSet;
 import com.mygdx.game.GamePiece.GamePiece;
 import com.mygdx.game.Utils.Constants;
 import com.mygdx.game.Utils.CoordinateBoardPair;
@@ -17,8 +14,6 @@ public class Board extends Group {
     public float screenWidth, screenHeight;
     public int boardRows, boardColumns;
     //menus
-    public MoveSelectButtonMenu menuTable;
-    public MoveConfirmationMenu confirmationMenu;
 
     //constructor for Board
     public Board(int rows, int columns) {
