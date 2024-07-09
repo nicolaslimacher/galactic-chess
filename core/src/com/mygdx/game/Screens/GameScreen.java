@@ -19,6 +19,7 @@ import com.mygdx.game.Utils.CoordinateBoardPair;
 import com.mygdx.game.MyChessGame;
 import com.mygdx.game.Utils.Helpers;
 
+import java.awt.Image;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -74,10 +75,13 @@ public class GameScreen implements Screen {
 		enemyAI = new EnemyAI(gameManager);
 		gameManager.enemyAI = enemyAI;
 
+		fightDialog = new Texture(Gdx.files.internal("fight_notification.png"));
+
 		batch = new SpriteBatch();
 
 		startTime = TimeUtils.millis();
 		fightDialog = new Texture(Gdx.files.internal("fight_dialog.png"));
+
 	}
 	@Override
 	public void render(float deltaTime) {
