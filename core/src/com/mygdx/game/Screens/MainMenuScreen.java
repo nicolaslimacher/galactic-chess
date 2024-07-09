@@ -14,7 +14,7 @@ public class MainMenuScreen implements Screen{
     OrthographicCamera camera;
     BitmapFont font;
     SpriteBatch batch;
-    Texture backgroundImage;
+    Texture loadingScreen;
 
     public MainMenuScreen(final MyChessGame game) {
         this.game = game;
@@ -25,7 +25,7 @@ public class MainMenuScreen implements Screen{
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 800, 480);
 
-        backgroundImage = new Texture(Gdx.files.internal("loading_screen.png"));
+        loadingScreen = new Texture(Gdx.files.internal("loading_screen.png"));
     }
 
     @Override
@@ -42,7 +42,7 @@ public class MainMenuScreen implements Screen{
 
         //begin new sprite batch and draw welcome (need game. before methods)
         batch.begin();
-        batch.draw(backgroundImage, 0, 0);
+        batch.draw(loadingScreen, 0,0);
         batch.end();
 
         if (Gdx.input.isTouched()) {

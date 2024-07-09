@@ -44,9 +44,7 @@ public class Target extends Actor {
     private final InputListener targetListener = new InputListener(){
         public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
             Target target = (Target) event.getListenerActor();
-            //parentGamePiece.HitPawn(target.targetGamePiece);
-            //TODO: targetgamepiece doesnt work - find gamepiece at that location?
-            parentGamePiece.gameManager.latestGamePieceCommand = new Command(parentGamePiece, target.indexOnBoard, CommandType.HIT);
+            parentGamePiece.gameManager.latestGamePieceCommand = new Command(parentGamePiece, target.indexOnBoard, CommandType.HIT, parentGamePiece.gameManager.selectedMoveSet);
             parentGamePiece.gameManager.latestGamePieceCommand.Execute();
             event.getListenerActor().getParent().remove(); //disposes group with targets and possible moves drawn
             return true;

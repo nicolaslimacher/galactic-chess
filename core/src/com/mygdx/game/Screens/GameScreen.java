@@ -6,12 +6,9 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.mygdx.game.Board.Board;
-import com.mygdx.game.BoardUI.MoveSelectButtonMenu;
-import com.mygdx.game.BoardUI.PossibleMoveImageCreator;
 import com.mygdx.game.EnemyAI.EnemyAI;
 import com.mygdx.game.GameManager.GameManager;
 import com.mygdx.game.GameManager.Team;
@@ -20,9 +17,11 @@ import com.mygdx.game.GamePiece.GamePiece;
 import com.mygdx.game.Utils.Constants;
 import com.mygdx.game.Utils.CoordinateBoardPair;
 import com.mygdx.game.MyChessGame;
+import com.mygdx.game.Utils.Helpers;
 
 import java.awt.Image;
 import java.util.ArrayList;
+import java.util.List;
 
 public class GameScreen implements Screen {
 	final MyChessGame game;
@@ -31,8 +30,9 @@ public class GameScreen implements Screen {
 	GameManager gameManager;
 	Board board;
 	EnemyAI enemyAI;
-	Texture fightDialog;
 	long startTime;
+	Texture fightDialog;
+	List<MoveSet> availableMoveSets;
 
 
 	public GameScreen(final MyChessGame game, final Stage stage) {
@@ -64,8 +64,11 @@ public class GameScreen implements Screen {
 				enemyPieces.add(gamePiece);
 			}
 		}
-		MoveSet[] availableMoveSets = new MoveSet[]{moveSets[1], moveSets[2], moveSets[3], moveSets[4]};
 
+		availableMoveSets = Helpers.GetRandomMoveSets(0,15);
+		for (MoveSet moveSet: availableMoveSets) {
+			System.out.println(moveSet.getName());
+		}
 		gameManager = new GameManager(stage, board, friendlyPieces, enemyPieces, availableMoveSets);
 		stage.addActor(gameManager);
 
@@ -75,7 +78,10 @@ public class GameScreen implements Screen {
 		fightDialog = new Texture(Gdx.files.internal("fight_notification.png"));
 
 		batch = new SpriteBatch();
+
 		startTime = TimeUtils.millis();
+		fightDialog = new Texture(Gdx.files.internal("fight_dialog.png"));
+
 	}
 	@Override
 	public void render(float deltaTime) {
@@ -85,7 +91,7 @@ public class GameScreen implements Screen {
 		batch.begin();
 		stage.draw();
 		if (TimeUtils.millis() - startTime < 1000){
-			batch.draw(fightDialog, Constants.SCREEN_WIDTH/2-200, Constants.SCREEN_HEIGHT/2-50);
+			batch.draw(fightDialog, Constants.SCREEN_WIDTH / 2 - 200, Constants.SCREEN_HEIGHT / 2 - 50);
 		}
 		batch.end();
 	}
