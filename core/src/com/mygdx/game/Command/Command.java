@@ -4,11 +4,13 @@ import com.mygdx.game.Board.Board;
 import com.mygdx.game.GameManager.GameManager;
 import com.mygdx.game.GameManager.Team;
 import com.mygdx.game.GamePiece.GamePiece;
+import com.mygdx.game.MoveSets.MoveSet;
 import com.mygdx.game.Utils.CoordinateBoardPair;
 
 public class Command {
     final CommandType commandType;
     final GamePiece gamePiece;
+    public final MoveSet moveSet;
 
     private final Board board;
     private final GameManager gameManager;
@@ -23,13 +25,14 @@ public class Command {
     private int targetGamePiecePreviousHealth;
 
 
-    public Command(GamePiece gamePiece, CoordinateBoardPair targetPosition, CommandType commandType) {
+    public Command(GamePiece gamePiece, CoordinateBoardPair targetPosition, CommandType commandType, MoveSet moveSet) {
         this.gamePiece = gamePiece;
         this.gameManager = gamePiece.gameManager;
         this.board = gamePiece.pawnBoard;
         this.commandType = commandType;
         this.previousPosition = gamePiece.indexOnBoard;
         this.targetPosition = targetPosition;
+        this.moveSet = moveSet;
         if (commandType == CommandType.HIT) {
             this.targetGamePiece = gameManager.GetPawnAtCoordinate(this.targetPosition);
             this.targetTeam = gamePiece.team;
@@ -53,10 +56,13 @@ public class Command {
         //set move select menu back to visible
         this.gameManager.selectedMoveSet = null;
         this.gameManager.movedThisTurn = true;
-        this.gameManager.menuTable.setVisible(true);
+        this.gameManager.moveSelectCards.setVisible(true);
         if (this.gameManager.getStage().getRoot().findActor("MoveConfirmationMenu") != null) {
             this.gameManager.getStage().getRoot().findActor("MoveConfirmationMenu").remove();
         this.gameManager.undoEndTurnMenu.EnableUndoButton();
+        this.gameManager.undoEndTurnMenu.EnableEndTurnButton();
+
+        System.out.println("Player executed move: " + this.moveSet.getName());
         }
 
     }
@@ -77,6 +83,9 @@ public class Command {
 
         this.gameManager.movedThisTurn = false;
         this.gameManager.undoEndTurnMenu.DisableUndoButton();
+        this.gameManager.undoEndTurnMenu.DisableEndTurnButton();
 
+
+        System.out.println("Player undid move: " + this.moveSet.getName());
     }
 }

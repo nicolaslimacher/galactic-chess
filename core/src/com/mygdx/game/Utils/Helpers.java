@@ -5,6 +5,7 @@ import static com.badlogic.gdx.net.HttpRequestBuilder.json;
 import com.badlogic.gdx.Gdx;
 import com.mygdx.game.MoveSets.MoveSet;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,13 +18,11 @@ public class Helpers {
         return range;
     }
 
-    public static MoveSet[] GetRandomMoveSets(int lowerBound, int upperBound){
-        MoveSet[] availableMoveSets = new MoveSet[5];
+    public static List<MoveSet> GetRandomMoveSets(int lowerBound, int upperBound){
+        List<MoveSet> availableMoveSets = new ArrayList<>(5);
         MoveSet[] moveSets = json.fromJson(MoveSet[].class, Gdx.files.internal("MoveSet.json"));
-        int moveSetIndex = 0;
         for ( int moveSetNumber : Helpers.GetShuffledIntsInRange(lowerBound,upperBound).subList(0,5) ) {
-            availableMoveSets[moveSetIndex] = moveSets[moveSetNumber];
-            moveSetIndex = moveSetIndex + 1;
+            availableMoveSets.add(moveSets[moveSetNumber]);
         }
         return availableMoveSets;
     }

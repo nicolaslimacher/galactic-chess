@@ -47,7 +47,7 @@ public class PossibleMove extends Actor {
             PossibleMove possibleMove = (PossibleMove) event.getListenerActor();
             GamePiece parentGamePiece = possibleMove.parentGamePiece;
             //move piece by creating new move command
-            parentGamePiece.gameManager.latestGamePieceCommand = new Command(parentGamePiece, possibleMove.indexOnBoard, CommandType.MOVE);
+            parentGamePiece.gameManager.latestGamePieceCommand = new Command(parentGamePiece, possibleMove.indexOnBoard, CommandType.MOVE, gameManager.selectedMoveSet);
             parentGamePiece.gameManager.latestGamePieceCommand.Execute();
             event.getListenerActor().getParent().remove();//removes possible move drawings
             return true;

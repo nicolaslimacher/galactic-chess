@@ -20,6 +20,7 @@ import com.mygdx.game.MyChessGame;
 import com.mygdx.game.Utils.Helpers;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class GameScreen implements Screen {
 	final MyChessGame game;
@@ -30,7 +31,7 @@ public class GameScreen implements Screen {
 	EnemyAI enemyAI;
 	long startTime;
 	Texture fightDialog;
-	MoveSet[] availableMoveSets;
+	List<MoveSet> availableMoveSets;
 
 
 	public GameScreen(final MyChessGame game, final Stage stage) {
@@ -64,7 +65,6 @@ public class GameScreen implements Screen {
 		}
 
 		availableMoveSets = Helpers.GetRandomMoveSets(0,15);
-		System.out.println(availableMoveSets.length);
 		for (MoveSet moveSet: availableMoveSets) {
 			System.out.println(moveSet.getName());
 		}

@@ -1,5 +1,6 @@
 package com.mygdx.game.GameManager;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
@@ -16,9 +17,10 @@ import com.mygdx.game.MoveSets.MoveSet;
 import com.mygdx.game.Utils.CoordinateBoardPair;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class GameManager extends Actor{
     Stage stage;
@@ -38,25 +40,25 @@ public class GameManager extends Actor{
     public EnemyAI enemyAI;
 
     //selected Moves and GamePiece
-    public MoveSet[] availableMoveSets;
-    public MoveSet[] enemyMoves = new MoveSet[2];
-    public MoveSet[] freeMoves = new MoveSet[1];
-    public MoveSet[] myMoves = new MoveSet[2];
+    public List<MoveSet> availableMoveSets;
+    public List<MoveSet> enemyMoves = new ArrayList<>(2);
+    public List<MoveSet> freeMove = new ArrayList<>(1);
+    public List<MoveSet> myMoves = new ArrayList<>(2);;
     public MoveSet selectedMoveSet = null;
 
     //menu
-    public MoveSelectCards menuTable;
+    public MoveSelectCards moveSelectCards;
     public UndoEndTurnMenu undoEndTurnMenu;
     public MoveConfirmation moveConfirmation;
 
-    public GameManager(Stage stage, Board board, ArrayList<GamePiece> friendlyGamePieces, ArrayList<GamePiece> enemyGamePieces, MoveSet[] availableMoveSets) {
+    public GameManager(Stage stage, Board board, ArrayList<GamePiece> friendlyGamePieces, ArrayList<GamePiece> enemyGamePieces, List<MoveSet> availableMoveSets) {
         this.stage = stage;
         this.board = board;
         this.friendlyGamePieces = friendlyGamePieces;
         this.enemyGamePieces = enemyGamePieces;
         this.availableMoveSets = availableMoveSets;
         AssignStartingChemicals();
-        this.menuTable = new MoveSelectCards(this);
+        this.moveSelectCards = new MoveSelectCards(this);
         this.undoEndTurnMenu = new UndoEndTurnMenu();
         this.turnCounterMenu = new TurnCounterMenu(this);
 
@@ -74,7 +76,7 @@ public class GameManager extends Actor{
         }
         this.currentTurn = Team.FRIENDLY;
         this.setName("GameManager");
-        stage.addActor(this.menuTable);
+        stage.addActor(this.moveSelectCards);
         stage.addActor(this.undoEndTurnMenu);
         stage.addActor(this.turnCounterMenu);
         stage.addListener(stageInputListener);
@@ -124,16 +126,66 @@ public class GameManager extends Actor{
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     public void AssignStartingChemicals () {
-        List<MoveSet> availableMoveSetsAsList = Arrays.asList(availableMoveSets);
-        Collections.shuffle(availableMoveSetsAsList);
-        enemyMoves[0] = availableMoveSetsAsList.get(0);
-        enemyMoves[1] = availableMoveSetsAsList.get(1);
-        freeMoves[0] = availableMoveSetsAsList.get(2);
-        myMoves[0] = availableMoveSetsAsList.get(3);
-        myMoves[1] = availableMoveSetsAsList.get(4);
+        Collections.shuffle(availableMoveSets);
+        enemyMoves.add(availableMoveSets.get(0));
+        enemyMoves.add(availableMoveSets.get(1));
+        freeMove.add(availableMoveSets.get(2));
+        myMoves.add(availableMoveSets.get(3));
+        myMoves.add(availableMoveSets.get(4));
 
-        System.out.println("AssignStartingChemicals() fired");
-        System.out.println(enemyMoves[0].getName());
+    }
 
+    private void ShuffleCardsAfterPlayer(MoveSet playerMoveSetUsed){
+        myMoves.remove(playerMoveSetUsed);
+        MoveSet freeMoveToAdd = freeMove.get(0);
+        freeMove.remove(freeMoveToAdd);
+        freeMove.add(playerMoveSetUsed);
+        myMoves.add(freeMoveToAdd);
+    }
+
+    private void ShuffleCardsAfterEnemy(MoveSet enemyMoveSetUsed){
+        enemyMoves.remove(enemyMoveSetUsed);
+        MoveSet freeMoveToAdd = freeMove.get(0);
+        freeMove.remove(freeMoveToAdd);
+        freeMove.add(enemyMoveSetUsed);
+        enemyMoves.add(freeMoveToAdd);
+    }
+
+    public void EndPlayerTurn(){
+        Timer enemyAITimer = new Timer("enemyAITimer", true); //running as daemon so program stops when window closed
+        this.turnNumber = this.turnNumber + 1;
+        this.currentTurn = Team.ENEMY;
+        this.movedThisTurn = false;
+
+        //shuffle chemicals
+        ShuffleCardsAfterPlayer(this.latestGamePieceCommand.moveSet);
+        this.latestGamePieceCommand = null;
+
+        this.moveSelectCards.UpdateCards();
+
+
+        //call AI to make turn
+            //TODO: try timer
+        TimerTask enemyAImove = new TimerTask() {
+            @Override
+            public void run() {
+                undoEndTurnMenu.DisableEndTurnButton();
+                undoEndTurnMenu.DisableUndoButton();
+
+                MoveSet enemyMoveUsed = enemyAI.MakeMove();
+                ShuffleCardsAfterEnemy(enemyMoveUsed);
+                moveSelectCards.UpdateCards();
+
+                turnCounterMenu.UpdateTurn();
+            }
+        };
+        long enemyAIDelay = 750L;
+        enemyAITimer.schedule(enemyAImove, enemyAIDelay);
+
+        //Gdx.app.wait(500L);
+        //MoveSet enemyMoveUsed = this.enemyAI.MakeMove();
+//        ShuffleCardsAfterEnemy(enemyMoveUsed);
+//
+//        this.moveSelectCards.UpdateCards();
     }
 }
