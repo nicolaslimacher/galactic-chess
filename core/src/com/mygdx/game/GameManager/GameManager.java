@@ -24,7 +24,7 @@ import java.util.TimerTask;
 
 public class GameManager extends Actor{
     Stage stage;
-    Board board;
+    public Board board;
 
     //turn
     public int turnNumber = 1;
@@ -51,11 +51,9 @@ public class GameManager extends Actor{
     public UndoEndTurnMenu undoEndTurnMenu;
     public MoveConfirmation moveConfirmation;
 
-    public GameManager(Stage stage, Board board, ArrayList<GamePiece> friendlyGamePieces, ArrayList<GamePiece> enemyGamePieces, List<MoveSet> availableMoveSets) {
+    public GameManager(Stage stage, Board board, List<MoveSet> availableMoveSets) {
         this.stage = stage;
         this.board = board;
-        this.friendlyGamePieces = friendlyGamePieces;
-        this.enemyGamePieces = enemyGamePieces;
         this.availableMoveSets = availableMoveSets;
         AssignStartingChemicals();
         this.moveSelectCards = new MoveSelectCards(this);
@@ -63,17 +61,17 @@ public class GameManager extends Actor{
         this.turnCounterMenu = new TurnCounterMenu(this);
 
         //adding actors to the stage
-        stage.addActor(board);
-        for (GamePiece gamePiece: this.friendlyGamePieces){
-            stage.addActor(gamePiece);
-            gamePiece.gameManager = this;
-            gamePiece.addHPandAttackLabels();
-        }
-        for (GamePiece gamePiece: this.enemyGamePieces){
-            stage.addActor(gamePiece);
-            gamePiece.gameManager = this;
-            gamePiece.addHPandAttackLabels();
-        }
+//        stage.addActor(board);
+//        for (GamePiece gamePiece: this.friendlyGamePieces){
+//            stage.addActor(gamePiece);
+//            gamePiece.gameManager = this;
+//            gamePiece.addHPandAttackLabels();
+//        }
+//        for (GamePiece gamePiece: this.enemyGamePieces){
+//            stage.addActor(gamePiece);
+//            gamePiece.gameManager = this;
+//            gamePiece.addHPandAttackLabels();
+//        }
         this.currentTurn = Team.FRIENDLY;
         this.setName("GameManager");
         stage.addActor(this.moveSelectCards);

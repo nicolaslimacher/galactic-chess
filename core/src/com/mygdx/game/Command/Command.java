@@ -46,7 +46,6 @@ public class Command {
             this.gamePiece.Move(this.targetPosition);
             gameManager.selectedGamePiece = null;
         }else {
-
                 if (this.gamePiece.HitPawn(this.targetGamePiece)) {
                     this.gamePiece.Move(this.targetPosition);
                 }

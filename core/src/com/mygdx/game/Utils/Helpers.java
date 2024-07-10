@@ -3,6 +3,7 @@ package com.mygdx.game.Utils;
 import static com.badlogic.gdx.net.HttpRequestBuilder.json;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.mygdx.game.MoveSets.MoveSet;
 
 import java.util.ArrayList;
@@ -25,5 +26,19 @@ public class Helpers {
             availableMoveSets.add(moveSets[moveSetNumber]);
         }
         return availableMoveSets;
+    }
+
+    public static void KeepPopUpOverBoard(TextButton button, float desiredX, float desiredY, float desiredWidth, float desiredHeight){
+        float finalX, finalY;
+
+        if (desiredX + desiredWidth > Constants.SCREEN_WIDTH * 0.9f){
+            finalX = Constants.SCREEN_WIDTH * 0.9f - desiredWidth;
+        } else finalX = Math.max(desiredX, Constants.SCREEN_BOARD_WIDTH_LEFT_OFFSET * 1.1f);
+
+        if (desiredY + desiredHeight > Constants.SCREEN_HEIGHT * 0.9f){
+            finalY = Constants.SCREEN_HEIGHT * 0.9f - desiredHeight;
+        } else finalY = Math.max(desiredY, Constants.SCREEN_HEIGHT * 0.1f);
+
+        button.setBounds(finalX, finalY, desiredWidth, desiredHeight);
     }
 }

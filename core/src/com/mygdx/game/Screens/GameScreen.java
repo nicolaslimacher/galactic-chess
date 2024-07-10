@@ -40,20 +40,24 @@ public class GameScreen implements Screen {
 		this.stage = stage;
 		Gdx.input.setInputProcessor(stage);
 
-		//adding moveset options
-		Json json = new Json();
-		// De-serialize to an object
-		MoveSet[] moveSets = json.fromJson(MoveSet[].class, Gdx.files.internal("MoveSet.json"));
+		availableMoveSets = Helpers.GetRandomMoveSets(0,15);
+		for (MoveSet moveSet: availableMoveSets) {
+			System.out.println(moveSet.getName());
+		}
 
 
 		//adding actors
 		board = new Board(5, 5);
+		stage.addActor(board);
+		gameManager = new GameManager(stage, board, availableMoveSets);
+		stage.addActor(gameManager);
 		ArrayList<GamePiece> friendlyPieces = new ArrayList<GamePiece>();
 		if (board.boardColumns > 0) {
 			for (int i = 0; i < board.boardColumns; i++) {
 				GamePiece gamePiece = new GamePiece(board, new CoordinateBoardPair(i, 0), Team.FRIENDLY, 10, 1, gameManager);
 				gamePiece.setName("GamePiece"+ i + ",0");
 				friendlyPieces.add(gamePiece);
+				stage.addActor(gamePiece);
 			}
 		}
 		ArrayList<GamePiece> enemyPieces = new ArrayList<GamePiece>();
@@ -62,15 +66,11 @@ public class GameScreen implements Screen {
 				GamePiece gamePiece = new GamePiece(board, new CoordinateBoardPair(i, board.boardRows-1), Team.ENEMY, 2, 1, gameManager);
 				gamePiece.setName("GamePiece"+ i + "," + (board.boardRows - 1));
 				enemyPieces.add(gamePiece);
+				stage.addActor(gamePiece);
 			}
 		}
-
-		availableMoveSets = Helpers.GetRandomMoveSets(0,15);
-		for (MoveSet moveSet: availableMoveSets) {
-			System.out.println(moveSet.getName());
-		}
-		gameManager = new GameManager(stage, board, friendlyPieces, enemyPieces, availableMoveSets);
-		stage.addActor(gameManager);
+		gameManager.friendlyGamePieces = friendlyPieces;
+		gameManager.enemyGamePieces = enemyPieces;
 
 		enemyAI = new EnemyAI(gameManager);
 		gameManager.enemyAI = enemyAI;
