@@ -2,26 +2,34 @@ package com.mygdx.game.BoardUI;
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.utils.Align;
 import com.mygdx.game.GameManager.GameManager;
 import com.mygdx.game.MoveSets.MoveSet;
 
-public class MoveCard extends TextButton{
+public class MoveCard extends Button {
         public MoveSet moveSet;
         public GameManager gameManager;
         private boolean selectable;
         public MoveCard(Skin skin, MoveSet moveSet, GameManager gameManager, boolean selectable) {
-            super("", skin);
+            super(skin);
             this.moveSet = moveSet;
             this.gameManager = gameManager;
             this.selectable = selectable;
-            this.setText(moveSet.name);
+            Label textLabel = new Label(moveSet.symbol + "\n" + moveSet.name, skin);
+            textLabel.setWrap(true);
+            textLabel.setAlignment(Align.center);
+            this.add(textLabel).expand().fill();
             if (this.selectable) {
                 this.addListener(MoveSelectButtonListener);
             }else{
                 this.addListener(MoveInfoButtonListener);
             }
+            this.setHeight(150f);
+            this.setWidth(70f);
         }
 
         private final InputListener MoveInfoButtonListener = new InputListener(){

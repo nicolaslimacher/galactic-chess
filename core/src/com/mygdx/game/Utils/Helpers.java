@@ -33,7 +33,7 @@ public class Helpers {
 
         if (desiredX + desiredWidth > Constants.SCREEN_WIDTH * 0.9f){
             finalX = Constants.SCREEN_WIDTH * 0.9f - desiredWidth;
-        } else finalX = Math.max(desiredX, Constants.SCREEN_BOARD_WIDTH_LEFT_OFFSET * 1.1f);
+        } else finalX = Math.max(desiredX, Constants.SCREEN_BOARD_WIDTH_LEFT_OFFSET * 2f);
 
         if (desiredY + desiredHeight > Constants.SCREEN_HEIGHT * 0.9f){
             finalY = Constants.SCREEN_HEIGHT * 0.9f - desiredHeight;

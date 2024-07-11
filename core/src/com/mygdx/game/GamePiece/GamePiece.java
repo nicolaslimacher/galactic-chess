@@ -86,6 +86,10 @@ public class GamePiece extends Actor{
                 GamePiece gamePiece = (GamePiece) event.getListenerActor();
                 System.out.println("MovedThisTurn? :" + gamePiece.gameManager.movedThisTurn);
 
+                //store position to place back after null drop
+                gamePiece.preDragXPosition = gamePiece.getX();
+                gamePiece.preDragYPosition = gamePiece.getY();
+
                 RemoveGamePieceInfo();
 
                 if(gamePiece.gameManager.movedThisTurn){
@@ -95,11 +99,8 @@ public class GamePiece extends Actor{
                 //TODO: try show info panel on a timer, start drag will cancel timer?
                 if (gamePiece.team == Team.FRIENDLY) {
                         payload.setDragActor(gamePiece);
+                        gamePiece.toFront();
                         System.out.println("drag if statement fired");
-
-
-                        gamePiece.preDragXPosition = gamePiece.getX();
-                        gamePiece.preDragYPosition = gamePiece.getY();
 
 
                         dragAndDrop.setDragActorPosition(gamePiece.getWidth() / 2, -gamePiece.getHeight() / 2);
@@ -126,9 +127,13 @@ public class GamePiece extends Actor{
 
             @Override
             public void dragStop(InputEvent event, float x, float y, int pointer, DragAndDrop.Payload payload, DragAndDrop.Target target) {
+                System.out.println("dragStop fired");
                 GamePiece gamePiece = (GamePiece) event.getListenerActor();
                 if (target == null){
                     gamePiece.setPosition(gamePiece.preDragXPosition, gamePiece.preDragYPosition);
+                    if (gamePiece.possibleMovesAndTargets != null){
+                        gamePiece.possibleMovesAndTargets.remove();
+                    }
                 }
             }
 
@@ -329,7 +334,7 @@ public class GamePiece extends Actor{
 
         gamePieceInfo.setName("gamePieceInfo");
         gamePieceInfo.setText("NAME: " + this.getName());
-        Helpers.KeepPopUpOverBoard(gamePieceInfo, this.getX() + this.getWidth() / 2, this.getY() + this.getWidth() * 2, 250, 250);
+        Helpers.KeepPopUpOverBoard(gamePieceInfo, this.getX() + this.getWidth() / 2 - 125, this.getY() + this.getWidth() + 10, 250, 250);
         gamePieceInfo.addListener(new InputListener(){
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {

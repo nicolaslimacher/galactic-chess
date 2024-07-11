@@ -13,7 +13,7 @@ public class MoveSelectCards extends Table {
     Skin moveSelectSkin = new Skin(Gdx.files.internal("buttons/uiskin.json"));
     public MoveSelectCards(GameManager gameManager) {
         this.setSkin(moveSelectSkin);
-        this.setDebug(true);
+        //this.setDebug(true);
         this.defaults().align(Align.center);
         this.gameManager = gameManager;
 
@@ -30,21 +30,24 @@ public class MoveSelectCards extends Table {
         this.add("their chemicals").colspan(5).align(Align.center);
         this.row();
         for (MoveSet moveSet : this.gameManager.enemyMoves) {
-            this.add(new MoveCard(moveSelectSkin, moveSet, this.gameManager, false)).expand().fill();
+            MoveCard moveCard = new MoveCard(moveSelectSkin, moveSet, this.gameManager, false);
+            this.add(moveCard).prefWidth(75).prefHeight(150);
         }
         this.row();
 
         this.add("free chemicals").colspan(5).align(Align.center);
         this.row();
         for (MoveSet moveSet : this.gameManager.freeMove) {
-            this.add(new MoveCard(moveSelectSkin, moveSet, this.gameManager, false)).expand().fill();
+            MoveCard moveCard = new MoveCard(moveSelectSkin, moveSet, this.gameManager, false);
+            this.add(moveCard).prefWidth(75).prefHeight(150).colspan(2);
         }
         this.row();
 
         this.add("my chemicals").colspan(5).align(Align.center);
         this.row();
         for (MoveSet moveSet : this.gameManager.myMoves) {
-            this.add(new MoveCard(moveSelectSkin, moveSet, this.gameManager, true)).expand().fill();
+            MoveCard moveCard = new MoveCard(moveSelectSkin, moveSet, this.gameManager, true);
+            this.add(moveCard).prefWidth(75).prefHeight(150);
         }
     }
 }
