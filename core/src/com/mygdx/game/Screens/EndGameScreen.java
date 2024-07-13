@@ -9,14 +9,14 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.mygdx.game.MyChessGame;
 
-public class MainMenuScreen implements Screen{
+public class EndGameScreen implements Screen{
     final MyChessGame game;
     OrthographicCamera camera;
     BitmapFont font;
     SpriteBatch batch;
     Texture loadingScreen;
 
-    public MainMenuScreen(final MyChessGame game) {
+    public EndGameScreen(final MyChessGame game) {
         this.game = game;
         batch = new SpriteBatch();
 
@@ -40,16 +40,16 @@ public class MainMenuScreen implements Screen{
         camera.update();
         batch.setProjectionMatrix(camera.combined);
 
-        //begin new sprite batch and draw welcome (need game. before methods)
         batch.begin();
-        batch.draw(loadingScreen, 0,0);
+        font.draw(batch, "Game Over!", 100, 100);
         batch.end();
 
-        if (Gdx.input.isTouched()) {
-            game.setScreen(new GameScreen(game, game.stage));
-            dispose();
-        }
+//        if (Gdx.input.isTouched()) {
+//            game.setScreen(new GameScreen(game));
+//            dispose();
+//        }
     }
+
 
     @Override
     public void resize(int width, int height) {
@@ -73,6 +73,6 @@ public class MainMenuScreen implements Screen{
 
     @Override
     public void dispose() {
-        loadingScreen.dispose();
+
     }
 }

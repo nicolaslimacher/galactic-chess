@@ -49,26 +49,44 @@ public class GameScreen implements Screen {
 		//adding actors
 		board = new Board(5, 5);
 		stage.addActor(board);
-		gameManager = new GameManager(stage, board, availableMoveSets);
+		gameManager = new GameManager(stage, board, availableMoveSets, this);
 		stage.addActor(gameManager);
 		ArrayList<GamePiece> friendlyPieces = new ArrayList<GamePiece>();
+
 		if (board.boardColumns > 0) {
 			for (int i = 0; i < board.boardColumns; i++) {
-				GamePiece gamePiece = new GamePiece(board, new CoordinateBoardPair(i, 0), Team.FRIENDLY, 10, 1, gameManager);
-				gamePiece.setName("GamePiece"+ i + ",0");
-				friendlyPieces.add(gamePiece);
-				stage.addActor(gamePiece);
+				if (i == 2){
+					//add king
+					GamePiece gamePiece = new GamePiece(board, new CoordinateBoardPair(i, 0), Team.FRIENDLY, true, 10, 1, gameManager);
+					friendlyPieces.add(gamePiece);
+					stage.addActor(gamePiece);
+				}else {
+					//add pawns
+					GamePiece gamePiece = new GamePiece(board, new CoordinateBoardPair(i, 0), Team.FRIENDLY, false, 10, 1, gameManager);
+					friendlyPieces.add(gamePiece);
+					stage.addActor(gamePiece);
+				}
 			}
 		}
+
+		//add two kings for enemy team
 		ArrayList<GamePiece> enemyPieces = new ArrayList<GamePiece>();
-		if (board.boardColumns > 0) {
-			for (int i = 0; i < board.boardColumns; i++) {
-				GamePiece gamePiece = new GamePiece(board, new CoordinateBoardPair(i, board.boardRows-1), Team.ENEMY, 2, 1, gameManager);
-				gamePiece.setName("GamePiece"+ i + "," + (board.boardRows - 1));
-				enemyPieces.add(gamePiece);
-				stage.addActor(gamePiece);
-			}
-		}
+		GamePiece enemyKing1 = new GamePiece(board, new CoordinateBoardPair(1, 4), Team.ENEMY, true,1, 1, gameManager);
+		enemyPieces.add(enemyKing1);
+		stage.addActor(enemyKing1);
+
+		GamePiece enemyKing2 = new GamePiece(board, new CoordinateBoardPair(3, 4), Team.ENEMY, true,1, 1, gameManager);
+		enemyPieces.add(enemyKing2);
+		stage.addActor(enemyKing2);
+
+//		if (board.boardColumns > 0) {
+//			for (int i = 0; i < board.boardColumns; i++) {
+//				GamePiece gamePiece = new GamePiece(board, new CoordinateBoardPair(i, board.boardRows-1), Team.ENEMY, false, 2, 1, gameManager);
+//				gamePiece.setName("GamePiece"+ i + "," + (board.boardRows - 1));
+//				enemyPieces.add(gamePiece);
+//				stage.addActor(gamePiece);
+//			}
+//		}
 		gameManager.friendlyGamePieces = friendlyPieces;
 		gameManager.enemyGamePieces = enemyPieces;
 
@@ -124,5 +142,10 @@ public class GameScreen implements Screen {
 	public void dispose() {
 		//TODO: make sure im disposing relevant assets
 		stage.dispose();
+	}
+
+	public void SwitchScreenEndGame(){
+		game.setScreen(new EndGameScreen(game));
+		dispose();
 	}
 }

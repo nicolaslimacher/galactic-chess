@@ -5,17 +5,14 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.TimeUtils;
@@ -32,25 +29,27 @@ import com.mygdx.game.Utils.IntPair;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 public class GamePiece extends Actor{
+    //metadata
     public final GameManager gameManager;
-    public final Board pawnBoard;
+    public final Board board;
     public CoordinateBoardPair indexOnBoard;
     public final TextureRegion textureRegion;
     public Team team;
     public Group possibleMovesAndTargets;
+    public boolean isKing;
+    private TextureRegion crown;
+    public boolean isAlive;
 
-
+    //stats
     private final Group statsLabels;
     private int hitPoints;
     private int attackPoints;
     private Label hitPointsLabel;
     private Label attackPointsLabel;
 
-    //drag
-    public boolean isDragged;
+    //drag and drop
     private final DragAndDrop dragAndDrop;
     private final DragAndDrop.Payload payload;
     public float preDragXPosition;
@@ -60,26 +59,32 @@ public class GamePiece extends Actor{
     Skin skin = new Skin(Gdx.files.internal("buttons/uiskin.json"));
 
 
-    public GamePiece(Board board, CoordinateBoardPair CoordinateBoardPair, Team team, int hitPoints, int attackPoints, GameManager gameManager){
+    public GamePiece(Board board, CoordinateBoardPair CoordinateBoardPair, Team team, boolean isKing, int hitPoints, int attackPoints, GameManager gameManager){
+        //metadata
         this.gameManager = gameManager;
-        System.out.println("Is game manager null? " + String.valueOf(this.gameManager==null));
-        Texture pawnTexture = new Texture(Gdx.files.internal("black_player.png"));
-        pawnBoard = board;
+        Texture gamePieceTexture = new Texture(Gdx.files.internal("black_player.png"));
+        this.textureRegion = new TextureRegion(gamePieceTexture, (int) Constants.TILE_SIZE, (int)Constants.TILE_SIZE);
+        this.setBounds(textureRegion.getRegionX(), textureRegion.getRegionY(),
+                textureRegion.getRegionWidth(), textureRegion.getRegionHeight());
+        this.setPosition(board.GetBoardTilePosition(CoordinateBoardPair).x, board.GetBoardTilePosition(CoordinateBoardPair).y);
+        this.board = board;
         this.team = team;
+        this.isKing = isKing;
+        this.crown = new TextureRegion(new Texture(Gdx.files.internal("king_crown.png")), 19, 32);
+        this.isAlive = true;
+        this.setName("GamePiece"+ CoordinateBoardPair.GetX() + "," + CoordinateBoardPair.GetY());
+
+        //stats
         this.SetAttackPoints(attackPoints);
         this.SetHitPoints(hitPoints);
         this.indexOnBoard = CoordinateBoardPair;
         this.statsLabels = new Group();
         addHPandAttackLabels();
-        this.isDragged = false;
-        this.textureRegion = new TextureRegion(pawnTexture, (int) Constants.TILE_SIZE, (int)Constants.TILE_SIZE);
-        this.setBounds(textureRegion.getRegionX(), textureRegion.getRegionY(),
-                textureRegion.getRegionWidth(), textureRegion.getRegionHeight());
-        this.setPosition(board.GetBoardTilePosition(CoordinateBoardPair).x, board.GetBoardTilePosition(CoordinateBoardPair).y);
 
+        //drag and drop
         this.dragAndDrop = new DragAndDrop();
         this.payload = new DragAndDrop.Payload();
-        this.addListener(pawnInputListener);
+        this.addListener(gamePieceInputListener);
         dragAndDrop.addSource(new DragAndDrop.Source(this) {
             @Override
             public DragAndDrop.Payload dragStart(InputEvent event, float x, float y, int pointer) {
@@ -114,6 +119,7 @@ public class GamePiece extends Actor{
                             gamePiece.possibleMovesAndTargets.setName("possibleMovesGroup" + gamePiece.getName());
                             gamePiece.drawPossibleMoves(gameManager.selectedMoveSet);
                             System.out.println("possible moves group" + gamePiece.possibleMovesAndTargets.getChildren());
+                            gamePiece.toFront();
                         }
                 }
                 gamePiece.startClickTime = TimeUtils.millis();
@@ -140,7 +146,7 @@ public class GamePiece extends Actor{
         });
     }
 
-    private final InputListener pawnInputListener = new InputListener(){
+    private final InputListener gamePieceInputListener = new InputListener(){
         @Override
         public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
             System.out.println("touchDown fired");
@@ -179,17 +185,18 @@ public class GamePiece extends Actor{
         this.hitPointsLabel = new Label(String.valueOf(attackPoints), skin);
     }
 
-    public boolean HitPawn (GamePiece enemyGamePiece){
+    public boolean HitGamePiece(GamePiece enemyGamePiece){
         return enemyGamePiece.GetHitAndIsFatal(this.attackPoints);
     }
 
-    //TODO: I returned bool for something? to move pawn to enemy location?
+    //TODO: I returned bool for something? to move game piece to enemy location?
     public boolean GetHitAndIsFatal(int AtkDmg){
         this.SetHitPoints(this.GetHitPoints() - AtkDmg);
         this.hitPointsLabel.remove();
         this.attackPointsLabel.remove();
         this.addHPandAttackLabels();
         if (this.hitPoints == 0){
+            this.isAlive = false;
             this.hitPointsLabel.remove();
             this.attackPointsLabel.remove();
             this.statsLabels.remove();
@@ -203,7 +210,7 @@ public class GamePiece extends Actor{
         List<CoordinateBoardPair> possibleMoves = new ArrayList<CoordinateBoardPair>();
         for (IntPair possibleMove : moveSet.possibleMoves){
             CoordinateBoardPair newMove = new CoordinateBoardPair(this.indexOnBoard.x + possibleMove.xVal, this.indexOnBoard.y + possibleMove.yVal);
-            if (isValidMove(possibleMove) && !gameManager.IsPawnAtBoardLocation(newMove)){
+            if (isValidMove(possibleMove) && !gameManager.IsGamePieceAtBoardLocation(newMove)){
                 possibleMoves.add(newMove);
             }
         }
@@ -214,8 +221,8 @@ public class GamePiece extends Actor{
         List<CoordinateBoardPair> possibleMoves = new ArrayList<CoordinateBoardPair>();
         for (IntPair possibleMove : moveSet.possibleMoves){
             CoordinateBoardPair newMove = new CoordinateBoardPair(this.indexOnBoard.x + possibleMove.xVal, this.indexOnBoard.y + possibleMove.yVal);
-            if (isValidMove(possibleMove) && gameManager.IsEnemyPawnAtBoardLocation(newMove)){
-                if (gameManager.IsPawnAtBoardLocation(newMove)) {
+            if (isValidMove(possibleMove) && gameManager.IsEnemyGamePieceAtBoardLocation(newMove)){
+                if (gameManager.IsGamePieceAtBoardLocation(newMove)) {
                     possibleMoves.add(newMove);
                 }
             }
@@ -225,8 +232,8 @@ public class GamePiece extends Actor{
 
     public boolean isValidMove(IntPair intPair) {
         boolean isValid = false;
-        boolean xIsValid = 0 <= this.indexOnBoard.x + intPair.xVal && this.indexOnBoard.x + intPair.xVal <= this.pawnBoard.boardColumns-1;
-        boolean yIsValid = 0 <= this.indexOnBoard.y + intPair.yVal && this.indexOnBoard.y + intPair.yVal <= this.pawnBoard.boardRows-1;
+        boolean xIsValid = 0 <= this.indexOnBoard.x + intPair.xVal && this.indexOnBoard.x + intPair.xVal <= this.board.boardColumns-1;
+        boolean yIsValid = 0 <= this.indexOnBoard.y + intPair.yVal && this.indexOnBoard.y + intPair.yVal <= this.board.boardRows-1;
         if (xIsValid && yIsValid){
             isValid = true;
         }
@@ -235,8 +242,8 @@ public class GamePiece extends Actor{
 
     public boolean isValidEnemyMove(IntPair intPair) {
         boolean isValid = false;
-        boolean xIsValid = 0 <= this.indexOnBoard.x + (-1 * intPair.xVal) && this.indexOnBoard.x + (-1 * intPair.xVal) <= this.pawnBoard.boardColumns-1;
-        boolean yIsValid = 0 <= this.indexOnBoard.y + (-1 * intPair.yVal) && this.indexOnBoard.y + (-1 * intPair.yVal) <= this.pawnBoard.boardRows-1;
+        boolean xIsValid = 0 <= this.indexOnBoard.x + (-1 * intPair.xVal) && this.indexOnBoard.x + (-1 * intPair.xVal) <= this.board.boardColumns-1;
+        boolean yIsValid = 0 <= this.indexOnBoard.y + (-1 * intPair.yVal) && this.indexOnBoard.y + (-1 * intPair.yVal) <= this.board.boardRows-1;
         if (xIsValid && yIsValid){
             isValid = true;
         }
@@ -244,9 +251,9 @@ public class GamePiece extends Actor{
     }
 
     public void Move(CoordinateBoardPair coordinateBoardPair) {
-        this.setPosition(pawnBoard.GetBoardTilePosition(coordinateBoardPair).x, pawnBoard.GetBoardTilePosition(coordinateBoardPair).y);
+        this.setPosition(board.GetBoardTilePosition(coordinateBoardPair).x, board.GetBoardTilePosition(coordinateBoardPair).y);
         this.indexOnBoard = coordinateBoardPair;
-        this.setName("Pawn"+coordinateBoardPair.x+","+coordinateBoardPair.y);
+        this.setName("GamePiece"+coordinateBoardPair.x+","+coordinateBoardPair.y);
         //TODO: Cap
         this.SetLabelPositions();
     }
@@ -267,6 +274,9 @@ public class GamePiece extends Actor{
             this.hitPointsLabel.draw(batch, parentAlpha);
             this.attackPointsLabel.draw(batch, parentAlpha);
         }
+        if (isKing) {
+            batch.draw(crown.getTexture(), this.getX() + this.getWidth() / 2 - 16, this.getY() + this.getHeight() - 10, 32, 19);
+        }
     }
 
     public void drawPossibleMoves(MoveSet moveSet){
@@ -282,7 +292,7 @@ public class GamePiece extends Actor{
 
                 @Override
                 public void drop(DragAndDrop.Source source, DragAndDrop.Payload payload, float x, float y, int pointer) {
-                    System.out.println("drop fired");
+                    System.out.println("drop fired : move");
                     GamePiece gamePiece = (GamePiece) source.getActor();
                     gamePiece.gameManager.latestGamePieceCommand = new Command(gamePiece, possibleMoveTarget.indexOnBoard, possibleMoveTarget.type, gameManager.selectedMoveSet);
                     gamePiece.gameManager.latestGamePieceCommand.Execute();
@@ -292,9 +302,26 @@ public class GamePiece extends Actor{
             System.out.println("possible move added to possiblemoves group");
         }
         for (CoordinateBoardPair target : GetPossibleTargets(moveSet)){
-            PossibleMove possibleMoveMove = new PossibleMove(this, target, CommandType.HIT);
-            this.possibleMovesAndTargets.addActor(possibleMoveMove);
+            PossibleMove possibleMoveHit = new PossibleMove(this, target, CommandType.HIT);
+            this.possibleMovesAndTargets.addActor(possibleMoveHit);
             System.out.println("possible target added to possiblemoves group");
+            dragAndDrop.addTarget(new DragAndDrop.Target(possibleMoveHit) {
+                @Override
+                public boolean drag(DragAndDrop.Source source, DragAndDrop.Payload payload, float x, float y, int pointer) {
+                    System.out.println("drag fired");
+                    return true;
+                }
+
+                @Override
+                public void drop(DragAndDrop.Source source, DragAndDrop.Payload payload, float x, float y, int pointer) {
+                    System.out.println("drop fired : hit");
+                    GamePiece gamePiece = (GamePiece) source.getActor();
+                    gamePiece.gameManager.latestGamePieceCommand = new Command(gamePiece, possibleMoveHit.indexOnBoard, possibleMoveHit.type, gameManager.selectedMoveSet);
+                    gamePiece.gameManager.latestGamePieceCommand.Execute();
+                    //if execute
+                    possibleMoveHit.getParent().remove();
+                }
+            });
         }
         this.getStage().addActor(this.possibleMovesAndTargets);
     }

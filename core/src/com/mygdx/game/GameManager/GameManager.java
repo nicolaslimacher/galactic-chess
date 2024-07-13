@@ -1,6 +1,6 @@
 package com.mygdx.game.GameManager;
 
-import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
@@ -14,6 +14,7 @@ import com.mygdx.game.Command.Command;
 import com.mygdx.game.EnemyAI.EnemyAI;
 import com.mygdx.game.GamePiece.GamePiece;
 import com.mygdx.game.MoveSets.MoveSet;
+import com.mygdx.game.Screens.GameScreen;
 import com.mygdx.game.Utils.CoordinateBoardPair;
 
 import java.util.ArrayList;
@@ -25,6 +26,7 @@ import java.util.TimerTask;
 public class GameManager extends Actor{
     Stage stage;
     public Board board;
+    final GameScreen gameScreen;
 
     //turn
     public int turnNumber = 1;
@@ -51,9 +53,10 @@ public class GameManager extends Actor{
     public UndoEndTurnMenu undoEndTurnMenu;
     public MoveConfirmation moveConfirmation;
 
-    public GameManager(Stage stage, Board board, List<MoveSet> availableMoveSets) {
+    public GameManager(Stage stage, Board board, List<MoveSet> availableMoveSets, GameScreen gameScreen) {
         this.stage = stage;
         this.board = board;
+        this.gameScreen = gameScreen;
         this.availableMoveSets = availableMoveSets;
         AssignStartingChemicals();
         this.moveSelectCards = new MoveSelectCards(this);
@@ -100,13 +103,17 @@ public class GameManager extends Actor{
         }
     };
 
-    public Boolean IsPawnAtBoardLocation(CoordinateBoardPair coordinateBoardPair) {
-        return GetPawnAtCoordinate(coordinateBoardPair) != null;
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    //                                       GamePiece Management                                 //
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    public Boolean IsGamePieceAtBoardLocation(CoordinateBoardPair coordinateBoardPair) {
+        return GetGamePieceAtCoordinate(coordinateBoardPair) != null;
     }
-    public Boolean IsEnemyPawnAtBoardLocation(CoordinateBoardPair coordinateBoardPair) {
-        return GetPawnAtCoordinate(coordinateBoardPair) != null && !(GetPawnAtCoordinate(coordinateBoardPair).team == Team.FRIENDLY);
+    public Boolean IsEnemyGamePieceAtBoardLocation(CoordinateBoardPair coordinateBoardPair) {
+        return GetGamePieceAtCoordinate(coordinateBoardPair) != null && !(GetGamePieceAtCoordinate(coordinateBoardPair).team == Team.FRIENDLY);
     }
-    public GamePiece GetPawnAtCoordinate(CoordinateBoardPair coordinateBoardPair){
+    public GamePiece GetGamePieceAtCoordinate(CoordinateBoardPair coordinateBoardPair){
         for(Actor actor:this.getStage().getActors()){
             if(actor.getClass() == GamePiece.class) {
                 GamePiece gamePiece = (GamePiece) actor;
@@ -116,6 +123,30 @@ public class GameManager extends Actor{
             }
         }
         return null;
+    }
+
+    private boolean IsValidKingLeft(Team team){
+        ArrayList<GamePiece> gamePieces = (team == Team.FRIENDLY) ? friendlyGamePieces : enemyGamePieces;
+        for ( GamePiece gamePiece : gamePieces) {
+            if (gamePiece.isKing && gamePiece.isAlive) {
+                return true;
+                //this.gameScreen.SwitchScreenEndGame();
+            }
+        }
+        return false;
+    }
+
+    private boolean EndGameScreenIfKingsDead(Team team){
+        if (IsValidKingLeft(team)){
+            System.out.println("There is a valid enemy king left");
+
+        }else{
+            System.out.println("There is no valid enemy king left");
+            //switch screens
+            this.gameScreen.SwitchScreenEndGame();
+            return true;
+        }
+        return false;
     }
 
 
@@ -149,24 +180,35 @@ public class GameManager extends Actor{
         enemyMoves.add(freeMoveToAdd);
     }
 
-    public void EndPlayerTurn(){
+    public boolean EndPlayerTurn(){
+        //returning bool so EndGameScreenIfKingsDead can exit method
         Timer enemyAITimer = new Timer("enemyAITimer", true); //running as daemon so program stops when window closed
+
+        //check if enemy team has a king left, then check if king has any health
+        if(EndGameScreenIfKingsDead(Team.ENEMY)){
+            return true;
+        }
+
+        //update turn info
         this.turnNumber = this.turnNumber + 1;
         this.currentTurn = Team.ENEMY;
         this.movedThisTurn = false;
 
-        //shuffle chemicals
+        //reset and shuffle chemicals
+        if (this.getStage().getRoot().findActor("MoveConfirmationMenu") != null) {
+            this.getStage().getRoot().findActor("MoveConfirmationMenu").remove();
+        }
         ShuffleCardsAfterPlayer(this.latestGamePieceCommand.moveSet);
-        this.latestGamePieceCommand = null;
-
+        this.moveSelectCards.setVisible(true);
         this.moveSelectCards.UpdateCards();
+        this.latestGamePieceCommand = null;
 
 
         //call AI to make turn
-            //TODO: try timer
         TimerTask enemyAImove = new TimerTask() {
             @Override
             public void run() {
+                System.out.println("enemy AI run task created");
                 undoEndTurnMenu.DisableEndTurnButton();
                 undoEndTurnMenu.DisableUndoButton();
 
@@ -175,15 +217,15 @@ public class GameManager extends Actor{
                 moveSelectCards.UpdateCards();
 
                 turnCounterMenu.UpdateTurn();
+
+                //check if enemy team has a king left, then check if king has any health
+                EndGameScreenIfKingsDead(Team.FRIENDLY);
             }
         };
         long enemyAIDelay = 750L;
         enemyAITimer.schedule(enemyAImove, enemyAIDelay);
 
-        //Gdx.app.wait(500L);
-        //MoveSet enemyMoveUsed = this.enemyAI.MakeMove();
-//        ShuffleCardsAfterEnemy(enemyMoveUsed);
-//
-//        this.moveSelectCards.UpdateCards();
+
+        return true;
     }
 }

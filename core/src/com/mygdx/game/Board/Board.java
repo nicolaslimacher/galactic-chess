@@ -57,7 +57,7 @@ public class Board extends Group {
         }
     }
 
-    public GamePiece GetPawnAtCoordinate(CoordinateBoardPair coordinateBoardPair){
+    public GamePiece GetGamePieceAtCoordinate(CoordinateBoardPair coordinateBoardPair){
         GamePiece gamePieceAtCoordinate = null;
         for(Actor actor:this.getStage().getActors()){
             if(actor.getClass() == GamePiece.class) {

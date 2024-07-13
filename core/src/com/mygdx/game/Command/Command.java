@@ -16,6 +16,7 @@ public class Command {
     private final GameManager gameManager;
     final CoordinateBoardPair previousPosition;
     final CoordinateBoardPair targetPosition;
+    final boolean isKing;
 
 
     //hit-specific fields
@@ -28,14 +29,15 @@ public class Command {
     public Command(GamePiece gamePiece, CoordinateBoardPair targetPosition, CommandType commandType, MoveSet moveSet) {
         this.gamePiece = gamePiece;
         this.gameManager = gamePiece.gameManager;
-        this.board = gamePiece.pawnBoard;
+        this.board = gamePiece.board;
         this.commandType = commandType;
         this.previousPosition = gamePiece.indexOnBoard;
         this.targetPosition = targetPosition;
+        this.isKing = gamePiece.isKing;
         this.moveSet = moveSet;
         if (commandType == CommandType.HIT) {
-            this.targetGamePiece = gameManager.GetPawnAtCoordinate(this.targetPosition);
-            this.targetTeam = gamePiece.team;
+            this.targetGamePiece = gameManager.GetGamePieceAtCoordinate(this.targetPosition);
+            this.targetTeam = Team.ENEMY;
             this.targetGamePiecePreviousAtk = targetGamePiece.GetAttackPoints();
             this.targetGamePiecePreviousHealth = targetGamePiece.GetHitPoints();
         }
@@ -44,25 +46,27 @@ public class Command {
     public void Execute() {
         if (commandType == CommandType.MOVE) {
             this.gamePiece.Move(this.targetPosition);
-            gameManager.selectedGamePiece = null;
+            //trying to leave selected game piece up in case you undo
+            //gameManager.selectedGamePiece = null;
         }else {
-                if (this.gamePiece.HitPawn(this.targetGamePiece)) {
+                if (this.gamePiece.HitGamePiece(this.targetGamePiece)) {
                     this.gamePiece.Move(this.targetPosition);
+                }else{
+                    this.gamePiece.Move(this.previousPosition);
                 }
-                gameManager.selectedGamePiece = null;
+                //gameManager.selectedGamePiece = null;
 
         }
         //set move select menu back to visible
-        this.gameManager.selectedMoveSet = null;
+        //this.gameManager.selectedMoveSet = null;
         this.gameManager.movedThisTurn = true;
-        this.gameManager.moveSelectCards.setVisible(true);
-        if (this.gameManager.getStage().getRoot().findActor("MoveConfirmationMenu") != null) {
-            this.gameManager.getStage().getRoot().findActor("MoveConfirmationMenu").remove();
+        //this.gameManager.moveSelectCards.setVisible(true);
+        //if (this.gameManager.getStage().getRoot().findActor("MoveConfirmationMenu") != null) {
+        //    this.gameManager.getStage().getRoot().findActor("MoveConfirmationMenu").remove();
         this.gameManager.undoEndTurnMenu.EnableUndoButton();
         this.gameManager.undoEndTurnMenu.EnableEndTurnButton();
 
         System.out.println("Player executed move: " + this.moveSet.getName());
-        }
 
     }
 
@@ -71,9 +75,8 @@ public class Command {
             this.gamePiece.Move(this.previousPosition);
             gameManager.selectedGamePiece = this.gamePiece;
         }else{
-            //TODO: do i need to re-add pawn to GameManager.enemyGamePieces? printScreen list of enemyGamePieces to check if duplicated
             this.gamePiece.Move(this.previousPosition);
-            GamePiece replacedGamePiece = new GamePiece(this.board, this.targetPosition, this.targetTeam, this.targetGamePiecePreviousHealth, this.targetGamePiecePreviousAtk, this.gameManager);
+            GamePiece replacedGamePiece = new GamePiece(this.board, this.targetPosition, this.targetTeam, this.isKing, this.targetGamePiecePreviousHealth, this.targetGamePiecePreviousAtk, this.gameManager);
             this.gameManager.enemyGamePieces.add(replacedGamePiece);
             this.gameManager.getStage().addActor(replacedGamePiece);
             replacedGamePiece.addHPandAttackLabels();

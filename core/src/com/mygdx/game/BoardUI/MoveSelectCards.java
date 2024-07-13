@@ -29,26 +29,29 @@ public class MoveSelectCards extends Table {
 
         this.add("their chemicals").colspan(5).align(Align.center);
         this.row();
+        if (!this.gameManager.enemyMoves.isEmpty()){
         for (MoveSet moveSet : this.gameManager.enemyMoves) {
             MoveCard moveCard = new MoveCard(moveSelectSkin, moveSet, this.gameManager, false);
             this.add(moveCard).prefWidth(75).prefHeight(150);
-        }
+        }}
         this.row();
 
         this.add("free chemicals").colspan(5).align(Align.center);
         this.row();
+        if (!this.gameManager.freeMove.isEmpty()){
         for (MoveSet moveSet : this.gameManager.freeMove) {
             MoveCard moveCard = new MoveCard(moveSelectSkin, moveSet, this.gameManager, false);
             this.add(moveCard).prefWidth(75).prefHeight(150).colspan(2);
-        }
+        }}
         this.row();
 
         this.add("my chemicals").colspan(5).align(Align.center);
         this.row();
+        if (!this.gameManager.freeMove.isEmpty()){
         for (MoveSet moveSet : this.gameManager.myMoves) {
             MoveCard moveCard = new MoveCard(moveSelectSkin, moveSet, this.gameManager, true);
             this.add(moveCard).prefWidth(75).prefHeight(150);
-        }
+        }}
     }
 }
 
