@@ -5,7 +5,6 @@ import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.Align;
 import com.mygdx.game.GameManager.GameManager;
 import com.mygdx.game.MoveSets.MoveSet;
@@ -64,14 +63,14 @@ public class MoveCard extends Button {
 
 
         public void setSelectable(){
-            if (this.selectable == false) {
+            if (!this.selectable) {
                 this.removeListener(MoveInfoButtonListener);
                 this.addListener(MoveSelectButtonListener);
             }
             this.selectable = true;
         }
         public void setUnselectable(){
-            if (this.selectable == true) {
+            if (this.selectable) {
                 this.removeListener(MoveSelectButtonListener);
                 this.addListener(MoveInfoButtonListener);
             }
