@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -103,12 +104,14 @@ public class GamePiece extends Actor{
 
                 //TODO: try show info panel on a timer, start drag will cancel timer?
                 if (gamePiece.team == Team.FRIENDLY) {
-                        payload.setDragActor(gamePiece);
-                        gamePiece.toFront();
                         System.out.println("drag if statement fired");
+                        Arrow arrow = new Arrow(new Vector2(gamePiece.getX()+90f,gamePiece.getY()+32f), gamePiece.getStage());
+                        gamePiece.getStage().addActor(arrow);
+                        payload.setDragActor(arrow);
+                        arrow.toFront();
+                        dragAndDrop.setDragActorPosition(arrow.getWidth() / 2, -arrow.getHeight() / 2);
+                        //dragAndDrop.setTouchOffset(20, -20);
 
-
-                        dragAndDrop.setDragActorPosition(gamePiece.getWidth() / 2, -gamePiece.getHeight() / 2);
                         System.out.println("dragStart");
 
                         //draw possible moves
@@ -135,6 +138,8 @@ public class GamePiece extends Actor{
             public void dragStop(InputEvent event, float x, float y, int pointer, DragAndDrop.Payload payload, DragAndDrop.Target target) {
                 System.out.println("dragStop fired");
                 GamePiece gamePiece = (GamePiece) event.getListenerActor();
+                payload.getDragActor().remove();
+                ((Arrow) payload.getDragActor()).trailsGroup.remove();
                 if (target == null){
                     gamePiece.setPosition(gamePiece.preDragXPosition, gamePiece.preDragYPosition);
                     if (gamePiece.possibleMovesAndTargets != null){
