@@ -23,8 +23,8 @@ public class Arrow extends Actor {
     TextureRegion textureRegion;
     Vector2 p0, p1, p2, p3;
     final int bezierNodeNum = 6;
-    final Vector2 p1transform = new Vector2(-0.1f, 0.8f);
-    final Vector2 p2transform = new Vector2(0.1f, 1.4f);
+    final Vector2 p1transform = new Vector2(-0.5f, 0.6f);
+    final Vector2 p2transform = new Vector2(0.2f, 1.4f);
     Group trailsGroup;
     ArrayList<ArrowTrail> trails;
 
@@ -36,7 +36,7 @@ public class Arrow extends Actor {
         System.out.println("arrow made");
         this.toFront();
         stage.addActor(this);
-        this.setDebug(true);
+        //this.setDebug(true);
 
         p0 = pos;
         p3 = this.localToStageCoordinates(new Vector2(getX()*1.2f, getY()*1.2f));

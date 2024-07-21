@@ -138,8 +138,10 @@ public class GamePiece extends Actor{
             public void dragStop(InputEvent event, float x, float y, int pointer, DragAndDrop.Payload payload, DragAndDrop.Target target) {
                 System.out.println("dragStop fired");
                 GamePiece gamePiece = (GamePiece) event.getListenerActor();
-                payload.getDragActor().remove();
-                ((Arrow) payload.getDragActor()).trailsGroup.remove();
+                if (payload.getDragActor() != null){
+                    payload.getDragActor().remove();
+                    ((Arrow) payload.getDragActor()).trailsGroup.remove();
+                }
                 if (target == null){
                     gamePiece.setPosition(gamePiece.preDragXPosition, gamePiece.preDragYPosition);
                     if (gamePiece.possibleMovesAndTargets != null){
