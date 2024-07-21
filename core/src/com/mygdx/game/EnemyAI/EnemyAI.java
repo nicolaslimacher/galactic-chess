@@ -26,6 +26,7 @@ public class EnemyAI {
         List<EnemyAIMove> allPossibleMoves = GetAllPossibleMoves();
         if (allPossibleMoves.isEmpty()){
             System.out.println("Enemy AI: no valid moves");
+            //TODO: add random damage, show popup
             return null;
         }
         int rnd = getRandomNumber(0, allPossibleMoves.size()-1);

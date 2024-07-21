@@ -86,7 +86,7 @@ public class GameManager extends Actor{
     private final InputListener stageInputListener = new InputListener(){
         public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
             Object selectedObject = event.getTarget();
-            GameManager gameManager = event.getStage().getRoot().findActor("GameManager");
+            GameManager gameManager = GameManager.this;
             for(Actor actor:stage.getActors()){
                 if(actor.getClass() == GamePiece.class) {
                     GamePiece gamePiece = (GamePiece) actor;
