@@ -262,13 +262,11 @@ public class GamePiece extends Actor{
     public void Move(CoordinateBoardPair coordinateBoardPair) {
         ArcToAction arcMove = new ArcToAction();
         arcMove.setPosition(board.GetBoardTilePosition(coordinateBoardPair).x, board.GetBoardTilePosition(coordinateBoardPair).y);
-        //this.setPosition(board.GetBoardTilePosition(coordinateBoardPair).x, board.GetBoardTilePosition(coordinateBoardPair).y);
         arcMove.setDuration(0.5f);
         arcMove.setInterpolation(Interpolation.fastSlow);
         this.addAction(arcMove);
         this.indexOnBoard = coordinateBoardPair;
         this.setName("GamePiece"+coordinateBoardPair.x+","+coordinateBoardPair.y);
-        //TODO: Cap
         this.SetLabelPositions();
     }
 
@@ -276,7 +274,6 @@ public class GamePiece extends Actor{
         this.setPosition(board.GetBoardTilePosition(coordinateBoardPair).x, board.GetBoardTilePosition(coordinateBoardPair).y);
         this.indexOnBoard = coordinateBoardPair;
         this.setName("GamePiece"+coordinateBoardPair.x+","+coordinateBoardPair.y);
-        //TODO: Cap
         this.SetLabelPositions();
     }
 
