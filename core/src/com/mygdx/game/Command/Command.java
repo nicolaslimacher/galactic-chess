@@ -46,15 +46,10 @@ public class Command {
     public void Execute() {
         if (commandType == CommandType.MOVE) {
             this.gamePiece.Move(this.targetPosition);
-            //trying to leave selected game piece up in case you undo
-            //gameManager.selectedGamePiece = null;
         }else {
                 if (this.gamePiece.HitGamePiece(this.targetGamePiece)) {
                     this.gamePiece.Move(this.targetPosition);
-                }else{
-                    this.gamePiece.Move(this.previousPosition);
                 }
-                //gameManager.selectedGamePiece = null;
 
         }
         //set move select menu back to visible
@@ -72,10 +67,10 @@ public class Command {
 
     public void Undo() {
         if (commandType == CommandType.MOVE) {
-            this.gamePiece.Move(this.previousPosition);
+            this.gamePiece.Teleport(this.previousPosition);
             gameManager.selectedGamePiece = this.gamePiece;
         }else{
-            this.gamePiece.Move(this.previousPosition);
+            this.gamePiece.Teleport(this.previousPosition);
             GamePiece replacedGamePiece = new GamePiece(this.board, this.targetPosition, this.targetTeam, this.isKing, this.targetGamePiecePreviousHealth, this.targetGamePiecePreviousAtk, this.gameManager);
             this.gameManager.enemyGamePieces.add(replacedGamePiece);
             this.gameManager.getStage().addActor(replacedGamePiece);

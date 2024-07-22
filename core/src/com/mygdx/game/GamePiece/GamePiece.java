@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
@@ -17,6 +18,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.TimeUtils;
+import com.mygdx.game.Actions.ArcToAction;
 import com.mygdx.game.Board.Board;
 import com.mygdx.game.Command.Command;
 import com.mygdx.game.Command.CommandType;
@@ -105,7 +107,7 @@ public class GamePiece extends Actor{
                 //TODO: try show info panel on a timer, start drag will cancel timer?
                 if (gamePiece.team == Team.FRIENDLY) {
                         System.out.println("drag if statement fired");
-                        Arrow arrow = new Arrow(new Vector2(gamePiece.getX()+90f,gamePiece.getY()+32f), gamePiece.getStage());
+                        Arrow arrow = new Arrow(new Vector2(gamePiece.getX() + gamePiece.getWidth()/2,gamePiece.getY()+gamePiece.getHeight()/2), gamePiece.getStage());
                         gamePiece.getStage().addActor(arrow);
                         payload.setDragActor(arrow);
                         arrow.toFront();
@@ -258,6 +260,19 @@ public class GamePiece extends Actor{
     }
 
     public void Move(CoordinateBoardPair coordinateBoardPair) {
+        ArcToAction arcMove = new ArcToAction();
+        arcMove.setPosition(board.GetBoardTilePosition(coordinateBoardPair).x, board.GetBoardTilePosition(coordinateBoardPair).y);
+        //this.setPosition(board.GetBoardTilePosition(coordinateBoardPair).x, board.GetBoardTilePosition(coordinateBoardPair).y);
+        arcMove.setDuration(0.5f);
+        arcMove.setInterpolation(Interpolation.fastSlow);
+        this.addAction(arcMove);
+        this.indexOnBoard = coordinateBoardPair;
+        this.setName("GamePiece"+coordinateBoardPair.x+","+coordinateBoardPair.y);
+        //TODO: Cap
+        this.SetLabelPositions();
+    }
+
+    public void Teleport(CoordinateBoardPair coordinateBoardPair) {
         this.setPosition(board.GetBoardTilePosition(coordinateBoardPair).x, board.GetBoardTilePosition(coordinateBoardPair).y);
         this.indexOnBoard = coordinateBoardPair;
         this.setName("GamePiece"+coordinateBoardPair.x+","+coordinateBoardPair.y);

@@ -158,6 +158,8 @@ public class GameScreen implements Screen {
 	public void dispose() {
 		//TODO: make sure im disposing relevant assets
 		stage.dispose();
+		fightDialog.dispose();
+		batch.dispose();
 	}
 
 	public void SwitchScreenEndGame(){
