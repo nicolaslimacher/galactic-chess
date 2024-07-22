@@ -1,6 +1,8 @@
 package com.mygdx.game.GameManager;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
@@ -27,6 +29,10 @@ public class GameManager extends Actor{
     Stage stage;
     public Board board;
     final GameScreen gameScreen;
+
+    //background
+    public Texture smallStar;
+    public Texture mediumStar;
 
     //turn
     public int turnNumber = 1;
@@ -57,6 +63,8 @@ public class GameManager extends Actor{
         this.stage = stage;
         this.board = board;
         this.gameScreen = gameScreen;
+        smallStar = new Texture(Gdx.files.internal("smallstar1.png"));
+        mediumStar = new Texture(Gdx.files.internal("mediumstar.png"));
         this.availableMoveSets = availableMoveSets;
         AssignStartingChemicals();
         this.moveSelectCards = new MoveSelectCards(this);
