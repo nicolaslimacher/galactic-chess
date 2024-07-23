@@ -6,11 +6,19 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Interpolation;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.scenes.scene2d.actions.ParallelAction;
+import com.badlogic.gdx.scenes.scene2d.actions.RunnableAction;
+import com.badlogic.gdx.scenes.scene2d.actions.ScaleByAction;
+import com.badlogic.gdx.scenes.scene2d.actions.ScaleToAction;
+import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -20,6 +28,7 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.mygdx.game.Actions.ArcToAction;
 import com.mygdx.game.Board.Board;
+import com.mygdx.game.Board.BoardTile;
 import com.mygdx.game.Command.Command;
 import com.mygdx.game.Command.CommandType;
 import com.mygdx.game.GameManager.GameManager;
@@ -153,6 +162,31 @@ public class GamePiece extends Actor{
             }
 
         });
+
+        float pathY = MathUtils.random(1f, 4f);
+        float duration = MathUtils.random(5f, 8f);
+        int firstDirection = MathUtils.random(0,1);
+        if (firstDirection == 0){
+            this.addAction(Actions.moveBy(0f, -(pathY/2), duration));
+            this.addAction(
+                    Actions.forever(
+                            Actions.sequence(
+                                    Actions.moveBy(0f, pathY, duration),
+                                    Actions.moveBy(0f, -pathY, duration)
+                            )
+                    )
+            );
+        }else {
+            this.addAction(Actions.moveBy(0f, -(pathY/2), duration));
+            this.addAction(
+                    Actions.forever(
+                            Actions.sequence(
+                                    Actions.moveBy(0f, -pathY, duration),
+                                    Actions.moveBy(0f, pathY, duration)
+                            )
+                    )
+            );
+        }
     }
 
     private final InputListener gamePieceInputListener = new InputListener(){
@@ -259,18 +293,44 @@ public class GamePiece extends Actor{
         return isValid;
     }
 
-    public void Move(CoordinateBoardPair coordinateBoardPair) {
+    public void JetpackJump(CoordinateBoardPair coordinateBoardPair) {
+        System.out.println("jumping to: " + coordinateBoardPair.GetX() + "," + coordinateBoardPair.GetY());
+        //squish gamepiece
+        ScaleToAction squish = Actions.scaleTo(1f, 0.75f, 0.03f);
+
+        //movement action (and undo squish)
         ArcToAction arcMove = new ArcToAction();
         arcMove.setPosition(board.GetBoardTilePosition(coordinateBoardPair).x, board.GetBoardTilePosition(coordinateBoardPair).y);
-        arcMove.setDuration(0.5f);
-        arcMove.setInterpolation(Interpolation.fastSlow);
-        this.addAction(arcMove);
+        arcMove.setDuration(0.6f);
+        arcMove.setInterpolation(Interpolation.exp10);
+        ScaleToAction unSquish = Actions.scaleTo(1f, 1f, 0.6f);
+        ParallelAction jump = new ParallelAction(arcMove, unSquish);
+
+
+        //adding landing cloud effect and tile bounce
+        RunnableAction clouds = new RunnableAction();
+        clouds.setRunnable(() -> {
+            new LandingClouds(coordinateBoardPair, GamePiece.this.gameManager);
+        });
+        RunnableAction tileBounce = new RunnableAction();
+        tileBounce.setRunnable(() -> {
+            if (GamePiece.this.board.GetBoardTileAtCoordinate(coordinateBoardPair) != null) {
+                BoardTile tile = GamePiece.this.board.GetBoardTileAtCoordinate(coordinateBoardPair);
+                tile.BounceWhenLandedOn();
+            }
+        });
+        ParallelAction landing = new ParallelAction(clouds, tileBounce);
+
+        //add clouds after movement
+        SequenceAction jetpackJump = new SequenceAction(squish, jump, landing);
+        this.addAction(jetpackJump);
+
         this.indexOnBoard = coordinateBoardPair;
         this.setName("GamePiece"+coordinateBoardPair.x+","+coordinateBoardPair.y);
         this.SetLabelPositions();
     }
 
-    public void Teleport(CoordinateBoardPair coordinateBoardPair) {
+    public void teleport(CoordinateBoardPair coordinateBoardPair) {
         this.setPosition(board.GetBoardTilePosition(coordinateBoardPair).x, board.GetBoardTilePosition(coordinateBoardPair).y);
         this.indexOnBoard = coordinateBoardPair;
         this.setName("GamePiece"+coordinateBoardPair.x+","+coordinateBoardPair.y);
@@ -305,7 +365,6 @@ public class GamePiece extends Actor{
             dragAndDrop.addTarget(new DragAndDrop.Target(possibleMoveTarget) {
                 @Override
                 public boolean drag(DragAndDrop.Source source, DragAndDrop.Payload payload, float x, float y, int pointer) {
-                    System.out.println("drag fired");
                     return true;
                 }
 
@@ -327,7 +386,6 @@ public class GamePiece extends Actor{
             dragAndDrop.addTarget(new DragAndDrop.Target(possibleMoveHit) {
                 @Override
                 public boolean drag(DragAndDrop.Source source, DragAndDrop.Payload payload, float x, float y, int pointer) {
-                    System.out.println("drag fired");
                     return true;
                 }
 

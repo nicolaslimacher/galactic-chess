@@ -32,11 +32,11 @@ public class EnemyAI {
         int rnd = getRandomNumber(0, allPossibleMoves.size()-1);
         EnemyAIMove enemyAIMove = allPossibleMoves.get(rnd);
         if(enemyAIMove.commandType == CommandType.MOVE) {
-            enemyAIMove.gamePiece.Move(enemyAIMove.coordinateBoardPair);
+            enemyAIMove.gamePiece.JetpackJump(enemyAIMove.coordinateBoardPair);
             System.out.println("Enemy executed move: " + enemyAIMove.moveSet.getName());
         }else{
             if (enemyAIMove.gamePiece.HitGamePiece(gameManager.GetGamePieceAtCoordinate(enemyAIMove.coordinateBoardPair))) {
-                enemyAIMove.gamePiece.Move(enemyAIMove.coordinateBoardPair);
+                enemyAIMove.gamePiece.JetpackJump(enemyAIMove.coordinateBoardPair);
             }
             System.out.println("Enemy executed move: " + enemyAIMove.moveSet.getName());
         }

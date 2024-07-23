@@ -27,6 +27,7 @@ public class Command {
 
 
     public Command(GamePiece gamePiece, CoordinateBoardPair targetPosition, CommandType commandType, MoveSet moveSet) {
+        System.out.println("command created: " + commandType + " to " + targetPosition.GetX() + "," + targetPosition.GetY());
         this.gamePiece = gamePiece;
         this.gameManager = gamePiece.gameManager;
         this.board = gamePiece.board;
@@ -45,19 +46,14 @@ public class Command {
 
     public void Execute() {
         if (commandType == CommandType.MOVE) {
-            this.gamePiece.Move(this.targetPosition);
+            this.gamePiece.JetpackJump(this.targetPosition);
         }else {
                 if (this.gamePiece.HitGamePiece(this.targetGamePiece)) {
-                    this.gamePiece.Move(this.targetPosition);
+                    this.gamePiece.JetpackJump(this.targetPosition);
                 }
 
         }
-        //set move select menu back to visible
-        //this.gameManager.selectedMoveSet = null;
         this.gameManager.movedThisTurn = true;
-        //this.gameManager.moveSelectCards.setVisible(true);
-        //if (this.gameManager.getStage().getRoot().findActor("MoveConfirmationMenu") != null) {
-        //    this.gameManager.getStage().getRoot().findActor("MoveConfirmationMenu").remove();
         this.gameManager.undoEndTurnMenu.EnableUndoButton();
         this.gameManager.undoEndTurnMenu.EnableEndTurnButton();
 
@@ -67,10 +63,10 @@ public class Command {
 
     public void Undo() {
         if (commandType == CommandType.MOVE) {
-            this.gamePiece.Teleport(this.previousPosition);
+            this.gamePiece.teleport(this.previousPosition);
             gameManager.selectedGamePiece = this.gamePiece;
         }else{
-            this.gamePiece.Teleport(this.previousPosition);
+            this.gamePiece.teleport(this.previousPosition);
             GamePiece replacedGamePiece = new GamePiece(this.board, this.targetPosition, this.targetTeam, this.isKing, this.targetGamePiecePreviousHealth, this.targetGamePiecePreviousAtk, this.gameManager);
             this.gameManager.enemyGamePieces.add(replacedGamePiece);
             this.gameManager.getStage().addActor(replacedGamePiece);

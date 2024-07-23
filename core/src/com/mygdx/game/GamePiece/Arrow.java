@@ -36,10 +36,9 @@ public class Arrow extends Actor {
         System.out.println("arrow made");
         this.toFront();
         stage.addActor(this);
-        this.setDebug(true);
+        //this.setDebug(true);
 
         p0 = new Vector2(pos.x,pos.y);
-        System.out.println("p0: " + p0);
         p3 = new Vector2(Arrow.this.getX() + Arrow.this.getWidth()/2, Arrow.this.getY() + Arrow.this.getHeight()/2);
         Vector2 difference = new Vector2(p3.x - p0.x, p3.y - p0.y);
         p1 = new Vector2(p0.x + (difference.x) * p1transform.x , p0.y + (difference.y) * p1transform.y);
@@ -74,7 +73,6 @@ public class Arrow extends Actor {
 
     @Override
     protected void positionChanged() {
-        System.out.println("arrow pos:" + (this.getX() + this.getWidth()/2) + "," + (this.getY() + this.getHeight()/2));
         if (this.p0 != null){
             super.positionChanged();
             p3.set(new Vector2((this.getX() + this.getWidth()/2), (this.getY() + this.getHeight()/2)));
