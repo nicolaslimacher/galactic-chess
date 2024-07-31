@@ -14,7 +14,7 @@ public class ArrowTrail extends Actor {
 
     public ArrowTrail(Vector2 pos) {
         this.textureRegion = new TextureRegion(new Texture(Gdx.files.internal("black_player.png")), 64, 64);
-        this.setBounds(pos.x, pos.y, 64, 64);
+        this.setBounds(pos.x, pos.y, 32, 32);
         //this.setDebug(true);
     }
 

@@ -11,13 +11,14 @@ import com.mygdx.game.Utils.CoordinateBoardPair;
 public class Board extends Group {
 
     public int[][] boardGrid; // boardGrid[r][c] is the contents of row r, column c.
+    private final BoardTile[][] boardTiles;
     public float screenWidth, screenHeight;
     public int boardRows, boardColumns;
     //menus
 
     //constructor for Board
     public Board(int rows, int columns) {
-        boardGrid = new int[rows][columns];
+        boardTiles = new BoardTile[rows][columns];
         this.boardRows = rows;
         this.boardColumns = columns;
         this.setSize(screenWidth*0.8f, screenHeight*0.8f);
@@ -46,12 +47,13 @@ public class Board extends Group {
         this.clearChildren(); //removes already drawn board tiles
         this.screenWidth = Gdx.graphics.getWidth();
         this.screenHeight = Gdx.graphics.getHeight();
-        for (int row = 0; row < boardGrid.length; ++row) {
-            for (int column = 0; column < boardGrid[row].length; ++column) {
+        for (int row = 0; row < boardRows; ++row) {
+            for (int column = 0; column < boardColumns; ++column) {
                 float tilePositionX = GetTileXPosition(column, boardColumns);
                 float tilePositionY = GetTileYPosition(row, boardRows);
                 BoardTile boardTile = new BoardTile(tilePositionX, tilePositionY, new CoordinateBoardPair(row, column));
                 boardTile.setName("tile" + boardTile.CoordinateBoardPair.GetX() +","+ boardTile.CoordinateBoardPair.GetY());
+                boardTiles[column][row] = boardTile;
                 this.addActor(boardTile);
             }
         }
@@ -68,5 +70,9 @@ public class Board extends Group {
             }
         }
         return gamePieceAtCoordinate;
+    }
+
+    public BoardTile GetBoardTileAtCoordinate(CoordinateBoardPair coordinateBoardPair){
+        return boardTiles[coordinateBoardPair.x][coordinateBoardPair.y];
     }
 }//end Board class

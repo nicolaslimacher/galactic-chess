@@ -73,6 +73,8 @@ public class EndGameScreen implements Screen{
 
     @Override
     public void dispose() {
-
+        batch.dispose();
+        loadingScreen.dispose();
+        font.dispose();
     }
 }

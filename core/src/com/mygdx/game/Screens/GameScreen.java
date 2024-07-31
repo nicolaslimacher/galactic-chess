@@ -5,9 +5,13 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Json;
+import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.TimeUtils;
+import com.mygdx.game.Background.Star;
+import com.mygdx.game.Background.StarType;
 import com.mygdx.game.Board.Board;
 import com.mygdx.game.EnemyAI.EnemyAI;
 import com.mygdx.game.GameManager.GameManager;
@@ -33,12 +37,19 @@ public class GameScreen implements Screen {
 	long startTime;
 	Texture fightDialog;
 	List<MoveSet> availableMoveSets;
+	private long lastDropTimeSmall, timeToSmallCreation, lastDropTimeMedium, timeToMediumCreation;
+	private final Texture starryBackground;
 
 
 	public GameScreen(final MyChessGame game, final Stage stage) {
 		this.game = game;
 		this.stage = stage;
 		Gdx.input.setInputProcessor(stage);
+		starryBackground = new Texture(Gdx.files.internal("starrybackground.png"));
+		lastDropTimeSmall = TimeUtils.millis();
+		timeToSmallCreation = 750L;
+		lastDropTimeMedium = TimeUtils.millis();
+		timeToMediumCreation = 2000L;
 
 		availableMoveSets = Helpers.GetRandomMoveSets(0,15);
 		for (MoveSet moveSet: availableMoveSets) {
@@ -70,48 +81,53 @@ public class GameScreen implements Screen {
 		}
 
 		//add two kings for enemy team
-		ArrayList<GamePiece> enemyPieces = new ArrayList<GamePiece>();
-		GamePiece enemyKing1 = new GamePiece(board, new CoordinateBoardPair(1, 4), Team.ENEMY, true,1, 1, gameManager);
+ArrayList<GamePiece> enemyPieces = new ArrayList<GamePiece>();
+//		GamePiece enemyKing1 = new GamePiece(board, new CoordinateBoardPair(1, 4), Team.ENEMY, true,1, 1, gameManager);
+//		enemyPieces.add(enemyKing1);
+//		stage.addActor(enemyKing1);
+
+		GamePiece enemyKing1 = new GamePiece(board, new CoordinateBoardPair(2, 1), Team.ENEMY, true,1, 1, gameManager);
 		enemyPieces.add(enemyKing1);
 		stage.addActor(enemyKing1);
 
-		GamePiece enemyKing2 = new GamePiece(board, new CoordinateBoardPair(3, 4), Team.ENEMY, true,1, 1, gameManager);
-		enemyPieces.add(enemyKing2);
-		stage.addActor(enemyKing2);
+//		GamePiece enemyKing2 = new GamePiece(board, new CoordinateBoardPair(3, 4), Team.ENEMY, true,1, 1, gameManager);
+//		enemyPieces.add(enemyKing2);
+//		stage.addActor(enemyKing2);
 
-//		if (board.boardColumns > 0) {
-//			for (int i = 0; i < board.boardColumns; i++) {
-//				GamePiece gamePiece = new GamePiece(board, new CoordinateBoardPair(i, board.boardRows-1), Team.ENEMY, false, 2, 1, gameManager);
-//				gamePiece.setName("GamePiece"+ i + "," + (board.boardRows - 1));
-//				enemyPieces.add(gamePiece);
-//				stage.addActor(gamePiece);
-//			}
-//		}
 		gameManager.friendlyGamePieces = friendlyPieces;
 		gameManager.enemyGamePieces = enemyPieces;
 
 		enemyAI = new EnemyAI(gameManager);
 		gameManager.enemyAI = enemyAI;
 
-		fightDialog = new Texture(Gdx.files.internal("fight_notification.png"));
-
 		batch = new SpriteBatch();
 
 		startTime = TimeUtils.millis();
-		fightDialog = new Texture(Gdx.files.internal("fight_dialog.png"));
+
+		gameManager.DisplayPlayerMessage("FIGHT!", "now");
 
 	}
 	@Override
 	public void render(float deltaTime) {
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+		ScreenUtils.clear(0.10f, 0.10f, 0.15f, 1f);
 		stage.act(deltaTime);
 		// begin a new batch and draw board
 		batch.begin();
+		//for performance reasons disable blend before drawing background
+		batch.disableBlending();
+		batch.draw(starryBackground,0,0);
+		batch.enableBlending();
+
 		stage.draw();
-		if (TimeUtils.millis() - startTime < 1000){
-			batch.draw(fightDialog, Constants.SCREEN_WIDTH / 2 - 200, Constants.SCREEN_HEIGHT / 2 - 50);
-		}
 		batch.end();
+
+		//check if enough time has elapsed to spawn new stars
+		if (TimeUtils.timeSinceMillis(lastDropTimeSmall) > timeToSmallCreation){
+			AddSmallStar(gameManager);
+		}
+		if (TimeUtils.timeSinceMillis(lastDropTimeMedium) > timeToMediumCreation){
+			AddMediumStar(gameManager);
+		}
 	}
 
 
@@ -142,10 +158,28 @@ public class GameScreen implements Screen {
 	public void dispose() {
 		//TODO: make sure im disposing relevant assets
 		stage.dispose();
+		fightDialog.dispose();
+		batch.dispose();
+		starryBackground.dispose();
 	}
 
 	public void SwitchScreenEndGame(){
+		//no need to dispose, called automatically in setScreem
 		game.setScreen(new EndGameScreen(game));
-		dispose();
+
+	}
+
+	private void AddSmallStar(GameManager gameManager) {
+		Star star = new Star(gameManager, 3000000000L, 6000000000L, StarType.SMALL); //in nano 3000000000L = 3s
+		star.setBounds(MathUtils.random(25, 769), MathUtils.random(100, 454), 6, 6);
+		lastDropTimeSmall = TimeUtils.millis();
+		timeToSmallCreation = MathUtils.random(3000, 7000);
+	}
+
+	private void AddMediumStar(GameManager gameManager){
+		Star star = new Star(gameManager, 12000000000L, 26000000000L, StarType.SMALL);
+		star.setBounds(MathUtils.random(25, 769), MathUtils.random(100, 454), 6, 6);
+		lastDropTimeMedium = TimeUtils.millis();
+		timeToMediumCreation = MathUtils.random(10000, 15000);
 	}
 }

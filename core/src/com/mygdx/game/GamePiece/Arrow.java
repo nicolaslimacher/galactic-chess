@@ -7,24 +7,24 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Bezier;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.mygdx.game.Utils.Constants;
 
 import java.util.ArrayList;
 import java.util.stream.IntStream;
 
-import jdk.vm.ci.meta.Constant;
-
 public class Arrow extends Actor {
     TextureRegion textureRegion;
-    Vector2 p0, p1, p2, p3;
-    final int bezierNodeNum = 6;
-    final Vector2 p1transform = new Vector2(-0.5f, 0.6f);
-    final Vector2 p2transform = new Vector2(0.2f, 1.4f);
+    private Vector2 p0, p1, p2, p3;
+    private Bezier bezier;
+    Vector2 pos = new Vector2(); //overwritten by bezier.valueAt
+    final int arrowTrailNum = 9;
+    final Vector2 p1transform = new Vector2(-0.3f, 0.8f);
+    final Vector2 p2transform = new Vector2(0.1f, 1.8f);
     Group trailsGroup;
     ArrayList<ArrowTrail> trails;
 
@@ -38,21 +38,25 @@ public class Arrow extends Actor {
         stage.addActor(this);
         //this.setDebug(true);
 
-        p0 = pos;
-        p3 = this.localToStageCoordinates(new Vector2(getX()*1.2f, getY()*1.2f));
-        p3.x = p3.x + 64f;
-        p1 = new Vector2((p0.x + (p3.x - p0.x)) * p1transform.x , (p0.y + (p3.y - p0.y)) * p1transform.y);
-        p2 = new Vector2((p0.x + (p3.x - p0.x)) * p2transform.x , (p0.y + (p3.y - p0.y)) * p2transform.y);
+        p0 = new Vector2(pos.x,pos.y);
+        p3 = new Vector2(Arrow.this.getX() + Arrow.this.getWidth()/2, Arrow.this.getY() + Arrow.this.getHeight()/2);
+        Vector2 difference = new Vector2(p3.x - p0.x, p3.y - p0.y);
+        p1 = new Vector2(p0.x + (difference.x) * p1transform.x , p0.y + (difference.y) * p1transform.y);
+        p2 = new Vector2(p0.x + (difference.x) * p2transform.x , p0.y + (difference.y) * p2transform.y);
+        bezier = new Bezier<>(p0, p1, p2, p3);
 
         trailsGroup = new Group();
         trailsGroup.setName("trailsGroup");
         trails = new ArrayList<>();
 
-        IntStream.range(0, bezierNodeNum).forEachOrdered(n -> {
-            ArrowTrail trail = new ArrowTrail(GetBezierPosition(n));
-            trail.setScale(0.3f + ((0.3f / bezierNodeNum) * n));
+        IntStream.range(0, arrowTrailNum).forEachOrdered(n -> {
+            float t = (1f / (arrowTrailNum+1))*(n+1);;
+            bezier.valueAt(pos, t);
+            ArrowTrail trail = new ArrowTrail(pos);
+            trail.setScale(0.3f + ((0.3f / arrowTrailNum) * n));
             trails.add(trail);
             trailsGroup.addActor(trail);
+            trail.toFront();
         });
         this.setRotation(GetBezierCurveRotation());
 
@@ -71,17 +75,18 @@ public class Arrow extends Actor {
     protected void positionChanged() {
         if (this.p0 != null){
             super.positionChanged();
-            p3 = new Vector2(this.getX()+this.getWidth()/2, this.getY()+this.getWidth()/2);
-            p3.x = p3.x + 64f;
-            p1 = new Vector2((p0.x + (p3.x - p0.x) * p1transform.x), (p0.y + (p3.y - p0.y) * p1transform.y));
-            p2 = new Vector2((p0.x + (p3.x - p0.x) * p2transform.x), (p0.y + (p3.y - p0.y) * p2transform.y));
+            p3.set(new Vector2((this.getX() + this.getWidth()/2), (this.getY() + this.getHeight()/2)));
+            Vector2 difference = new Vector2(p3.x - p0.x, p3.y - p0.y);
+            p1.set(new Vector2(p0.x + (difference.x) * p1transform.x , p0.y + (difference.y) * p1transform.y));
+            p2.set(new Vector2(p0.x + (difference.x) * p2transform.x , p0.y + (difference.y) * p2transform.y));
 
-            int nodeNum = 0;
+
+            int arrowTrailNumber = 0;
             for ( ArrowTrail arrowTrail : trails){
-                Vector2 newPos = GetBezierPosition(nodeNum);
-                arrowTrail.setPosition(newPos.x, newPos.y);
-                nodeNum += 1;
-
+                float t = (1f / (arrowTrailNum+1))*(arrowTrailNumber+1);
+                bezier.valueAt(pos, t); //update pos with new location, will be rewritten for each arrow trail
+                arrowTrail.setPosition(pos.x - (arrowTrail.getWidth()*arrowTrail.getScaleX())/2, pos.y - (arrowTrail.getHeight()*arrowTrail.getScaleY())/2);
+                arrowTrailNumber += 1;
             }
 
             this.setRotation(GetBezierCurveRotation());
@@ -89,25 +94,10 @@ public class Arrow extends Actor {
         }
     }
 
-    private Vector2 GetBezierPosition(int NodeNumber){
-        Vector2 trailPosition = new Vector2();
-        float t = (1f / (bezierNodeNum + 1)) * (NodeNumber + 1);
-        trailPosition.x = (float) ((pow(1f-t,3)*p0.x) + (3f*pow(1f-t,2)*t*p1.x) + (3f*(1-t)*pow(t,2f)*p2.x) + (pow(t,3)*p3.x))-64f;
-        trailPosition.y = (float) ((pow(1f-t,3)*p0.y) + (3f*pow(1f-t,2)*t*p1.y) + (3f*(1-t)*pow(t,2f)*p2.y) + (pow(t,3)*p3.y));
-        return trailPosition;
-    }
-
     private float GetBezierCurveRotation(){
-        Vector2 arrowPos = new Vector2(this.getX()+this.getWidth()/2, this.getY()+this.getWidth()/2);
         ArrowTrail lastArrowTrail = trails.get(trails.size()-1);
-        Vector2 lastArrowTrailPos = new Vector2(lastArrowTrail.getX() + lastArrowTrail.getWidth()/2, lastArrowTrail.getY() + lastArrowTrail.getHeight()/2);
-        System.out.println("arrow point: " + arrowPos.x + ", " + arrowPos.y);
-        System.out.println("arrow trail point: " + lastArrowTrailPos.x +  ", " + lastArrowTrailPos.y);
-
-        float angle = (float) (MathUtils.radiansToDegrees * Math.atan2(arrowPos.y - lastArrowTrailPos.y, arrowPos.x - lastArrowTrailPos.x));
-        //float angle = (float) Math.toDegrees(theta);
-
-        System.out.println("rotation: " + angle);
+        Vector2 lastArrowTrailPos = new Vector2(lastArrowTrail.getX() + (lastArrowTrail.getWidth() * lastArrowTrail.getScaleX())/2, lastArrowTrail.getY() + (lastArrowTrail.getHeight() * lastArrowTrail.getScaleY())/2);
+        float angle = (float) (MathUtils.radiansToDegrees * Math.atan2(p3.y - lastArrowTrailPos.y, p3.x - lastArrowTrailPos.x));
         return angle;
     }
 }
