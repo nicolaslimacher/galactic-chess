@@ -46,10 +46,10 @@ public class Command {
 
     public void Execute() {
         if (commandType == CommandType.MOVE) {
-            this.gamePiece.JetpackJump(this.targetPosition);
+            this.gamePiece.JetpackJump(this.targetPosition, 0f); //no delay for player move
         }else {
                 if (this.gamePiece.HitGamePiece(this.targetGamePiece)) {
-                    this.gamePiece.JetpackJump(this.targetPosition);
+                    this.gamePiece.JetpackJump(this.targetPosition, 0f); //no delay for player move
                 }
 
         }

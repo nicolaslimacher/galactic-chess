@@ -293,7 +293,7 @@ public class GamePiece extends Actor{
         return isValid;
     }
 
-    public void JetpackJump(CoordinateBoardPair coordinateBoardPair) {
+    public void JetpackJump(CoordinateBoardPair coordinateBoardPair, float jumpDelay) {
         System.out.println("jumping to: " + coordinateBoardPair.GetX() + "," + coordinateBoardPair.GetY());
         //squish gamepiece
         ScaleToAction squish = Actions.scaleTo(1f, 0.75f, 0.03f);
@@ -322,7 +322,7 @@ public class GamePiece extends Actor{
         ParallelAction landing = new ParallelAction(clouds, tileBounce);
 
         //add clouds after movement
-        SequenceAction jetpackJump = new SequenceAction(squish, jump, landing);
+        SequenceAction jetpackJump = new SequenceAction(Actions.delay(jumpDelay), squish, jump, landing);
         this.addAction(jetpackJump);
 
         this.indexOnBoard = coordinateBoardPair;

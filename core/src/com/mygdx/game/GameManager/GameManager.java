@@ -188,9 +188,16 @@ public class GameManager extends Actor{
         enemyMoves.add(freeMoveToAdd);
     }
 
+    public void DisplayPlayerMessage(String headerMessage){
+        DisplayMessage message = new DisplayMessage(this, headerMessage, 3f);
+    }
+
+    public void DisplayPlayerMessage(String headerMessage, String subMessage){
+        DisplayMessage message = new DisplayMessage(this, headerMessage, subMessage, 3f);
+    }
+
     public boolean EndPlayerTurn(){
         //returning bool so EndGameScreenIfKingsDead can exit method
-        Timer enemyAITimer = new Timer("enemyAITimer", true); //running as daemon so program stops when window closed
 
         //check if enemy team has a king left, then check if king has any health
         if(EndGameScreenIfKingsDead(Team.ENEMY)){
@@ -213,27 +220,18 @@ public class GameManager extends Actor{
 
 
         //call AI to make turn
-        TimerTask enemyAImove = new TimerTask() {
-            @Override
-            public void run() {
-                System.out.println("enemy AI run task created");
-                undoEndTurnMenu.DisableEndTurnButton();
-                undoEndTurnMenu.DisableUndoButton();
+        System.out.println("creating enemy move");
+        undoEndTurnMenu.DisableEndTurnButton();
+        undoEndTurnMenu.DisableUndoButton();
 
-                MoveSet enemyMoveUsed = enemyAI.MakeMove();
-                ShuffleCardsAfterEnemy(enemyMoveUsed);
-                moveSelectCards.UpdateCards();
+        MoveSet enemyMoveUsed = enemyAI.MakeMove();
+        ShuffleCardsAfterEnemy(enemyMoveUsed);
+        moveSelectCards.UpdateCards();
 
-                turnCounterMenu.UpdateTurn();
+        turnCounterMenu.UpdateTurn();
 
-                //check if enemy team has a king left, then check if king has any health
-                EndGameScreenIfKingsDead(Team.FRIENDLY);
-            }
-        };
-        long enemyAIDelay = 750L;
-        enemyAITimer.schedule(enemyAImove, enemyAIDelay);
-
-
+        //check if enemy team has a king left, then check if king has any health
+        EndGameScreenIfKingsDead(Team.FRIENDLY);
         return true;
     }
 }

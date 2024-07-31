@@ -1,8 +1,11 @@
 {
-BitmapFont: { default-font: { file: default.fnt},
-	small-font: { file: small.fnt},
-	medium-font: { file: medium.fnt},
-	large-font: { file: large.fnt}
+BitmapFont: { default-font: { file: fonts/default.fnt},
+	small-font: { file: fonts/small.fnt},
+	medium-font: { file: fonts/medium.fnt},
+	large-font: { file: fonts/large.fnt},
+	il-grinta-font: { file: fonts/il-grinta-large.fnt},
+	fontinaredsuit-font: { file: fonts/fontinaredsuit.fnt},
+	jaini-font: { file: fonts/jaini-regular.fnt}
 },
 Color: {
 	green: { a: 1, b: 0, g: 1, r: 0 },
@@ -19,7 +22,7 @@ ButtonStyle: {
 	toggle: { parent: default, checked: default-round-down }
 },
 TextButtonStyle: {
-	default: { parent: default, font: medium-font, fontColor: white, disabledFontColor: gray },
+	default: { parent: default, font: jaini-font, fontColor: black, disabledFontColor: gray },
 	toggle: { parent: default, checked: default-round-down, downFontColor: red }
 },
 ScrollPaneStyle: {
@@ -49,7 +52,7 @@ SliderStyle: {
 	default-vertical: { parent: default-vertical }
 },
 LabelStyle: {
-	default: { font: medium-font, fontColor: white },
+	default: { font: il-grinta-font, fontColor: white },
 	small: {
 		font: small-font, fontColor: white
 	},
@@ -64,7 +67,7 @@ LabelStyle: {
 	}
 },
 TextFieldStyle: {
-	default: { selection: selection, background: textfield, font: default-font, fontColor: white, cursor: cursor }
+	default: { selection: selection, background: textfield, font: il-grinta-font, fontColor: white, cursor: cursor }
 },
 CheckBoxStyle: {
 	default: { checkboxOn: check-on, checkboxOff: check-off, font: default-font, fontColor: white }

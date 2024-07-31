@@ -38,7 +38,7 @@ public class GameScreen implements Screen {
 	Texture fightDialog;
 	List<MoveSet> availableMoveSets;
 	private long lastDropTimeSmall, timeToSmallCreation, lastDropTimeMedium, timeToMediumCreation;
-	private Texture starryBackground;
+	private final Texture starryBackground;
 
 
 	public GameScreen(final MyChessGame game, final Stage stage) {
@@ -81,14 +81,18 @@ public class GameScreen implements Screen {
 		}
 
 		//add two kings for enemy team
-		ArrayList<GamePiece> enemyPieces = new ArrayList<GamePiece>();
-		GamePiece enemyKing1 = new GamePiece(board, new CoordinateBoardPair(1, 4), Team.ENEMY, true,1, 1, gameManager);
+ArrayList<GamePiece> enemyPieces = new ArrayList<GamePiece>();
+//		GamePiece enemyKing1 = new GamePiece(board, new CoordinateBoardPair(1, 4), Team.ENEMY, true,1, 1, gameManager);
+//		enemyPieces.add(enemyKing1);
+//		stage.addActor(enemyKing1);
+
+		GamePiece enemyKing1 = new GamePiece(board, new CoordinateBoardPair(2, 1), Team.ENEMY, true,1, 1, gameManager);
 		enemyPieces.add(enemyKing1);
 		stage.addActor(enemyKing1);
 
-		GamePiece enemyKing2 = new GamePiece(board, new CoordinateBoardPair(3, 4), Team.ENEMY, true,1, 1, gameManager);
-		enemyPieces.add(enemyKing2);
-		stage.addActor(enemyKing2);
+//		GamePiece enemyKing2 = new GamePiece(board, new CoordinateBoardPair(3, 4), Team.ENEMY, true,1, 1, gameManager);
+//		enemyPieces.add(enemyKing2);
+//		stage.addActor(enemyKing2);
 
 		gameManager.friendlyGamePieces = friendlyPieces;
 		gameManager.enemyGamePieces = enemyPieces;
@@ -96,12 +100,11 @@ public class GameScreen implements Screen {
 		enemyAI = new EnemyAI(gameManager);
 		gameManager.enemyAI = enemyAI;
 
-		fightDialog = new Texture(Gdx.files.internal("fight_notification.png"));
-
 		batch = new SpriteBatch();
 
 		startTime = TimeUtils.millis();
-		fightDialog = new Texture(Gdx.files.internal("fight_dialog.png"));
+
+		gameManager.DisplayPlayerMessage("FIGHT!", "now");
 
 	}
 	@Override
@@ -116,9 +119,6 @@ public class GameScreen implements Screen {
 		batch.enableBlending();
 
 		stage.draw();
-		if (TimeUtils.millis() - startTime < 1000){
-			batch.draw(fightDialog, Constants.SCREEN_WIDTH / 2 - 200, Constants.SCREEN_HEIGHT / 2 - 50);
-		}
 		batch.end();
 
 		//check if enough time has elapsed to spawn new stars
@@ -160,11 +160,13 @@ public class GameScreen implements Screen {
 		stage.dispose();
 		fightDialog.dispose();
 		batch.dispose();
+		starryBackground.dispose();
 	}
 
 	public void SwitchScreenEndGame(){
+		//no need to dispose, called automatically in setScreem
 		game.setScreen(new EndGameScreen(game));
-		dispose();
+
 	}
 
 	private void AddSmallStar(GameManager gameManager) {
