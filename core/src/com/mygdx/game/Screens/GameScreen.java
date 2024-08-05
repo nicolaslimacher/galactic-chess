@@ -18,10 +18,9 @@ import com.mygdx.game.GameManager.GameManager;
 import com.mygdx.game.GameManager.Team;
 import com.mygdx.game.MoveSets.MoveSet;
 import com.mygdx.game.GamePiece.GamePiece;
-import com.mygdx.game.Utils.Constants;
-import com.mygdx.game.Utils.CoordinateBoardPair;
 import com.mygdx.game.MyChessGame;
 import com.mygdx.game.Utils.Helpers;
+import com.mygdx.game.Utils.IntPair;
 
 import java.awt.Image;
 import java.util.ArrayList;
@@ -68,12 +67,12 @@ public class GameScreen implements Screen {
 			for (int i = 0; i < board.boardColumns; i++) {
 				if (i == 2){
 					//add king
-					GamePiece gamePiece = new GamePiece(board, new CoordinateBoardPair(i, 0), Team.FRIENDLY, true, 10, 1, gameManager);
+					GamePiece gamePiece = new GamePiece(board, new IntPair(i, 0), Team.FRIENDLY, true, 10, 1, gameManager);
 					friendlyPieces.add(gamePiece);
 					stage.addActor(gamePiece);
 				}else {
 					//add pawns
-					GamePiece gamePiece = new GamePiece(board, new CoordinateBoardPair(i, 0), Team.FRIENDLY, false, 10, 1, gameManager);
+					GamePiece gamePiece = new GamePiece(board, new IntPair(i, 0), Team.FRIENDLY, false, 10, 1, gameManager);
 					friendlyPieces.add(gamePiece);
 					stage.addActor(gamePiece);
 				}
@@ -86,7 +85,7 @@ ArrayList<GamePiece> enemyPieces = new ArrayList<GamePiece>();
 //		enemyPieces.add(enemyKing1);
 //		stage.addActor(enemyKing1);
 
-		GamePiece enemyKing1 = new GamePiece(board, new CoordinateBoardPair(2, 1), Team.ENEMY, true,1, 1, gameManager);
+		GamePiece enemyKing1 = new GamePiece(board, new IntPair(2, 1), Team.ENEMY, true,1, 1, gameManager);
 		enemyPieces.add(enemyKing1);
 		stage.addActor(enemyKing1);
 

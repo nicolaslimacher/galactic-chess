@@ -5,7 +5,7 @@ import com.mygdx.game.GameManager.GameManager;
 import com.mygdx.game.GameManager.Team;
 import com.mygdx.game.GamePiece.GamePiece;
 import com.mygdx.game.MoveSets.MoveSet;
-import com.mygdx.game.Utils.CoordinateBoardPair;
+import com.mygdx.game.Utils.IntPair;
 
 public class Command {
     final CommandType commandType;
@@ -14,8 +14,8 @@ public class Command {
 
     private final Board board;
     private final GameManager gameManager;
-    final CoordinateBoardPair previousPosition;
-    final CoordinateBoardPair targetPosition;
+    final IntPair previousPosition;
+    final IntPair targetPosition;
     final boolean isKing;
 
 
@@ -26,8 +26,8 @@ public class Command {
     private int targetGamePiecePreviousHealth;
 
 
-    public Command(GamePiece gamePiece, CoordinateBoardPair targetPosition, CommandType commandType, MoveSet moveSet) {
-        System.out.println("command created: " + commandType + " to " + targetPosition.GetX() + "," + targetPosition.GetY());
+    public Command(GamePiece gamePiece, IntPair targetPosition, CommandType commandType, MoveSet moveSet) {
+        System.out.println("command created: " + commandType + " to " + targetPosition.xVal + "," + targetPosition.yVal);
         this.gamePiece = gamePiece;
         this.gameManager = gamePiece.gameManager;
         this.board = gamePiece.board;
