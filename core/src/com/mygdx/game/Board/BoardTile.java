@@ -6,21 +6,20 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.mygdx.game.Utils.Constants;
-import com.mygdx.game.Utils.CoordinateBoardPair;
+import com.mygdx.game.Utils.IntPair;
 
 public class BoardTile extends Actor {
 
-    public final CoordinateBoardPair CoordinateBoardPair;
+    public final IntPair coordinates;
     private final TextureRegion boardTileTextureRegion;
 
-    public BoardTile(float positionX, float positionY, CoordinateBoardPair CoordinateBoardPair) {
+    public BoardTile(float positionX, float positionY, IntPair coordinates) {
         Texture boardTileTexture = new Texture("light_internal.png");
         this.boardTileTextureRegion = new TextureRegion(boardTileTexture, (int) Constants.TILE_SIZE, (int) Constants.TILE_SIZE);
-        this.CoordinateBoardPair = CoordinateBoardPair;
+        this.coordinates = coordinates;
         setBounds(boardTileTextureRegion.getRegionX(), boardTileTextureRegion.getRegionY(),
                 boardTileTextureRegion.getRegionWidth(), boardTileTextureRegion.getRegionHeight());
         this.setPosition(positionX, positionY);

@@ -35,7 +35,6 @@ import com.mygdx.game.GameManager.GameManager;
 import com.mygdx.game.GameManager.Team;
 import com.mygdx.game.MoveSets.MoveSet;
 import com.mygdx.game.Utils.Constants;
-import com.mygdx.game.Utils.CoordinateBoardPair;
 import com.mygdx.game.Utils.Helpers;
 import com.mygdx.game.Utils.IntPair;
 
@@ -46,7 +45,7 @@ public class GamePiece extends Actor{
     //metadata
     public final GameManager gameManager;
     public final Board board;
-    public CoordinateBoardPair indexOnBoard;
+    public IntPair indexOnBoard;
     public final TextureRegion textureRegion;
     public Team team;
     public Group possibleMovesAndTargets;
@@ -71,25 +70,25 @@ public class GamePiece extends Actor{
     Skin skin = new Skin(Gdx.files.internal("buttons/uiskin.json"));
 
 
-    public GamePiece(Board board, CoordinateBoardPair CoordinateBoardPair, Team team, boolean isKing, int hitPoints, int attackPoints, GameManager gameManager){
+    public GamePiece(Board board, IntPair coordinates, Team team, boolean isKing, int hitPoints, int attackPoints, GameManager gameManager){
         //metadata
         this.gameManager = gameManager;
         Texture gamePieceTexture = new Texture(Gdx.files.internal("black_player.png"));
         this.textureRegion = new TextureRegion(gamePieceTexture, (int) Constants.TILE_SIZE, (int)Constants.TILE_SIZE);
         this.setBounds(textureRegion.getRegionX(), textureRegion.getRegionY(),
                 textureRegion.getRegionWidth(), textureRegion.getRegionHeight());
-        this.setPosition(board.GetBoardTilePosition(CoordinateBoardPair).x, board.GetBoardTilePosition(CoordinateBoardPair).y);
+        this.setPosition(board.GetBoardTilePosition(coordinates).x, board.GetBoardTilePosition(coordinates).y);
         this.board = board;
         this.team = team;
         this.isKing = isKing;
         this.crown = new TextureRegion(new Texture(Gdx.files.internal("king_crown.png")), 19, 32);
         this.isAlive = true;
-        this.setName("GamePiece"+ CoordinateBoardPair.GetX() + "," + CoordinateBoardPair.GetY());
+        this.setName("GamePiece"+ coordinates.xVal + "," + coordinates.yVal);
 
         //stats
         this.SetAttackPoints(attackPoints);
         this.SetHitPoints(hitPoints);
-        this.indexOnBoard = CoordinateBoardPair;
+        this.indexOnBoard = coordinates;
         this.statsLabels = new Group();
         addHPandAttackLabels();
 
@@ -249,10 +248,10 @@ public class GamePiece extends Actor{
         return false;
     }
 
-    public List<CoordinateBoardPair> GetPossibleMoves(MoveSet moveSet){
-        List<CoordinateBoardPair> possibleMoves = new ArrayList<CoordinateBoardPair>();
+    public List<IntPair> GetPossibleMoves(MoveSet moveSet){
+        List<IntPair> possibleMoves = new ArrayList<IntPair>();
         for (IntPair possibleMove : moveSet.possibleMoves){
-            CoordinateBoardPair newMove = new CoordinateBoardPair(this.indexOnBoard.x + possibleMove.xVal, this.indexOnBoard.y + possibleMove.yVal);
+            IntPair newMove = new IntPair(this.indexOnBoard.xVal + possibleMove.xVal, this.indexOnBoard.yVal + possibleMove.yVal);
             if (isValidMove(possibleMove) && !gameManager.IsGamePieceAtBoardLocation(newMove)){
                 possibleMoves.add(newMove);
             }
@@ -260,11 +259,11 @@ public class GamePiece extends Actor{
         return possibleMoves;
     }
 
-    public List<CoordinateBoardPair> GetPossibleTargets(MoveSet moveSet){
-        List<CoordinateBoardPair> possibleMoves = new ArrayList<CoordinateBoardPair>();
+    public List<IntPair> GetPossibleTargets(MoveSet moveSet){
+        List<IntPair> possibleMoves = new ArrayList<IntPair>();
         for (IntPair possibleMove : moveSet.possibleMoves){
-            CoordinateBoardPair newMove = new CoordinateBoardPair(this.indexOnBoard.x + possibleMove.xVal, this.indexOnBoard.y + possibleMove.yVal);
-            if (isValidMove(possibleMove) && gameManager.IsEnemyGamePieceAtBoardLocation(newMove)){
+            IntPair newMove = new IntPair(this.indexOnBoard.xVal + possibleMove.xVal, this.indexOnBoard.yVal + possibleMove.yVal);
+            if (isValidMove(possibleMove) && gameManager.IsTeamGamePieceAtBoardLocation(newMove, Team.ENEMY)){
                 if (gameManager.IsGamePieceAtBoardLocation(newMove)) {
                     possibleMoves.add(newMove);
                 }
@@ -275,8 +274,8 @@ public class GamePiece extends Actor{
 
     public boolean isValidMove(IntPair intPair) {
         boolean isValid = false;
-        boolean xIsValid = 0 <= this.indexOnBoard.x + intPair.xVal && this.indexOnBoard.x + intPair.xVal <= this.board.boardColumns-1;
-        boolean yIsValid = 0 <= this.indexOnBoard.y + intPair.yVal && this.indexOnBoard.y + intPair.yVal <= this.board.boardRows-1;
+        boolean xIsValid = 0 <= this.indexOnBoard.xVal + intPair.xVal && this.indexOnBoard.xVal + intPair.xVal <= this.board.boardColumns-1;
+        boolean yIsValid = 0 <= this.indexOnBoard.yVal + intPair.yVal && this.indexOnBoard.yVal + intPair.yVal <= this.board.boardRows-1;
         if (xIsValid && yIsValid){
             isValid = true;
         }
@@ -285,22 +284,22 @@ public class GamePiece extends Actor{
 
     public boolean isValidEnemyMove(IntPair intPair) {
         boolean isValid = false;
-        boolean xIsValid = 0 <= this.indexOnBoard.x + (-1 * intPair.xVal) && this.indexOnBoard.x + (-1 * intPair.xVal) <= this.board.boardColumns-1;
-        boolean yIsValid = 0 <= this.indexOnBoard.y + (-1 * intPair.yVal) && this.indexOnBoard.y + (-1 * intPair.yVal) <= this.board.boardRows-1;
+        boolean xIsValid = 0 <= this.indexOnBoard.xVal + (-1 * intPair.xVal) && this.indexOnBoard.xVal + (-1 * intPair.xVal) <= this.board.boardColumns-1;
+        boolean yIsValid = 0 <= this.indexOnBoard.yVal + (-1 * intPair.yVal) && this.indexOnBoard.yVal + (-1 * intPair.yVal) <= this.board.boardRows-1;
         if (xIsValid && yIsValid){
             isValid = true;
         }
         return isValid;
     }
 
-    public void JetpackJump(CoordinateBoardPair coordinateBoardPair, float jumpDelay) {
-        System.out.println("jumping to: " + coordinateBoardPair.GetX() + "," + coordinateBoardPair.GetY());
+    public void JetpackJump(IntPair coordinates, float jumpDelay) {
+        System.out.println("jumping to: " + coordinates.xVal + "," + coordinates.yVal);
         //squish gamepiece
         ScaleToAction squish = Actions.scaleTo(1f, 0.75f, 0.03f);
 
         //movement action (and undo squish)
         ArcToAction arcMove = new ArcToAction();
-        arcMove.setPosition(board.GetBoardTilePosition(coordinateBoardPair).x, board.GetBoardTilePosition(coordinateBoardPair).y);
+        arcMove.setPosition(board.GetBoardTilePosition(coordinates).x, board.GetBoardTilePosition(coordinates).y);
         arcMove.setDuration(0.6f);
         arcMove.setInterpolation(Interpolation.exp10);
         ScaleToAction unSquish = Actions.scaleTo(1f, 1f, 0.6f);
@@ -310,12 +309,12 @@ public class GamePiece extends Actor{
         //adding landing cloud effect and tile bounce
         RunnableAction clouds = new RunnableAction();
         clouds.setRunnable(() -> {
-            new LandingClouds(coordinateBoardPair, GamePiece.this.gameManager);
+            new LandingClouds(coordinates, GamePiece.this.gameManager);
         });
         RunnableAction tileBounce = new RunnableAction();
         tileBounce.setRunnable(() -> {
-            if (GamePiece.this.board.GetBoardTileAtCoordinate(coordinateBoardPair) != null) {
-                BoardTile tile = GamePiece.this.board.GetBoardTileAtCoordinate(coordinateBoardPair);
+            if (GamePiece.this.board.GetBoardTileAtCoordinate(coordinates) != null) {
+                BoardTile tile = GamePiece.this.board.GetBoardTileAtCoordinate(coordinates);
                 tile.BounceWhenLandedOn();
             }
         });
@@ -325,15 +324,15 @@ public class GamePiece extends Actor{
         SequenceAction jetpackJump = new SequenceAction(Actions.delay(jumpDelay), squish, jump, landing);
         this.addAction(jetpackJump);
 
-        this.indexOnBoard = coordinateBoardPair;
-        this.setName("GamePiece"+coordinateBoardPair.x+","+coordinateBoardPair.y);
+        this.indexOnBoard = coordinates;
+        this.setName("GamePiece"+coordinates.xVal+","+coordinates.yVal);
         this.SetLabelPositions();
     }
 
-    public void teleport(CoordinateBoardPair coordinateBoardPair) {
+    public void teleport(IntPair coordinateBoardPair) {
         this.setPosition(board.GetBoardTilePosition(coordinateBoardPair).x, board.GetBoardTilePosition(coordinateBoardPair).y);
         this.indexOnBoard = coordinateBoardPair;
-        this.setName("GamePiece"+coordinateBoardPair.x+","+coordinateBoardPair.y);
+        this.setName("GamePiece"+coordinateBoardPair.xVal+","+coordinateBoardPair.yVal);
         this.SetLabelPositions();
     }
 
@@ -359,7 +358,7 @@ public class GamePiece extends Actor{
     }
 
     public void drawPossibleMoves(MoveSet moveSet){
-        for (CoordinateBoardPair move : GetPossibleMoves(moveSet)) {
+        for (IntPair move : GetPossibleMoves(moveSet)) {
             PossibleMove possibleMoveTarget = new PossibleMove(this, move, CommandType.MOVE);
             this.possibleMovesAndTargets.addActor(possibleMoveTarget);
             dragAndDrop.addTarget(new DragAndDrop.Target(possibleMoveTarget) {
@@ -379,7 +378,7 @@ public class GamePiece extends Actor{
             });
             System.out.println("possible move added to possiblemoves group");
         }
-        for (CoordinateBoardPair target : GetPossibleTargets(moveSet)){
+        for (IntPair target : GetPossibleTargets(moveSet)){
             PossibleMove possibleMoveHit = new PossibleMove(this, target, CommandType.HIT);
             this.possibleMovesAndTargets.addActor(possibleMoveHit);
             System.out.println("possible target added to possiblemoves group");

@@ -12,6 +12,8 @@ import com.mygdx.game.GameManager.GameManager;
 import com.mygdx.game.MoveSets.MoveSet;
 import com.mygdx.game.Utils.Constants;
 
+import sun.tools.jstat.Alignment;
+
 public class MoveConfirmation extends Table {
     GameManager gameManager;
     Skin moveSelectSkin = new Skin(Gdx.files.internal("buttons/uiskin.json"));
@@ -31,10 +33,12 @@ public class MoveConfirmation extends Table {
     private Button NewMoveConfirmationButton(Skin skin, MoveSet moveSet){
         Button button = new Button(skin);
         Table confirmationName = new Table();
+        confirmationName.setDebug(true);
         confirmationName.defaults().padTop(5f);
+        moveSelectSkin.getFont("il-grinta-font").getData().setScale(0.25f);
 
         Label moveSymbol = new Label(moveSet.symbol, skin);
-        moveSymbol.setFontScale(1.2f);
+        moveSymbol.setFontScale(0.55f);
         moveSymbol.setAlignment(Align.center);
         confirmationName.add(moveSymbol).width(50).center();
 
@@ -52,7 +56,8 @@ public class MoveConfirmation extends Table {
         confirmationName.row();
         PossibleMoveImageCreator possibleMoveImage = new PossibleMoveImageCreator(moveSet);
         possibleMoveImage.setScale(0.73f);
-        confirmationName.add(possibleMoveImage).colspan(2).expand().left().padLeft(2f);
+        confirmationName.add(possibleMoveImage).colspan(2).expand().fill().padLeft(3f).padBottom(70f);
+
 
         this.addListener(MoveConfirmationCancelButtonListener);
         return button;

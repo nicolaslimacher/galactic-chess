@@ -6,7 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.mygdx.game.GamePiece.GamePiece;
 import com.mygdx.game.Utils.Constants;
-import com.mygdx.game.Utils.CoordinateBoardPair;
+import com.mygdx.game.Utils.IntPair;
 
 public class Board extends Group {
 
@@ -35,11 +35,11 @@ public class Board extends Group {
         return ((1-Constants.SCREEN_BOARD_HEIGHT_RATIO)/2*Constants.SCREEN_HEIGHT) + (rowHeight * rowIndex) + (rowHeight / 2f) - (Constants.TILE_SIZE /2f);
     }
 
-    public Vector2 GetBoardTilePosition (CoordinateBoardPair CoordinateBoardPair){
+    public Vector2 GetBoardTilePosition (IntPair coordinates){
         //get tile
         Vector2 tileCoordinates = new Vector2();
-        tileCoordinates.x = GetTileXPosition(CoordinateBoardPair.x, boardColumns);
-        tileCoordinates.y = GetTileYPosition(CoordinateBoardPair.y, boardRows);
+        tileCoordinates.x = GetTileXPosition(coordinates.xVal, boardColumns);
+        tileCoordinates.y = GetTileYPosition(coordinates.yVal, boardRows);
         return tileCoordinates;
     }
 
@@ -51,20 +51,20 @@ public class Board extends Group {
             for (int column = 0; column < boardColumns; ++column) {
                 float tilePositionX = GetTileXPosition(column, boardColumns);
                 float tilePositionY = GetTileYPosition(row, boardRows);
-                BoardTile boardTile = new BoardTile(tilePositionX, tilePositionY, new CoordinateBoardPair(row, column));
-                boardTile.setName("tile" + boardTile.CoordinateBoardPair.GetX() +","+ boardTile.CoordinateBoardPair.GetY());
+                BoardTile boardTile = new BoardTile(tilePositionX, tilePositionY, new IntPair(row, column));
+                boardTile.setName("tile" + boardTile.coordinates.xVal +","+ boardTile.coordinates.yVal);
                 boardTiles[column][row] = boardTile;
                 this.addActor(boardTile);
             }
         }
     }
 
-    public GamePiece GetGamePieceAtCoordinate(CoordinateBoardPair coordinateBoardPair){
+    public GamePiece GetGamePieceAtCoordinate(IntPair coordinates){
         GamePiece gamePieceAtCoordinate = null;
         for(Actor actor:this.getStage().getActors()){
             if(actor.getClass() == GamePiece.class) {
                 GamePiece gamePiece = (GamePiece) actor;
-                if (gamePiece.indexOnBoard.equals(coordinateBoardPair)) {
+                if (gamePiece.indexOnBoard.equals(coordinates)) {
                     gamePieceAtCoordinate = gamePiece;
                 }
             }
@@ -72,7 +72,7 @@ public class Board extends Group {
         return gamePieceAtCoordinate;
     }
 
-    public BoardTile GetBoardTileAtCoordinate(CoordinateBoardPair coordinateBoardPair){
-        return boardTiles[coordinateBoardPair.x][coordinateBoardPair.y];
+    public BoardTile GetBoardTileAtCoordinate(IntPair coordinateBoardPair){
+        return boardTiles[coordinateBoardPair.xVal][coordinateBoardPair.yVal];
     }
 }//end Board class

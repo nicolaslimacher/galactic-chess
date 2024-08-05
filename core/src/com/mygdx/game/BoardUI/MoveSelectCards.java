@@ -12,8 +12,7 @@ public class MoveSelectCards extends Table {
     GameManager gameManager;
     Skin moveSelectSkin = new Skin(Gdx.files.internal("buttons/uiskin.json"));
     public MoveSelectCards(GameManager gameManager) {
-        moveSelectSkin.getFont("il-grinta-font").getData().setScale(1f);
-        moveSelectSkin.getFont("il-grinta-font").getData().setScale(0.3f);
+        moveSelectSkin.getFont("il-grinta-font").getData().setScale(0.25f);
         this.setSkin(moveSelectSkin);
         //this.setDebug(true);
         this.defaults().align(Align.center);

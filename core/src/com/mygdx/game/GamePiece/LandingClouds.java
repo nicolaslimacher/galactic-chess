@@ -11,14 +11,14 @@ import com.badlogic.gdx.scenes.scene2d.actions.ParallelAction;
 import com.badlogic.gdx.scenes.scene2d.actions.RunnableAction;
 import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
 import com.mygdx.game.GameManager.GameManager;
-import com.mygdx.game.Utils.CoordinateBoardPair;
+import com.mygdx.game.Utils.IntPair;
 
 public class LandingClouds extends Actor {
     Texture texture;
     float sidewaysMovement;
     final float animationDuration = 0.25f;
 
-    public LandingClouds(CoordinateBoardPair coordinateBoardPair, GameManager gameManager, boolean isLeftClouds) {
+    public LandingClouds(IntPair coordinates, GameManager gameManager, boolean isLeftClouds) {
         if (isLeftClouds){
             texture = new Texture(Gdx.files.internal("left_clouds.png"));
             sidewaysMovement = -5f;
@@ -28,8 +28,8 @@ public class LandingClouds extends Actor {
         }
         this.setWidth(64);
         this.setHeight(20);
-        this.setPosition(gameManager.board.GetBoardTilePosition(coordinateBoardPair).x+2f, gameManager.board.GetBoardTilePosition(coordinateBoardPair).y);
-        this.setBounds(gameManager.board.GetBoardTilePosition(coordinateBoardPair).x+2f, gameManager.board.GetBoardTilePosition(coordinateBoardPair).y, 64, 20);
+        this.setPosition(gameManager.board.GetBoardTilePosition(coordinates).x+2f, gameManager.board.GetBoardTilePosition(coordinates).y);
+        this.setBounds(gameManager.board.GetBoardTilePosition(coordinates).x+2f, gameManager.board.GetBoardTilePosition(coordinates).y, 64, 20);
         gameManager.getStage().addActor(this);
         this.toFront();
 
@@ -45,9 +45,9 @@ public class LandingClouds extends Actor {
         this.addAction(fadeInAndRemove);
     }
 
-    public LandingClouds(CoordinateBoardPair coordinateBoardPair, GameManager gameManager){
-        new LandingClouds(coordinateBoardPair, gameManager, true);
-        new LandingClouds(coordinateBoardPair, gameManager, false);
+    public LandingClouds(IntPair coordinates, GameManager gameManager){
+        new LandingClouds(coordinates, gameManager, true);
+        new LandingClouds(coordinates, gameManager, false);
     }
 
     @Override
