@@ -198,6 +198,7 @@ public class GameManager extends Actor{
 
     public boolean EndPlayerTurn(){
         //returning bool so EndGameScreenIfKingsDead can exit method
+        //could wrap rest of call in check for enemyKingIsDead?
 
         //check if enemy team has a king left, then check if king has any health
         if(EndGameScreenIfKingsDead(Team.ENEMY))
@@ -215,7 +216,7 @@ public class GameManager extends Actor{
 
         ShuffleCardsAfterPlayer(this.latestGamePieceCommand.moveSet);
         this.moveSelectCards.setVisible(true);
-        this.moveSelectCards.UpdateCards();
+        this.moveSelectCards.UpdateCardLocations();
         this.latestGamePieceCommand = null;
 
 
@@ -226,7 +227,7 @@ public class GameManager extends Actor{
 
         MoveSet enemyMoveUsed = enemyAI.MakeMove();
         ShuffleCardsAfterEnemy(enemyMoveUsed);
-        moveSelectCards.UpdateCards();
+        moveSelectCards.UpdateCardLocations();
 
         turnCounterMenu.UpdateTurn();
 

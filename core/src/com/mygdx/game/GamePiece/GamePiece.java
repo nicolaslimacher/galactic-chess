@@ -65,7 +65,7 @@ public class GamePiece extends Actor{
     public float preDragYPosition;
     public long startClickTime;
 
-    Skin skin = new Skin(Gdx.files.internal("buttons/uiskin.json"));
+    Skin skin = new Skin(Gdx.files.internal("skins/uiskin.json"));
 
 
     public GamePiece(Board board, IntPair coordinates, Team team, boolean isKing, int hitPoints, int attackPoints, GameManager gameManager){
