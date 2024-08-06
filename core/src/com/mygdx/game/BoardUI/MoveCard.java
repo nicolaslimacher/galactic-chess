@@ -37,10 +37,10 @@ public class MoveCard extends Button {
                 GameManager gameManager = event.getStage().getRoot().findActor("GameManager");
                 thisButton.getParent().setVisible(false); //make select menu non-visible
                 //create new confirmation menu
-                MoveConfirmation moveConfirmationMenu = new MoveConfirmation(thisButton.gameManager);
+                MoveConfirmation moveConfirmationMenu = new MoveConfirmation(thisButton.gameManager, thisButton.moveSet);
                 thisButton.getStage().addActor(moveConfirmationMenu);
                 gameManager.moveConfirmation = moveConfirmationMenu;
-                gameManager.moveConfirmation.AddConfirmationButton(thisButton.moveSet);
+                //gameManager.moveConfirmation.AddConfirmationButton(thisButton.moveSet);
                 return true;
             }
         };
@@ -52,10 +52,10 @@ public class MoveCard extends Button {
             gameManager.selectedMoveSet = thisButton.moveSet; //make this move active allowed moveset
             thisButton.getParent().setVisible(false); //make select menu non-visible
             //create new confirmation menu
-            MoveConfirmation moveConfirmationMenu = new MoveConfirmation(thisButton.gameManager);
+            MoveConfirmation moveConfirmationMenu = new MoveConfirmation(thisButton.gameManager, thisButton.moveSet);
             thisButton.getStage().addActor(moveConfirmationMenu);
             gameManager.moveConfirmation = moveConfirmationMenu;
-            gameManager.moveConfirmation.AddConfirmationButton(thisButton.moveSet);
+            //gameManager.moveConfirmation.AddConfirmationButton(thisButton.moveSet);
             return true;
         }
     };

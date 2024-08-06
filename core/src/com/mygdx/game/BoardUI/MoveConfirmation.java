@@ -1,66 +1,91 @@
 package com.mygdx.game.BoardUI;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.mygdx.game.GameManager.GameManager;
 import com.mygdx.game.MoveSets.MoveSet;
-import com.mygdx.game.Utils.Constants;
 
-import sun.tools.jstat.Alignment;
-
-public class MoveConfirmation extends Table {
+public class MoveConfirmation extends Actor {
     GameManager gameManager;
-    Skin moveSelectSkin = new Skin(Gdx.files.internal("buttons/uiskin.json"));
-    public MoveConfirmation(GameManager gameManager) {
-        this.setBounds(Constants.SCREEN_WIDTH*0.025f, 0, Constants.SCREEN_WIDTH*0.25f, Constants.SCREEN_HEIGHT);
+    TextureRegion textureRegion;
+    Label moveSymbol, moveName, cancelText;
+    Skin moveSelectSkin;
+    PossibleMoveImageCreator possibleMoveImage;
+
+    public MoveConfirmation(GameManager gameManager, MoveSet moveSet) {
+        System.out.println("moveConfirmation created");
+        moveSelectSkin = new Skin(Gdx.files.internal("buttons/uiskin.json"));
+        Texture bottleImage = new Texture(Gdx.files.internal("bottle.png"));
+        this.textureRegion = new TextureRegion(bottleImage, 480, 1000);
+        this.setWidth(MoveCardLocations.CHEMICAL_END_LOCATION_X-MoveCardLocations.CHEMICAL_START_LOCATION_X);
+        this.setHeight(MoveCardLocations.ALL_CHEMICAL_TOP - MoveCardLocations.ALL_CHEMICAL_BOTTOM);
+        this.setPosition(MoveCardLocations.CHEMICAL_START_LOCATION_X, MoveCardLocations.ALL_CHEMICAL_BOTTOM);
         this.gameManager = gameManager;
-        this.setVisible(false);
+        this.setBounds(getX(), getY(), getWidth(), getHeight());
         this.setName("MoveConfirmationMenu");
-    }
 
-    public void AddConfirmationButton (MoveSet moveSet) {
-        this.setVisible(true);
-        this.row();
-        this.add(NewMoveConfirmationButton(moveSelectSkin, moveSet)).size(this.getWidth() * 0.8f, this.getHeight() * 0.8f);
-    }
+        gameManager.getStage().addActor(this);
 
-    private Button NewMoveConfirmationButton(Skin skin, MoveSet moveSet){
-        Button button = new Button(skin);
-        Table confirmationName = new Table();
-        confirmationName.setDebug(true);
-        confirmationName.defaults().padTop(5f);
-        moveSelectSkin.getFont("il-grinta-font").getData().setScale(0.25f);
-
-        Label moveSymbol = new Label(moveSet.symbol, skin);
+        moveSymbol = new Label(moveSet.symbol, moveSelectSkin, "moveCard");
         moveSymbol.setFontScale(0.55f);
         moveSymbol.setAlignment(Align.center);
-        confirmationName.add(moveSymbol).width(50).center();
+        moveSymbol.setTouchable(Touchable.disabled);
+        this.getStage().addActor(moveSymbol);
 
-        Label buttonText = new Label(moveSet.name, skin);
-        buttonText.setWrap(true);
-        buttonText.setAlignment(Align.center);
-        confirmationName.add(buttonText).expandX().prefWidth(400);
-        confirmationName.align(Align.topLeft);
+        moveName = new Label(moveSet.name, moveSelectSkin, "moveCard");
+        moveName.setFontScale(0.45f);
+        moveName.setWrap(true);
+        moveName.setAlignment(Align.center);
+        moveName.setTouchable(Touchable.disabled);
 
-        button.add(confirmationName).fill().expand();
-        confirmationName.row();
-        Label cancelText = new Label("Click here to cancel", skin, "small");
-        buttonText.setAlignment(Align.center);
-        confirmationName.add(cancelText).colspan(2).padTop(5f);
-        confirmationName.row();
-        PossibleMoveImageCreator possibleMoveImage = new PossibleMoveImageCreator(moveSet);
+        this.getStage().addActor(moveName);
+
+        cancelText = new Label("Click here to cancel", moveSelectSkin, "small");
+        cancelText.setAlignment(Align.center);
+        cancelText.setTouchable(Touchable.disabled);
+        this.getStage().addActor(cancelText);
+
+        possibleMoveImage = new PossibleMoveImageCreator(moveSet);
         possibleMoveImage.setScale(0.73f);
-        confirmationName.add(possibleMoveImage).colspan(2).expand().fill().padLeft(3f).padBottom(70f);
+        possibleMoveImage.setTouchable(Touchable.disabled);
+        this.getStage().addActor(possibleMoveImage);
 
+        LocateTextAndImages();
 
         this.addListener(MoveConfirmationCancelButtonListener);
-        return button;
+    }
+
+    private void LocateTextAndImages(){
+
+        this.moveName.setDebug(false);
+        this.moveName.setPosition(this.getX()+(this.getWidth() * 0.3f), this.getY()+(this.getHeight() * 0.55f));
+        this.moveName.setSize(this.getWidth() * 0.7f, this.getHeight() * 0.2f);
+        this.moveName.setAlignment(Align.center);
+
+        this.moveSymbol.setDebug(false);
+        this.moveSymbol.setPosition(this.getX(), this.getY()+(this.getHeight() * 0.55f));
+        this.moveSymbol.setSize(this.getWidth() * 0.3f, this.getHeight() * 0.2f);
+        this.moveSymbol.setAlignment(Align.center);
+
+        this.cancelText.setDebug(false);
+        this.cancelText.setPosition(this.getX(), this.getY()+(this.getHeight() * 0.45f));
+        this.cancelText.setSize(this.getWidth(), this.getHeight() * 0.1f);
+        this.cancelText.setAlignment(Align.center);
+        System.out.println("cancelText pos: " + cancelText.getX() + ", " + cancelText.getY());
+
+        this.possibleMoveImage.setDebug(false);
+        this.possibleMoveImage.setScale(0.79f);
+        possibleMoveImage.setPosition(this.getX()+(this.getWidth()/2 - 120f*0.79f), this.getY()+(this.getHeight() * 0.10f));
     }
 
     private final ClickListener MoveConfirmationCancelButtonListener = new ClickListener(){
@@ -69,9 +94,21 @@ public class MoveConfirmation extends Table {
             GameManager gameManager = event.getStage().getRoot().findActor("GameManager");
             gameManager.selectedMoveSet = null;
             moveConfirmation.getStage().getRoot().findActor("MoveSelectCards").setVisible(true);
+            //remove text over
+            moveConfirmation.moveName.remove();
+            moveConfirmation.moveSymbol.remove();
+            moveConfirmation.possibleMoveImage.remove();
+            moveConfirmation.cancelText.remove();
             moveConfirmation.remove();
             //gameManager.menuTable = null; why did i add this before?
             return true;
         }
     };
+
+    @Override
+    public void draw(Batch batch, float parentAlpha){
+        Color color = getColor();
+        batch.setColor(color.r, color.g, color.b, 1f);
+        batch.draw(textureRegion, getX(), getY(), getWidth(), getHeight());
+    }
 }

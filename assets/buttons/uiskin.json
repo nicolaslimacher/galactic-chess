@@ -53,6 +53,7 @@ SliderStyle: {
 },
 LabelStyle: {
 	default: { font: il-grinta-font, fontColor: white },
+	moveCard: { font: il-grinta-font, fontColor: black },
 	small: {
 		font: small-font, fontColor: white
 	},

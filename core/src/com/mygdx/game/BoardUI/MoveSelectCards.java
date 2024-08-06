@@ -21,6 +21,7 @@ public class MoveSelectCards extends Table {
         UpdateCards();
 
         this.setBounds(Constants.SCREEN_WIDTH *0.025f, 0, Constants.SCREEN_WIDTH*0.25f, Constants.SCREEN_HEIGHT);
+        this.setDebug(true);
         this.defaults().padRight(10); // All cells have a padding of 10px to the right
         this.setName("MoveSelectCards");
     }
