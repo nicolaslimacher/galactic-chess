@@ -102,7 +102,7 @@ public class MoveConfirmation extends Actor {
             GameManager gameManager = event.getStage().getRoot().findActor("GameManager");
             if (gameManager.selectedMoveSet == moveConfirmation.moveSet) //remove selected moveSet IF this was for selected move
                 gameManager.selectedMoveSet = null;
-            moveConfirmation.getStage().getRoot().findActor("MoveSelectCards").setVisible(true);
+            gameManager.moveSelectCards.SetCardsVisibility(true);
 
             //remove text over
             moveConfirmation.moveName.remove();

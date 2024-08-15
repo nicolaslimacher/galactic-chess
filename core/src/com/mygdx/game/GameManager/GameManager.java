@@ -64,7 +64,7 @@ public class GameManager extends Actor{
         mediumStar = new Texture(Gdx.files.internal("mediumstar.png"));
         this.availableMoveSets = availableMoveSets;
         AssignStartingChemicals();
-        this.moveSelectCards = new MoveSelectCards(this);
+        this.moveSelectCards = new MoveSelectCards(this, stage);
         this.undoEndTurnMenu = new UndoEndTurnMenu();
         this.turnCounterMenu = new TurnCounterMenu(this);
 
