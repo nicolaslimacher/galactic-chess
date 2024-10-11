@@ -1,5 +1,6 @@
 package com.mygdx.game.Board;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -68,6 +69,6 @@ public class BoardTile extends Actor {
                         Actions.moveBy(0f, 6f, 0.75f, Interpolation.pow4)
                 )
         );
-        System.out.println("i am: " + this.getName() + " and i am bouncing");
+        Gdx.app.log("BoardTile", "I am " + this.getName() + " and I am bouncing.");
     }
 }

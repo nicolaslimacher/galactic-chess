@@ -17,7 +17,6 @@ import com.mygdx.game.GamePiece.GamePiece;
 import com.mygdx.game.MoveSets.MoveSet;
 import com.mygdx.game.Screens.GameScreen;
 import com.mygdx.game.Utils.IntPair;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -74,6 +73,7 @@ public class GameManager extends Actor{
         stage.addActor(this.undoEndTurnMenu);
         stage.addActor(this.turnCounterMenu);
         stage.addListener(stageInputListener);
+        Gdx.app.log("GameManager", "GameManager created.");
     }
 
     private final InputListener stageInputListener = new InputListener(){
@@ -83,6 +83,8 @@ public class GameManager extends Actor{
             for(Actor actor:stage.getActors()){
                 if(actor.getClass() == GamePiece.class) {
                     GamePiece gamePiece = (GamePiece) actor;
+                    //doing this rather than just checking !gameManager.selectedGamePiece.equals(selectedObject)
+                    //so that player can click menu items
                     if (!gamePiece.equals(selectedObject) && gamePiece == gameManager.selectedGamePiece) {
                         gameManager.selectedGamePiece = null;
                         if (stage.getRoot().findActor("possibleMovesGroup" + gamePiece.getName()) != null){
@@ -92,6 +94,7 @@ public class GameManager extends Actor{
                     }
                 }
             }
+            Gdx.app.log("GameManager", "Stage-level input listener received input.");
             return false;
         }
     };

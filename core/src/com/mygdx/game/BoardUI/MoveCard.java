@@ -26,7 +26,7 @@ public class MoveCard extends Actor {
         this.moveSet = moveSet;
         this.gameManager = gameManager;
         this.selectable = selectable;
-        sprite = new Sprite(new Texture(Gdx.files.internal("moveCardBackground.png")), 75, 150);
+        sprite = new Sprite(new Texture(Gdx.files.internal("moveCardBackground.png")), (int) MoveCardLocations.CARD_WIDTH, 150);
         sprite.setScale(0.75f);
         sprite.setPosition(x, y);
 
@@ -89,9 +89,6 @@ public class MoveCard extends Actor {
         moveNameLabel.setPosition(sprite.getX() + 30f/75f*sprite.getWidth(),
                 sprite.getY() + 125f/150f*sprite.getHeight(),
                 Align.left);
-        System.out.println("MoveNameLabel Pos for " + this.moveSet.name + ": " + moveNameLabel.getX() + "," + moveNameLabel.getY());
-        System.out.println("sprite Pos for " + this.moveSet.name + ": "  + sprite.getX() + "," + sprite.getY());
-        System.out.println("card Pos for " + this.moveSet.name + ": "  + this.getX() + "," + this.getY());
 //        moveSymbolLabel.setBounds(sprite.getX() + 30f/75f*sprite.getWidth(),
 //                sprite.getY() + 125f/150f*sprite.getHeight(),
 //                30f/75f*sprite.getWidth(),
@@ -99,9 +96,6 @@ public class MoveCard extends Actor {
         moveSymbolLabel.setPosition(sprite.getX(),
                 sprite.getY() + 125f/150f*sprite.getHeight(),
                 Align.left);
-        System.out.println("moveSymbolLabel Pos for " + this.moveSet.name + ": " + moveSymbolLabel.getX() + "," + moveSymbolLabel.getY());
-        System.out.println("MoveCard Pos for " + this.moveSet.name + sprite.getX() + "," + sprite.getY());
-        System.out.println("sprite width for : " + this.moveSet.name + ": "  + sprite.getWidth());
     }
 
 

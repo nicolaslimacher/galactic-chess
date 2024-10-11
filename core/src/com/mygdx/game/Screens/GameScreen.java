@@ -2,12 +2,10 @@ package com.mygdx.game.Screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.mygdx.game.Background.Star;
@@ -21,8 +19,6 @@ import com.mygdx.game.GamePiece.GamePiece;
 import com.mygdx.game.MyChessGame;
 import com.mygdx.game.Utils.Helpers;
 import com.mygdx.game.Utils.IntPair;
-
-import java.awt.Image;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,6 +40,8 @@ public class GameScreen implements Screen {
 		this.game = game;
 		this.stage = stage;
 		Gdx.input.setInputProcessor(stage);
+
+		//background stars
 		starryBackground = new Texture(Gdx.files.internal("starrybackground.png"));
 		lastDropTimeSmall = TimeUtils.millis();
 		timeToSmallCreation = 750L;
@@ -52,7 +50,7 @@ public class GameScreen implements Screen {
 
 		availableMoveSets = Helpers.GetRandomMoveSets(0,15);
 		for (MoveSet moveSet: availableMoveSets) {
-			System.out.println(moveSet.getName());
+			Gdx.app.log("GameScreen", "Move Set Chosen: " + moveSet.getName() + ".");
 		}
 
 
@@ -65,22 +63,22 @@ public class GameScreen implements Screen {
 
 		if (board.boardColumns > 0) {
 			for (int i = 0; i < board.boardColumns; i++) {
-				if (i == 2){
+                GamePiece gamePiece;
+                if (i == 2){
 					//add king
-					GamePiece gamePiece = new GamePiece(board, new IntPair(i, 0), Team.FRIENDLY, true, 10, 1, gameManager);
-					friendlyPieces.add(gamePiece);
-					stage.addActor(gamePiece);
-				}else {
+                    gamePiece = new GamePiece(board, new IntPair(i, 0), Team.FRIENDLY, true, 10, 1, gameManager);
+                }else {
 					//add pawns
-					GamePiece gamePiece = new GamePiece(board, new IntPair(i, 0), Team.FRIENDLY, false, 10, 1, gameManager);
-					friendlyPieces.add(gamePiece);
-					stage.addActor(gamePiece);
-				}
-			}
+                    gamePiece = new GamePiece(board, new IntPair(i, 0), Team.FRIENDLY, false, 10, 1, gameManager);
+                }
+                friendlyPieces.add(gamePiece);
+                stage.addActor(gamePiece);
+            }
 		}
 
 		//add two kings for enemy team
-ArrayList<GamePiece> enemyPieces = new ArrayList<GamePiece>();
+		ArrayList<GamePiece> enemyPieces = new ArrayList<GamePiece>();
+
 //		GamePiece enemyKing1 = new GamePiece(board, new CoordinateBoardPair(1, 4), Team.ENEMY, true,1, 1, gameManager);
 //		enemyPieces.add(enemyKing1);
 //		stage.addActor(enemyKing1);
@@ -105,6 +103,7 @@ ArrayList<GamePiece> enemyPieces = new ArrayList<GamePiece>();
 
 		gameManager.DisplayPlayerMessage("FIGHT!", "now");
 
+		Gdx.app.log("GameScreen", "GameScreen created.");
 	}
 	@Override
 	public void render(float deltaTime) {
@@ -160,15 +159,17 @@ ArrayList<GamePiece> enemyPieces = new ArrayList<GamePiece>();
 		fightDialog.dispose();
 		batch.dispose();
 		starryBackground.dispose();
+		Gdx.app.log("GameScreen", "Dispose called.");
 	}
 
 	public void SwitchScreenEndGame(){
-		//no need to dispose, called automatically in setScreem
+		//no need to dispose, called automatically in setScreen
 		game.setScreen(new EndGameScreen(game));
 
 	}
 
 	private void AddSmallStar(GameManager gameManager) {
+		Gdx.app.log("GameScreen", "Small star created in background.");
 		Star star = new Star(gameManager, 3000000000L, 6000000000L, StarType.SMALL); //in nano 3000000000L = 3s
 		star.setBounds(MathUtils.random(25, 769), MathUtils.random(100, 454), 6, 6);
 		lastDropTimeSmall = TimeUtils.millis();
@@ -176,6 +177,7 @@ ArrayList<GamePiece> enemyPieces = new ArrayList<GamePiece>();
 	}
 
 	private void AddMediumStar(GameManager gameManager){
+		Gdx.app.log("GameScreen", "Medium star created in background.");
 		Star star = new Star(gameManager, 12000000000L, 26000000000L, StarType.SMALL);
 		star.setBounds(MathUtils.random(25, 769), MathUtils.random(100, 454), 6, 6);
 		lastDropTimeMedium = TimeUtils.millis();

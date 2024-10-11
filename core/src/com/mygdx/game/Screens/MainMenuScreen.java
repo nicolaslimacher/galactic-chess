@@ -1,5 +1,6 @@
 package com.mygdx.game.Screens;
 
+import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -37,6 +38,10 @@ public class MainMenuScreen implements Screen{
     public void render(float delta) {
         ScreenUtils.clear(0, 0, 0.2f, 1);
 
+        //set log level of app (ship in info?)
+        Gdx.app.setLogLevel(Application.LOG_DEBUG);
+
+
         camera.update();
         batch.setProjectionMatrix(camera.combined);
 
@@ -45,8 +50,10 @@ public class MainMenuScreen implements Screen{
         batch.draw(loadingScreen, 0,0);
         batch.end();
 
+        Gdx.app.log("MainMenu", "Game Started");
         if (Gdx.input.isTouched()) {
             game.setScreen(new GameScreen(game, game.stage));
+            Gdx.app.log("MainMenu", "Input received, creating GameScreen instance.");
             dispose();
         }
     }
@@ -73,6 +80,7 @@ public class MainMenuScreen implements Screen{
 
     @Override
     public void dispose() {
+        Gdx.app.log("MainMenu", "Dispose called.");
         loadingScreen.dispose();
     }
 }

@@ -1,5 +1,6 @@
 package com.mygdx.game.Command;
 
+import com.badlogic.gdx.Gdx;
 import com.mygdx.game.Board.Board;
 import com.mygdx.game.GameManager.GameManager;
 import com.mygdx.game.GameManager.Team;
@@ -27,7 +28,6 @@ public class Command {
 
 
     public Command(GamePiece gamePiece, IntPair targetPosition, CommandType commandType, MoveSet moveSet) {
-        System.out.println("command created: " + commandType + " to " + targetPosition.xVal + "," + targetPosition.yVal);
         this.gamePiece = gamePiece;
         this.gameManager = gamePiece.gameManager;
         this.board = gamePiece.board;
@@ -42,6 +42,7 @@ public class Command {
             this.targetGamePiecePreviousAtk = targetGamePiece.GetAttackPoints();
             this.targetGamePiecePreviousHealth = targetGamePiece.GetHitPoints();
         }
+        Gdx.app.log("Command", "Command created: " + commandType + " to " + targetPosition.xVal + "," + targetPosition.yVal + ".");
     }
 
     public void Execute() {
@@ -57,8 +58,7 @@ public class Command {
         this.gameManager.undoEndTurnMenu.EnableUndoButton();
         this.gameManager.undoEndTurnMenu.EnableEndTurnButton();
 
-        System.out.println("Player executed move: " + this.moveSet.getName());
-
+        Gdx.app.log("Command", "Player executed move: " + this.moveSet.getName() + ".");
     }
 
     public void Undo() {
@@ -78,7 +78,6 @@ public class Command {
         this.gameManager.undoEndTurnMenu.DisableUndoButton();
         this.gameManager.undoEndTurnMenu.DisableEndTurnButton();
 
-
-        System.out.println("Player undid move: " + this.moveSet.getName());
+        Gdx.app.log("Command", "Player undid move: " + this.moveSet.getName() + ".");
     }
 }
