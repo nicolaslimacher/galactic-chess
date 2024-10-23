@@ -46,7 +46,7 @@ public class GamePiece extends Actor{
     public Team team;
     public Group possibleMovesAndTargets;
     public boolean isKing;
-    private TextureRegion crown;
+    private final TextureRegion crown;
     public boolean isAlive;
 
     //stats
@@ -108,7 +108,7 @@ public class GamePiece extends Actor{
                 }
 
                 //TODO: try show info panel on a timer, start drag will cancel timer?
-                if (gamePiece.team == Team.FRIENDLY) {
+                if (gamePiece.team == Team.FRIENDLY && gameManager.selectedMoveSet != null) {
                         Arrow arrow = new Arrow(new Vector2(gamePiece.getX() + gamePiece.getWidth()/2,gamePiece.getY()+gamePiece.getHeight()/2), gamePiece.getStage());
                         gamePiece.getStage().addActor(arrow);
                         payload.setDragActor(arrow);
@@ -133,7 +133,7 @@ public class GamePiece extends Actor{
 
             @Override
             public void drag(InputEvent event, float x, float y, int pointer) {
-                RemoveGamePieceInfo(); //technically redundant?
+                //RemoveGamePieceInfo(); //technically redundant?
             }
 
             @Override
@@ -156,7 +156,7 @@ public class GamePiece extends Actor{
 
         });
 
-        //adding floating hover animations
+        //end drag and drop, adding floating hover animations
         float pathY = MathUtils.random(1f, 4f);
         float duration = MathUtils.random(5f, 8f);
         int firstDirection = MathUtils.random(0,1);
@@ -249,7 +249,7 @@ public class GamePiece extends Actor{
         List<IntPair> possibleMoves = new ArrayList<IntPair>();
         for (IntPair possibleMove : moveSet.possibleMoves){
             IntPair newMove = new IntPair(this.indexOnBoard.xVal + possibleMove.xVal, this.indexOnBoard.yVal + possibleMove.yVal);
-            if (isValidMove(possibleMove) && !gameManager.IsGamePieceAtBoardLocation(newMove)){
+            if (IsValidMove(possibleMove) && !gameManager.IsGamePieceAtBoardLocation(newMove)){
                 possibleMoves.add(newMove);
             }
         }
@@ -260,7 +260,7 @@ public class GamePiece extends Actor{
         List<IntPair> possibleMoves = new ArrayList<IntPair>();
         for (IntPair possibleMove : moveSet.possibleMoves){
             IntPair newMove = new IntPair(this.indexOnBoard.xVal + possibleMove.xVal, this.indexOnBoard.yVal + possibleMove.yVal);
-            if (isValidMove(possibleMove) && gameManager.IsTeamGamePieceAtBoardLocation(newMove, Team.ENEMY)){
+            if (IsValidMove(possibleMove) && gameManager.IsTeamGamePieceAtBoardLocation(newMove, Team.ENEMY)){
                 if (gameManager.IsGamePieceAtBoardLocation(newMove)) {
                     possibleMoves.add(newMove);
                 }
@@ -269,7 +269,7 @@ public class GamePiece extends Actor{
         return possibleMoves;
     }
 
-    public boolean isValidMove(IntPair intPair) {
+    public boolean IsValidMove(IntPair intPair) {
         boolean isValid = false;
         boolean xIsValid = 0 <= this.indexOnBoard.xVal + intPair.xVal && this.indexOnBoard.xVal + intPair.xVal <= this.board.boardColumns-1;
         boolean yIsValid = 0 <= this.indexOnBoard.yVal + intPair.yVal && this.indexOnBoard.yVal + intPair.yVal <= this.board.boardRows-1;
@@ -280,7 +280,7 @@ public class GamePiece extends Actor{
     }
 
     //due to mirrored game board from enemy perspective, math for checking is different
-    public boolean isValidEnemyMove(IntPair intPair) {
+    public boolean IsValidEnemyMove(IntPair intPair) {
         boolean isValid = false;
         boolean xIsValid = 0 <= this.indexOnBoard.xVal + (-1 * intPair.xVal) && this.indexOnBoard.xVal + (-1 * intPair.xVal) <= this.board.boardColumns-1;
         boolean yIsValid = 0 <= this.indexOnBoard.yVal + (-1 * intPair.yVal) && this.indexOnBoard.yVal + (-1 * intPair.yVal) <= this.board.boardRows-1;
@@ -291,7 +291,7 @@ public class GamePiece extends Actor{
     }
 
     public void JetpackJump(IntPair coordinates, float jumpDelay) {
-        Gdx.app.log("GamePiece", "GamePiece " + this.getName() + " is moving to " + coordinates + ".");
+        Gdx.app.log("GamePiece", "GamePiece " + this.getName() + " is moving to " + coordinates.xVal + "," + coordinates.yVal + ".");
         //squish GamePiece for cartoon-ish jump effect
         ScaleToAction squish = Actions.scaleTo(1f, 0.75f, 0.03f);
 
@@ -357,6 +357,7 @@ public class GamePiece extends Actor{
     }
 
     public void drawPossibleMoves(MoveSet moveSet){
+        Gdx.app.log("GamePiece", "Drawing possible moves and targets");
         for (IntPair move : GetPossibleMoves(moveSet)) {
             PossibleMove possibleMoveTarget = new PossibleMove(this, move, CommandType.MOVE);
             this.possibleMovesAndTargets.addActor(possibleMoveTarget);

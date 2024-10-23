@@ -7,6 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.mygdx.game.Board.Board;
+import com.mygdx.game.BoardUI.MoveCardLocations;
 import com.mygdx.game.BoardUI.MoveConfirmation;
 import com.mygdx.game.BoardUI.MoveSelectCards;
 import com.mygdx.game.BoardUI.TurnCounterMenu;
@@ -47,7 +48,7 @@ public class GameManager extends Actor{
     public List<MoveSet> availableMoveSets;
     public List<MoveSet> enemyMoves = new ArrayList<>(2);
     public List<MoveSet> freeMove = new ArrayList<>(1);
-    public List<MoveSet> myMoves = new ArrayList<>(2);;
+    public List<MoveSet> playerMoves = new ArrayList<>(2);;
     public MoveSet selectedMoveSet = null;
 
     //menu
@@ -135,9 +136,9 @@ public class GameManager extends Actor{
     private boolean PlayerHasAValidMove(){
         for (GamePiece gamePieceToMove :  this.friendlyGamePieces) {
             if (gamePieceToMove.isAlive) {
-                for (MoveSet moveSet : this.myMoves) {
+                for (MoveSet moveSet : this.playerMoves) {
                     for (IntPair possibleMove : moveSet.possibleMoves) {
-                        if (gamePieceToMove.isValidMove(possibleMove) && !IsTeamGamePieceAtBoardLocation(possibleMove, Team.FRIENDLY)) {
+                        if (gamePieceToMove.IsValidMove(possibleMove) && !IsTeamGamePieceAtBoardLocation(possibleMove, Team.FRIENDLY)) {
                             return true;
                         }
                     }
@@ -170,17 +171,18 @@ public class GameManager extends Actor{
         enemyMoves.add(availableMoveSets.get(0));
         enemyMoves.add(availableMoveSets.get(1));
         freeMove.add(availableMoveSets.get(2));
-        myMoves.add(availableMoveSets.get(3));
-        myMoves.add(availableMoveSets.get(4));
+        playerMoves.add(availableMoveSets.get(3));
+        playerMoves.add(availableMoveSets.get(4));
 
     }
 
     private void ShuffleCardsAfterPlayer(MoveSet playerMoveSetUsed){
-        myMoves.remove(playerMoveSetUsed);
+        playerMoves.remove(playerMoveSetUsed);
         MoveSet freeMoveToAdd = freeMove.get(0);
         freeMove.remove(freeMoveToAdd);
         freeMove.add(playerMoveSetUsed);
-        myMoves.add(freeMoveToAdd);
+        playerMoves.add(freeMoveToAdd);
+
     }
 
     private void ShuffleCardsAfterEnemy(MoveSet enemyMoveSetUsed){
@@ -199,38 +201,41 @@ public class GameManager extends Actor{
         DisplayMessage message = new DisplayMessage(this, headerMessage, subMessage, 3f);
     }
 
-    public boolean EndPlayerTurn(){
+    public void EndPlayerTurn(){
         //returning bool so EndGameScreenIfKingsDead can exit method
         //could wrap rest of call in check for enemyKingIsDead?
 
         //check if enemy team has a king left, then check if king has any health
         if(EndGameScreenIfKingsDead(Team.ENEMY))
-            return true;
+            return;
 
 
+        //reset and shuffle chemicals
+        if (this.getStage().getRoot().findActor("MoveConfirmationMenu") != null){
+            MoveConfirmation moveConf = this.getStage().getRoot().findActor("MoveConfirmationMenu");
+            moveConf.ReturnToMoveSelectCards();
+        }
+
+        ShuffleCardsAfterPlayer(this.latestGamePieceCommand.moveSet);
         //update turn info
         this.turnNumber = this.turnNumber + 1;
         this.currentTurn = Team.ENEMY;
         this.movedThisTurn = false;
-
-        //reset and shuffle chemicals
-        if (this.getStage().getRoot().findActor("MoveConfirmationMenu") != null)
-            this.getStage().getRoot().findActor("MoveConfirmationMenu").remove();
-
-        ShuffleCardsAfterPlayer(this.latestGamePieceCommand.moveSet);
-        this.moveSelectCards.setVisible(true);
-        this.moveSelectCards.UpdateCardLocations();
         this.latestGamePieceCommand = null;
 
-
+        this.moveSelectCards.setVisible(true);
+        this.moveSelectCards.UpdateCardLocations();
         //call AI to make turn
-        System.out.println("creating enemy move");
         undoEndTurnMenu.DisableEndTurnButton();
         undoEndTurnMenu.DisableUndoButton();
 
-        MoveSet enemyMoveUsed = enemyAI.MakeMove();
-        ShuffleCardsAfterEnemy(enemyMoveUsed);
-        moveSelectCards.UpdateCardLocations();
+        enemyAI.MakeMove();
+    }
+
+    public void EndEnemyTurn(MoveSet enemyMoveSetUsed){
+
+        ShuffleCardsAfterEnemy(enemyMoveSetUsed);
+        this.moveSelectCards.UpdateCardLocations();
 
         turnCounterMenu.UpdateTurn();
 
@@ -244,7 +249,5 @@ public class GameManager extends Actor{
 
         //check if enemy team has a king left, then check if king has any health
         EndGameScreenIfKingsDead(Team.FRIENDLY);
-
-        return true;
     }
 }

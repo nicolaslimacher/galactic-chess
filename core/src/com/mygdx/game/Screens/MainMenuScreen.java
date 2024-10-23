@@ -27,6 +27,7 @@ public class MainMenuScreen implements Screen{
         camera.setToOrtho(false, 800, 480);
 
         loadingScreen = new Texture(Gdx.files.internal("loading_screen.png"));
+        Gdx.app.log("MainMenu", "Game Started");
     }
 
     @Override
@@ -50,7 +51,7 @@ public class MainMenuScreen implements Screen{
         batch.draw(loadingScreen, 0,0);
         batch.end();
 
-        Gdx.app.log("MainMenu", "Game Started");
+
         if (Gdx.input.isTouched()) {
             game.setScreen(new GameScreen(game, game.stage));
             Gdx.app.log("MainMenu", "Input received, creating GameScreen instance.");

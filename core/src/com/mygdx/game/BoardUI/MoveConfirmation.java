@@ -89,7 +89,6 @@ public class MoveConfirmation extends Actor {
         this.cancelText.setPosition(this.getX(), this.getY()+(this.getHeight() * 0.45f));
         this.cancelText.setSize(this.getWidth(), this.getHeight() * 0.1f);
         this.cancelText.setAlignment(Align.center);
-        System.out.println("cancelText pos: " + cancelText.getX() + ", " + cancelText.getY());
 
         this.possibleMoveImage.setDebug(false);
         this.possibleMoveImage.setScale(0.79f);
@@ -99,17 +98,7 @@ public class MoveConfirmation extends Actor {
     private final ClickListener MoveConfirmationCancelListener = new ClickListener(){
         public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
             MoveConfirmation moveConfirmation = (MoveConfirmation) event.getListenerActor();
-            GameManager gameManager = event.getStage().getRoot().findActor("GameManager");
-            if (gameManager.selectedMoveSet == moveConfirmation.moveSet) //remove selected moveSet IF this was for selected move
-                gameManager.selectedMoveSet = null;
-            gameManager.moveSelectCards.SetCardsVisibility(true);
-
-            //remove text over
-            moveConfirmation.moveName.remove();
-            moveConfirmation.moveSymbol.remove();
-            moveConfirmation.possibleMoveImage.remove();
-            moveConfirmation.cancelText.remove();
-            moveConfirmation.remove();
+            moveConfirmation.ReturnToMoveSelectCards();
             return true;
         }
     };
@@ -119,5 +108,18 @@ public class MoveConfirmation extends Actor {
         Color color = getColor();
         batch.setColor(color.r, color.g, color.b, 1f);
         batch.draw(textureRegion, getX(), getY(), getWidth(), getHeight());
+    }
+
+    public void ReturnToMoveSelectCards(){
+        if (gameManager.selectedMoveSet == this.moveSet) //remove selected moveSet IF this was for selected move
+            gameManager.selectedMoveSet = null;
+        gameManager.moveSelectCards.SetCardsVisibility(true);
+
+        //remove text over
+        this.moveName.remove();
+        this.moveSymbol.remove();
+        this.possibleMoveImage.remove();
+        this.cancelText.remove();
+        this.remove();
     }
 }

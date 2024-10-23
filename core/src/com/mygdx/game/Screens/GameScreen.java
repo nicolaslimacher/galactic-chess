@@ -59,7 +59,7 @@ public class GameScreen implements Screen {
 		stage.addActor(board);
 		gameManager = new GameManager(stage, board, availableMoveSets, this);
 		stage.addActor(gameManager);
-		ArrayList<GamePiece> friendlyPieces = new ArrayList<GamePiece>();
+		ArrayList<GamePiece> friendlyPieces = new ArrayList<>();
 
 		if (board.boardColumns > 0) {
 			for (int i = 0; i < board.boardColumns; i++) {
@@ -77,13 +77,13 @@ public class GameScreen implements Screen {
 		}
 
 		//add two kings for enemy team
-		ArrayList<GamePiece> enemyPieces = new ArrayList<GamePiece>();
+		ArrayList<GamePiece> enemyPieces = new ArrayList<>();
 
 //		GamePiece enemyKing1 = new GamePiece(board, new CoordinateBoardPair(1, 4), Team.ENEMY, true,1, 1, gameManager);
 //		enemyPieces.add(enemyKing1);
 //		stage.addActor(enemyKing1);
 
-		GamePiece enemyKing1 = new GamePiece(board, new IntPair(2, 1), Team.ENEMY, true,1, 1, gameManager);
+		GamePiece enemyKing1 = new GamePiece(board, new IntPair(2, 4), Team.ENEMY, true,1, 1, gameManager);
 		enemyPieces.add(enemyKing1);
 		stage.addActor(enemyKing1);
 
