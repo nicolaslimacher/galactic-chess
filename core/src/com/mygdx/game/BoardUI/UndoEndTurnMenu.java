@@ -12,7 +12,7 @@ import com.mygdx.game.GameManager.Team;
 import com.mygdx.game.Utils.Constants;
 
 public class UndoEndTurnMenu extends Table {
-    Skin skin = new Skin(Gdx.files.internal("buttons/uiskin.json"));
+    Skin skin = new Skin(Gdx.files.internal("skins/uiskin.json"));
     public TextButton undoButton;
     public TextButton endTurn;
 

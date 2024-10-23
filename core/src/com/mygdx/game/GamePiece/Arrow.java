@@ -1,6 +1,5 @@
 package com.mygdx.game.GamePiece;
 
-import static java.lang.Math.pow;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -13,7 +12,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-
 import java.util.ArrayList;
 import java.util.stream.IntStream;
 
@@ -33,7 +31,7 @@ public class Arrow extends Actor {
         this.textureRegion = new TextureRegion(new Texture(Gdx.files.internal("small_arrow.png")));
         this.setBounds(pos.x,pos.y,64,64);
         this.setOrigin(this.getWidth()/2, this.getHeight()/2);
-        System.out.println("arrow made");
+        Gdx.app.log("GamePiece", "Drag arrow created.");
         this.toFront();
         stage.addActor(this);
         //this.setDebug(true);

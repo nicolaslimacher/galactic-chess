@@ -3,7 +3,8 @@ BitmapFont: { default-font: { file: fonts/default.fnt},
 	small-font: { file: fonts/small.fnt},
 	medium-font: { file: fonts/medium.fnt},
 	large-font: { file: fonts/large.fnt},
-	il-grinta-font: { file: fonts/il-grinta-large.fnt},
+	il-grinta-font: { file: fonts/il-grinta.fnt},
+	il-grinta-large-font: { file: fonts/il-grinta-large.fnt},
 	fontinaredsuit-font: { file: fonts/fontinaredsuit.fnt},
 	jaini-font: { file: fonts/jaini-regular.fnt}
 },
@@ -53,6 +54,8 @@ SliderStyle: {
 },
 LabelStyle: {
 	default: { font: il-grinta-font, fontColor: white },
+	moveCardConfirmation: { font: il-grinta-large-font, fontColor: black },
+	moveCardSelect: { font: il-grinta-font, fontColor: black },
 	small: {
 		font: small-font, fontColor: white
 	},

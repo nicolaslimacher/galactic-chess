@@ -13,7 +13,7 @@ import com.mygdx.game.Utils.Constants;
 public class TurnCounterMenu extends Table {
     GameManager gameManager;
     TextButton turnCounter;
-    Skin skin = new Skin(Gdx.files.internal("buttons/uiskin.json"));
+    Skin skin = new Skin(Gdx.files.internal("skins/uiskin.json"));
     public TurnCounterMenu(GameManager gameManager) {
         this.gameManager = gameManager;
         turnCounter = new TextButton("Turn: " + gameManager.turnNumber, skin);

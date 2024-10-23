@@ -32,11 +32,9 @@ public class ArcToAction extends MoveToAction {
     protected void update (float percent) {
         float x, y;
         if (percent == 0) {
-            System.out.println("%: 0");
             x = getStartX();
             y = getStartY();
         } else if (percent == 1) {
-            System.out.println("%: 1");
             x = getX();
             y = getY();
         } else {
