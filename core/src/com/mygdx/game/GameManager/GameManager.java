@@ -1,5 +1,6 @@
 package com.mygdx.game.GameManager;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -7,13 +8,13 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.mygdx.game.Board.Board;
-import com.mygdx.game.BoardUI.MoveCardLocations;
 import com.mygdx.game.BoardUI.MoveConfirmation;
 import com.mygdx.game.BoardUI.MoveSelectCards;
 import com.mygdx.game.BoardUI.TurnCounterMenu;
 import com.mygdx.game.BoardUI.UndoEndTurnMenu;
 import com.mygdx.game.Command.Command;
 import com.mygdx.game.EnemyAI.EnemyAI;
+import com.mygdx.game.GamePiece.DefaultPawn;
 import com.mygdx.game.GamePiece.GamePiece;
 import com.mygdx.game.MoveSets.MoveSet;
 import com.mygdx.game.Screens.GameScreen;
@@ -40,7 +41,6 @@ public class GameManager extends Actor{
     //game pieces
     public ArrayList<GamePiece> friendlyGamePieces;
     public ArrayList<GamePiece> enemyGamePieces;
-    public GamePiece selectedGamePiece = null;
     public Command latestGamePieceCommand;
     public EnemyAI enemyAI;
 
@@ -73,32 +73,32 @@ public class GameManager extends Actor{
         stage.addActor(this.moveSelectCards);
         stage.addActor(this.undoEndTurnMenu);
         stage.addActor(this.turnCounterMenu);
-        stage.addListener(stageInputListener);
+//        stage.addListener(stageInputListener);
         Gdx.app.log("GameManager", "GameManager created.");
     }
 
-    private final InputListener stageInputListener = new InputListener(){
-        public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-            Object selectedObject = event.getTarget();
-            GameManager gameManager = GameManager.this;
-            for(Actor actor:stage.getActors()){
-                if(actor.getClass() == GamePiece.class) {
-                    GamePiece gamePiece = (GamePiece) actor;
-                    //doing this rather than just checking !gameManager.selectedGamePiece.equals(selectedObject)
-                    //so that player can click menu items
-                    if (!gamePiece.equals(selectedObject) && gamePiece == gameManager.selectedGamePiece) {
-                        gameManager.selectedGamePiece = null;
-                        if (stage.getRoot().findActor("possibleMovesGroup" + gamePiece.getName()) != null){
-                            stage.getRoot().findActor("possibleMovesGroup" + gamePiece.getName()).remove();
-                        }
-
-                    }
-                }
-            }
-            Gdx.app.log("GameManager", "Stage-level input listener received input.");
-            return false;
-        }
-    };
+//    private final InputListener stageInputListener = new InputListener(){
+//        public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+//            Object selectedObject = event.getTarget();
+//            GameManager gameManager = GameManager.this;
+//            for(Actor actor:stage.getActors()){
+//                if(actor.getClass() == DefaultPawn.class) {
+//                    DefaultPawn defaultPawn = (DefaultPawn) actor;
+//                    //doing this rather than just checking !gameManager.selectedGamePiece.equals(selectedObject)
+//                    //so that player can click menu items
+//                    if (!defaultPawn.equals(selectedObject) && defaultPawn == gameManager.selectedDefaultPawn) {
+//                        gameManager.selectedDefaultPawn = null;
+//                        if (stage.getRoot().findActor("possibleMovesGroup" + defaultPawn.getName()) != null){
+//                            stage.getRoot().findActor("possibleMovesGroup" + defaultPawn.getName()).remove();
+//                        }
+//
+//                    }
+//                }
+//            }
+//            Gdx.app.log("GameManager", "Stage-level input listener received input.");
+//            return false;
+//        }
+//    };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
     //                                       GamePiece Management                                 //
@@ -110,12 +110,12 @@ public class GameManager extends Actor{
     public Boolean IsTeamGamePieceAtBoardLocation(IntPair coordinates, Team team) {
         return GetGamePieceAtCoordinate(coordinates) != null && (GetGamePieceAtCoordinate(coordinates).team == team);
     }
-    public GamePiece GetGamePieceAtCoordinate(IntPair coordinateBoardPair){
+    public DefaultPawn GetGamePieceAtCoordinate(IntPair coordinateBoardPair){
         for(Actor actor:this.getStage().getActors()){
-            if(actor.getClass() == GamePiece.class) {
-                GamePiece gamePiece = (GamePiece) actor;
-                if (gamePiece.indexOnBoard.equals(coordinateBoardPair)) {
-                    return gamePiece;
+            if(actor.getClass() == DefaultPawn.class) {
+                DefaultPawn defaultPawn = (DefaultPawn) actor;
+                if (defaultPawn.indexOnBoard.equals(coordinateBoardPair)) {
+                    return defaultPawn;
                 }
             }
         }
@@ -125,7 +125,7 @@ public class GameManager extends Actor{
     private boolean IsValidKingLeft(Team team){
         ArrayList<GamePiece> gamePieces = (team == Team.FRIENDLY) ? friendlyGamePieces : enemyGamePieces;
         for ( GamePiece gamePiece : gamePieces) {
-            if (gamePiece.isKing && gamePiece.isAlive) {
+            if (gamePiece.GetIsKing() && gamePiece.GetIsAlive()) {
                 return true;
                 //this.gameScreen.SwitchScreenEndGame();
             }
@@ -135,7 +135,7 @@ public class GameManager extends Actor{
 
     private boolean PlayerHasAValidMove(){
         for (GamePiece gamePieceToMove :  this.friendlyGamePieces) {
-            if (gamePieceToMove.isAlive) {
+            if (gamePieceToMove.GetIsAlive()) {
                 for (MoveSet moveSet : this.playerMoves) {
                     for (IntPair possibleMove : moveSet.possibleMoves) {
                         if (gamePieceToMove.IsValidMove(possibleMove) && !IsTeamGamePieceAtBoardLocation(possibleMove, Team.FRIENDLY)) {

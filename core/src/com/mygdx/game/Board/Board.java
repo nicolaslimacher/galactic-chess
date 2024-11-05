@@ -4,7 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
-import com.mygdx.game.GamePiece.GamePiece;
+import com.mygdx.game.GamePiece.DefaultPawn;
 import com.mygdx.game.Utils.Constants;
 import com.mygdx.game.Utils.IntPair;
 
@@ -59,17 +59,17 @@ public class Board extends Group {
         }
     }
 
-    public GamePiece GetGamePieceAtCoordinate(IntPair coordinates){
-        GamePiece gamePieceAtCoordinate = null;
+    public DefaultPawn GetGamePieceAtCoordinate(IntPair coordinates){
+        DefaultPawn defaultPawnAtCoordinate = null;
         for(Actor actor:this.getStage().getActors()){
-            if(actor.getClass() == GamePiece.class) {
-                GamePiece gamePiece = (GamePiece) actor;
-                if (gamePiece.indexOnBoard.equals(coordinates)) {
-                    gamePieceAtCoordinate = gamePiece;
+            if(actor.getClass() == DefaultPawn.class) {
+                DefaultPawn defaultPawn = (DefaultPawn) actor;
+                if (defaultPawn.indexOnBoard.equals(coordinates)) {
+                    defaultPawnAtCoordinate = defaultPawn;
                 }
             }
         }
-        return gamePieceAtCoordinate;
+        return defaultPawnAtCoordinate;
     }
 
     public BoardTile GetBoardTileAtCoordinate(IntPair coordinateBoardPair){

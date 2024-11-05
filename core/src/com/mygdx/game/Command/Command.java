@@ -1,10 +1,13 @@
 package com.mygdx.game.Command;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.mygdx.game.Board.Board;
 import com.mygdx.game.GameManager.GameManager;
 import com.mygdx.game.GameManager.Team;
+import com.mygdx.game.GamePiece.DefaultPawn;
 import com.mygdx.game.GamePiece.GamePiece;
+import com.mygdx.game.GamePiece.GamePieceFactory;
 import com.mygdx.game.MoveSets.MoveSet;
 import com.mygdx.game.Utils.IntPair;
 
@@ -15,6 +18,7 @@ public class Command {
 
     private final Board board;
     private final GameManager gameManager;
+    private final int gamePiecesID;
     final IntPair previousPosition;
     final IntPair targetPosition;
     final boolean isKing;
@@ -29,12 +33,13 @@ public class Command {
 
     public Command(GamePiece gamePiece, IntPair targetPosition, CommandType commandType, MoveSet moveSet) {
         this.gamePiece = gamePiece;
-        this.gameManager = gamePiece.gameManager;
-        this.board = gamePiece.board;
+        this.gameManager = gamePiece.GetGameManager();
+        this.board = gamePiece.GetBoard();
+        this.gamePiecesID = gamePiece.GetGamePiecesID();
         this.commandType = commandType;
-        this.previousPosition = gamePiece.indexOnBoard;
+        this.previousPosition = gamePiece.GetIndexOnBoard();
         this.targetPosition = targetPosition;
-        this.isKing = gamePiece.isKing;
+        this.isKing = gamePiece.GetIsKing();
         this.moveSet = moveSet;
         if (commandType == CommandType.HIT) {
             this.targetGamePiece = gameManager.GetGamePieceAtCoordinate(this.targetPosition);
@@ -47,11 +52,11 @@ public class Command {
 
     public void Execute() {
         if (commandType == CommandType.MOVE) {
-            this.gamePiece.JetpackJump(this.targetPosition, 0f); //no delay for player move
+            this.gamePiece.MoveToTile(this.targetPosition, 0f); //no delay for player move
         }else {
-                if (this.gamePiece.HitGamePiece(this.targetGamePiece)) {
-                    this.gamePiece.JetpackJump(this.targetPosition, 0f); //no delay for player move
-                }
+            if (this.gamePiece.HitGamePiece(this.targetGamePiece)) {
+                this.gamePiece.MoveToTile(this.targetPosition, 0f); //no delay for player move
+            }
 
         }
         this.gameManager.movedThisTurn = true;
@@ -63,15 +68,15 @@ public class Command {
 
     public void Undo() {
         if (commandType == CommandType.MOVE) {
-            this.gamePiece.teleport(this.previousPosition);
-            gameManager.selectedGamePiece = this.gamePiece;
+            this.gamePiece.Teleport(this.previousPosition);
         }else{
-            this.gamePiece.teleport(this.previousPosition);
-            GamePiece replacedGamePiece = new GamePiece(this.board, this.targetPosition, this.targetTeam, this.isKing, this.targetGamePiecePreviousHealth, this.targetGamePiecePreviousAtk, this.gameManager);
+            this.gamePiece.Teleport(this.previousPosition);
+
+            GamePiece replacedGamePiece = GamePieceFactory.CreateGamePiece(this.board, this.gameManager, this.targetPosition, this.targetTeam, this.isKing, this.gamePiecesID, this.targetGamePiecePreviousHealth, this.targetGamePiecePreviousAtk);
             this.gameManager.enemyGamePieces.add(replacedGamePiece);
-            this.gameManager.getStage().addActor(replacedGamePiece);
-            replacedGamePiece.addHPandAttackLabels();
-            gameManager.selectedGamePiece = this.gamePiece;
+            //TODO: better way to cast GamePiece to Actor?
+            this.gameManager.getStage().addActor((Actor) replacedGamePiece);
+            replacedGamePiece.addHpAndAttackLabels();
         }
 
         this.gameManager.movedThisTurn = false;
