@@ -40,11 +40,11 @@ public class EnemyAI extends Actor {
         int rnd = getRandomNumber(0, allPossibleMoves.size()-1);
         EnemyAIMove enemyAIMove = allPossibleMoves.get(rnd);
         if(enemyAIMove.commandType == CommandType.MOVE) {
-            enemyAIMove.gamePiece.JetpackJump(enemyAIMove.coordinates, enemyAIDelay);
+            enemyAIMove.gamePiece.MoveToTile(enemyAIMove.coordinates, enemyAIDelay);
             Gdx.app.log("EnemyAI", "Enemy executed move: " + enemyAIMove.moveSet.getName());
         }else{
             if (enemyAIMove.gamePiece.HitGamePiece(gameManager.GetGamePieceAtCoordinate(enemyAIMove.coordinates))) {
-                enemyAIMove.gamePiece.JetpackJump(enemyAIMove.coordinates, enemyAIDelay);
+                enemyAIMove.gamePiece.MoveToTile(enemyAIMove.coordinates, enemyAIDelay);
             }
             Gdx.app.log("EnemyAI", "Enemy executed move: " + enemyAIMove.moveSet.getName());
         }
@@ -55,20 +55,20 @@ public class EnemyAI extends Actor {
 
     private List<EnemyAIMove> GetAllPossibleMoves(){
         List<EnemyAIMove> allPossibleMoves = new ArrayList<>();
-        for (GamePiece gamePieceToMove :  gameManager.enemyGamePieces) {
-            if (gamePieceToMove.isAlive) {
+        for (GamePiece defaultPawnToMove :  gameManager.enemyGamePieces) {
+            if (defaultPawnToMove.GetIsAlive()) {
                 for (MoveSet moveSet : gameManager.enemyMoves) {
                     for (IntPair possibleMove : moveSet.possibleMoves) {
-                        IntPair newMove = new IntPair(gamePieceToMove.indexOnBoard.xVal + (-1 * possibleMove.xVal), gamePieceToMove.indexOnBoard.yVal + (-1 * possibleMove.yVal));
-                        if (gamePieceToMove.IsValidEnemyMove(possibleMove)) {
+                        IntPair newMove = new IntPair(defaultPawnToMove.GetIndexOnBoard().xVal + (-1 * possibleMove.xVal), defaultPawnToMove.GetIndexOnBoard().yVal + (-1 * possibleMove.yVal));
+                        if (defaultPawnToMove.IsValidEnemyMove(possibleMove)) {
                             if (gameManager.IsGamePieceAtBoardLocation(newMove) && gameManager.GetGamePieceAtCoordinate(newMove).team == Team.FRIENDLY) {
                                 //check if piece at location AND is friendly
-                                allPossibleMoves.add(new EnemyAIMove(CommandType.HIT, newMove, gamePieceToMove, moveSet));
-                                Gdx.app.log("EnemyAI", "possible move - HIT:" + newMove.xVal + "," + newMove.yVal + " with gamepiece:" + gamePieceToMove.getName());
+                                allPossibleMoves.add(new EnemyAIMove(CommandType.HIT, newMove, defaultPawnToMove, moveSet));
+                                Gdx.app.log("EnemyAI", "possible move - HIT:" + newMove.xVal + "," + newMove.yVal + " with gamepiece:" + defaultPawnToMove.GetName());
                             } else if (!gameManager.IsGamePieceAtBoardLocation(newMove)) {
                                 //check if space is free (so enemy doesn't move on top of own piece)
-                                allPossibleMoves.add(new EnemyAIMove(CommandType.MOVE, newMove, gamePieceToMove, moveSet));
-                                Gdx.app.log("EnemyAI", "possible move - MOVE:" + newMove.xVal + "," + newMove.yVal + " with gamepiece:" + gamePieceToMove.getName());
+                                allPossibleMoves.add(new EnemyAIMove(CommandType.MOVE, newMove, defaultPawnToMove, moveSet));
+                                Gdx.app.log("EnemyAI", "possible move - MOVE:" + newMove.xVal + "," + newMove.yVal + " with gamepiece:" + defaultPawnToMove.GetName());
                             }
                         }
                     }
