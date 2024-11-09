@@ -1,6 +1,7 @@
 package com.mygdx.game.GameManager;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -16,6 +17,7 @@ import com.mygdx.game.Command.Command;
 import com.mygdx.game.EnemyAI.EnemyAI;
 import com.mygdx.game.GamePiece.GamePiece;
 import com.mygdx.game.MoveSets.MoveSet;
+import com.mygdx.game.MyChessGame;
 import com.mygdx.game.Screens.GameScreen;
 import com.mygdx.game.Utils.IntPair;
 import java.util.ArrayList;
@@ -131,6 +133,10 @@ public class GameManager extends Actor{
             }
         }
         return false;
+    }
+
+    public AssetManager GetAssetManager(){
+        return gameScreen.GetGame().GetAssetManager();
     }
 
     private boolean PlayerHasAValidMove(){

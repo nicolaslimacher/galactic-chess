@@ -3,8 +3,10 @@ package com.mygdx.game.Utils;
 import static com.badlogic.gdx.net.HttpRequestBuilder.json;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.mygdx.game.MoveSets.MoveSet;
+import com.mygdx.game.MyChessGame;
 
 import java.util.ArrayList;
 import java.util.Collections;

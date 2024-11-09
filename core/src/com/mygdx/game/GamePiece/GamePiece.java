@@ -68,7 +68,7 @@ public class GamePiece extends Actor{
     public GamePiece(Board board, IntPair coordinates, Team team, boolean isKing, int hitPoints, int attackPoints, GameManager gameManager){
         //metadata
         this.gameManager = gameManager;
-        Texture gamePieceTexture = new Texture(Gdx.files.internal("black_player.png"));
+        Texture gamePieceTexture = gameManager.GetAssetManager().get("black_player.png", Texture.class);
         this.textureRegion = new TextureRegion(gamePieceTexture, (int) Constants.TILE_SIZE, (int)Constants.TILE_SIZE);
         this.setBounds(textureRegion.getRegionX(), textureRegion.getRegionY(),
                 textureRegion.getRegionWidth(), textureRegion.getRegionHeight());

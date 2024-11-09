@@ -141,6 +141,10 @@ public class GameScreen implements Screen {
 		//rainMusic.play();
 	}
 
+	public MyChessGame GetGame() {
+		return game;
+	}
+
 	@Override
 	public void hide(){
 
