@@ -4,58 +4,76 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Group;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop;
+import com.badlogic.gdx.utils.Align;
+import com.mygdx.game.Actions.GamePieceJetpackJump;
 import com.mygdx.game.Board.Board;
+import com.mygdx.game.Command.Command;
+import com.mygdx.game.Command.CommandType;
 import com.mygdx.game.GameManager.GameManager;
 import com.mygdx.game.GameManager.Team;
 import com.mygdx.game.MoveSets.MoveSet;
+import com.mygdx.game.Utils.Constants;
 import com.mygdx.game.Utils.Helpers;
 import com.mygdx.game.Utils.IntPair;
+import java.util.ArrayList;
+import java.util.List;
 
-public class GamePiece extends Actor{
+public class DefaultPawn extends Actor implements GamePiece{
     //metadata
     public final GameManager gameManager;
     public final Board board;
     public IntPair indexOnBoard;
-    public final TextureRegion textureRegion;
+    public int gamePiecesID;
+    public TextureRegion textureRegion;
     public Team team;
     public Group possibleMovesAndTargets;
     public boolean isKing;
-    private final TextureRegion crown;
+    public final TextureRegion crown;
     public boolean isAlive;
 
     //stats
-    private final Group statsLabels;
-    private int hitPoints;
-    private int attackPoints;
-    private Label hitPointsLabel;
-    private Label attackPointsLabel;
+    public final Group statsLabels;
+    public int hitPoints;
+    public int attackPoints;
+    public Label hitPointsLabel;
+    public Label attackPointsLabel;
 
     //drag and drop
-    private final DragAndDrop dragAndDrop;
-    private final DragAndDrop.Payload payload;
+    public final DragAndDrop dragAndDrop;
+    public final DragAndDrop.Payload payload;
     public float preDragXPosition;
     public float preDragYPosition;
 
     Skin skin = new Skin(Gdx.files.internal("skins/uiskin.json"));
 
 
-    public GamePiece(Board board, IntPair coordinates, Team team, boolean isKing, int hitPoints, int attackPoints, GameManager gameManager){
+    public DefaultPawn(Board board, GameManager gameManager, IntPair coordinates, Team team, boolean isKing, int gamePiecesID){
         //metadata
         this.gameManager = gameManager;
-        this.textureRegion = gameManager.GetAssetManager().get("texturePacks/battleTextures.atlas", TextureAtlas.class).findRegion("black_player");
+        this.board = board;
+        this.team = team;
+        this.gamePiecesID = gamePiecesID;
+        Texture gamePieceTexture = new Texture(Gdx.files.internal("black_player.png"));
+        this.textureRegion = new TextureRegion(gamePieceTexture, (int) Constants.TILE_SIZE, (int)Constants.TILE_SIZE);
         this.setBounds(textureRegion.getRegionX(), textureRegion.getRegionY(),
                 textureRegion.getRegionWidth(), textureRegion.getRegionHeight());
         this.setPosition(board.GetBoardTilePosition(coordinates).x, board.GetBoardTilePosition(coordinates).y);
-        this.board = board;
-        this.team = team;
+
         this.isKing = isKing;
-        this.crown = gameManager.GetAssetManager().get("texturePacks/battleTextures.atlas", TextureAtlas.class).findRegion("king_crown");
+        this.crown = new TextureRegion(new Texture(Gdx.files.internal("king_crown.png")), 19, 32);
         this.isAlive = true;
         this.setName("GamePiece"+ coordinates.xVal + "," + coordinates.yVal);
 
@@ -64,7 +82,7 @@ public class GamePiece extends Actor{
         this.SetHitPoints(hitPoints);
         this.indexOnBoard = coordinates;
         this.statsLabels = new Group();
-        addHPandAttackLabels();
+        addHpAndAttackLabels();
 
         //drag and drop
         this.dragAndDrop = new DragAndDrop();
@@ -73,23 +91,19 @@ public class GamePiece extends Actor{
         dragAndDrop.addSource(new DragAndDrop.Source(this) {
             @Override
             public DragAndDrop.Payload dragStart(InputEvent event, float x, float y, int pointer) {
-                GamePiece gamePiece = (GamePiece) event.getListenerActor();
-                Gdx.app.log("GamePiece", "MovedThisTurn? :" + gamePiece.gameManager.movedThisTurn + ".");
-
-                //store position to place back after null drop
-                gamePiece.preDragXPosition = gamePiece.getX();
-                gamePiece.preDragYPosition = gamePiece.getY();
+                DefaultPawn defaultPawn = (DefaultPawn) event.getListenerActor();
+                Gdx.app.log("GamePiece", "MovedThisTurn? :" + defaultPawn.gameManager.movedThisTurn + ".");
 
                 RemoveGamePieceInfo();
 
-                if(gamePiece.gameManager.movedThisTurn){
+                if(defaultPawn.gameManager.movedThisTurn){
                     return null;
                 }
 
                 //TODO: try show info panel on a timer, start drag will cancel timer?
-                if (gamePiece.team == Team.FRIENDLY && gameManager.selectedMoveSet != null) {
-                        Arrow arrow = new Arrow(new Vector2(gamePiece.getX() + gamePiece.getWidth()/2,gamePiece.getY()+gamePiece.getHeight()/2), gamePiece.getStage(), gamePiece.gameManager);
-                        gamePiece.getStage().addActor(arrow);
+                if (defaultPawn.team == Team.FRIENDLY && gameManager.selectedMoveSet != null) {
+                        Arrow arrow = new Arrow(new Vector2(defaultPawn.getX() + defaultPawn.getWidth()/2, defaultPawn.getY()+ defaultPawn.getHeight()/2), defaultPawn.getStage());
+                        defaultPawn.getStage().addActor(arrow);
                         payload.setDragActor(arrow);
                         arrow.toFront();
                         dragAndDrop.setDragActorPosition(arrow.getWidth() / 2, -arrow.getHeight() / 2);
@@ -98,12 +112,12 @@ public class GamePiece extends Actor{
 
                         //draw possible moves
                         //only show targets if player can move
-                        if (gamePiece.team == Team.FRIENDLY && gamePiece.gameManager.selectedMoveSet != null) {
-                            gamePiece.possibleMovesAndTargets = new Group();
-                            gamePiece.possibleMovesAndTargets.setName("possibleMovesGroup" + gamePiece.getName());
-                            gamePiece.drawPossibleMoves(gameManager.selectedMoveSet);
-                            Gdx.app.log("GamePiece", "Possible moves group : " +  gamePiece.possibleMovesAndTargets.getChildren() + ".");
-                            gamePiece.toFront();
+                        if (defaultPawn.team == Team.FRIENDLY && defaultPawn.gameManager.selectedMoveSet != null) {
+                            defaultPawn.possibleMovesAndTargets = new Group();
+                            defaultPawn.possibleMovesAndTargets.setName("possibleMovesGroup" + defaultPawn.getName());
+                            defaultPawn.drawPossibleMoves(gameManager.selectedMoveSet);
+                            Gdx.app.log("GamePiece", "Possible moves group : " +  defaultPawn.possibleMovesAndTargets.getChildren() + ".");
+                            defaultPawn.toFront();
                             Gdx.app.log("GamePiece", "Drag targets created.");
                         }
                 }
@@ -118,15 +132,15 @@ public class GamePiece extends Actor{
             @Override
             public void dragStop(InputEvent event, float x, float y, int pointer, DragAndDrop.Payload payload, DragAndDrop.Target target) {
                 Gdx.app.log("GamePiece", "Drag stop fired, checking target.");
-                GamePiece gamePiece = (GamePiece) event.getListenerActor();
+                DefaultPawn defaultPawn = (DefaultPawn) event.getListenerActor();
                 if (payload.getDragActor() != null){
                     payload.getDragActor().remove();
                     ((Arrow) payload.getDragActor()).trailsGroup.remove();
                 }
                 if (target == null){
-                    gamePiece.setPosition(gamePiece.preDragXPosition, gamePiece.preDragYPosition);
-                    if (gamePiece.possibleMovesAndTargets != null){
-                        gamePiece.possibleMovesAndTargets.remove();
+                    defaultPawn.setPosition(defaultPawn.preDragXPosition, defaultPawn.preDragYPosition);
+                    if (defaultPawn.possibleMovesAndTargets != null){
+                        defaultPawn.possibleMovesAndTargets.remove();
                     }
                 }
             }
@@ -171,19 +185,46 @@ public class GamePiece extends Actor{
         }
         public void touchUp(InputEvent event, float x, float y, int pointer, int button){
             Gdx.app.log("GamePiece", "TouchUp fired.");
-            GamePiece gamePiece = (GamePiece) event.getListenerActor();
-            if(gamePiece == gamePiece.hit(x,y,false)){
-                gamePiece.DisplayGamePieceInfo();
+            DefaultPawn defaultPawn = (DefaultPawn) event.getListenerActor();
+            if(defaultPawn == defaultPawn.hit(x,y,false)){
+                defaultPawn.DisplayGamePieceInfo();
             }
         }
     };
 
+    public String GetName(){
+        return this.getName();
+    }
     ////////////////////////////////////////////////////////////////////////////////////////////////
     //                            INTERACTING WITH OTHER GAME PIECES                              //
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    public GameManager GetGameManager(){
+        return this.gameManager;
+    }
+
+    public Board GetBoard(){
+        return this.board;
+    }
+
+    public IntPair GetIndexOnBoard() {
+        return this.indexOnBoard;
+    }
+
+    public int GetGamePiecesID() {
+        return this.gamePiecesID;
+    }
+
+    public boolean GetIsKing() {
+        return this.isKing;
+    }
+
+    public boolean GetIsAlive() {
+        return this.isAlive;
+    }
+
     public int GetHitPoints() {
-        return hitPoints;
+        return this.hitPoints;
     }
 
     public void SetHitPoints(int hitPoints) {
@@ -192,9 +233,11 @@ public class GamePiece extends Actor{
         this.hitPointsLabel = new Label(String.valueOf(hitPoints), skin);
     }
 
+    @Override
     public int GetAttackPoints() {
         return attackPoints;
     }
+
 
     public void SetAttackPoints(int attackPoints) {
         this.attackPoints = attackPoints;
@@ -202,9 +245,9 @@ public class GamePiece extends Actor{
         this.hitPointsLabel = new Label(String.valueOf(attackPoints), skin);
     }
 
-    public boolean HitGamePiece(GamePiece enemyGamePiece){
-        Gdx.app.log("GamePiece", "GamePiece " + this.getName() + " is hitting " + enemyGamePiece.getName() + ".");
-        return enemyGamePiece.GetHitAndIsFatal(this.attackPoints);
+    public boolean HitGamePiece(GamePiece gamePiece){
+        Gdx.app.log("GamePiece", "GamePiece " + this.getName() + " is hitting " + gamePiece.GetName() + ".");
+        return gamePiece.GetHitAndIsFatal(this.attackPoints);
     }
 
     //TODO: I returned bool for something? to move game piece to enemy location?
@@ -212,7 +255,7 @@ public class GamePiece extends Actor{
         this.SetHitPoints(this.GetHitPoints() - AtkDmg);
         this.hitPointsLabel.remove();
         this.attackPointsLabel.remove();
-        this.addHPandAttackLabels();
+        this.addHpAndAttackLabels();
         if (this.hitPoints == 0){
             this.isAlive = false;
             this.hitPointsLabel.remove();
@@ -225,7 +268,7 @@ public class GamePiece extends Actor{
     }
 
     public List<IntPair> GetPossibleMoves(MoveSet moveSet){
-        List<IntPair> possibleMoves = new ArrayList<>();
+        List<IntPair> possibleMoves = new ArrayList<IntPair>();
         for (IntPair possibleMove : moveSet.possibleMoves){
             IntPair newMove = new IntPair(this.indexOnBoard.xVal + possibleMove.xVal, this.indexOnBoard.yVal + possibleMove.yVal);
             if (IsValidMove(possibleMove) && !gameManager.IsGamePieceAtBoardLocation(newMove)){
@@ -236,7 +279,7 @@ public class GamePiece extends Actor{
     }
 
     public List<IntPair> GetPossibleTargets(MoveSet moveSet){
-        List<IntPair> possibleMoves = new ArrayList<>();
+        List<IntPair> possibleMoves = new ArrayList<IntPair>();
         for (IntPair possibleMove : moveSet.possibleMoves){
             IntPair newMove = new IntPair(this.indexOnBoard.xVal + possibleMove.xVal, this.indexOnBoard.yVal + possibleMove.yVal);
             if (IsValidMove(possibleMove) && gameManager.IsTeamGamePieceAtBoardLocation(newMove, Team.ENEMY)){
@@ -269,45 +312,14 @@ public class GamePiece extends Actor{
         return isValid;
     }
 
-    public void JetpackJump(IntPair coordinates, float jumpDelay) {
-        Gdx.app.log("GamePiece", "GamePiece " + this.getName() + " is moving to " + coordinates.xVal + "," + coordinates.yVal + ".");
-        //squish GamePiece for cartoon-ish jump effect
-        ScaleToAction squish = Actions.scaleTo(1f, 0.75f, 0.03f);
 
-        //movement action (and undo squish)
-        ArcToAction arcMove = new ArcToAction();
-        arcMove.setPosition(board.GetBoardTilePosition(coordinates).x, board.GetBoardTilePosition(coordinates).y);
-        arcMove.setDuration(0.6f);
-        arcMove.setInterpolation(Interpolation.exp10);
-        ScaleToAction unSquish = Actions.scaleTo(1f, 1f, 0.6f);
-        ParallelAction jump = new ParallelAction(arcMove, unSquish);
-
-
-        //adding landing cloud effect and tile bounce
-        RunnableAction clouds = new RunnableAction();
-        clouds.setRunnable(() -> {
-            new LandingClouds(coordinates, GamePiece.this.gameManager);
-        });
-        RunnableAction tileBounce = new RunnableAction();
-        tileBounce.setRunnable(() -> {
-            if (GamePiece.this.board.GetBoardTileAtCoordinate(coordinates) != null) {
-                BoardTile tile = GamePiece.this.board.GetBoardTileAtCoordinate(coordinates);
-                tile.BounceWhenLandedOn();
-            }
-        });
-        ParallelAction landing = new ParallelAction(clouds, tileBounce);
-
-        //add clouds after movement
-        SequenceAction jetpackJump = new SequenceAction(Actions.delay(jumpDelay), squish, jump, landing);
-        this.addAction(jetpackJump);
-
-        this.indexOnBoard = coordinates;
-        this.setName("GamePiece"+coordinates.xVal+","+coordinates.yVal);
-        this.SetLabelPositions();
+    public void MoveToTile (IntPair coordinates, float jumpDelay) {
+        //TODO: add switch on field "MoveStyle", default to GamePieceJetpackJump
+        new GamePieceJetpackJump(this, coordinates, jumpDelay);
     }
 
     //currently only used for undo to instantly reset board
-    public void teleport(IntPair coordinateBoardPair) {
+    public void Teleport(IntPair coordinateBoardPair) {
         this.setPosition(board.GetBoardTilePosition(coordinateBoardPair).x, board.GetBoardTilePosition(coordinateBoardPair).y);
         this.indexOnBoard = coordinateBoardPair;
         this.setName("GamePiece"+coordinateBoardPair.xVal+","+coordinateBoardPair.yVal);
@@ -331,7 +343,7 @@ public class GamePiece extends Actor{
             this.attackPointsLabel.draw(batch, parentAlpha);
         }
         if (isKing) {
-            batch.draw(crown, this.getX() + this.getWidth() / 2 - 16, this.getY() + this.getHeight() - 10, 32, 19);
+            batch.draw(crown.getTexture(), this.getX() + this.getWidth() / 2 - 16, this.getY() + this.getHeight() - 10, 32, 19);
         }
     }
 
@@ -349,9 +361,9 @@ public class GamePiece extends Actor{
                 @Override
                 public void drop(DragAndDrop.Source source, DragAndDrop.Payload payload, float x, float y, int pointer) {
                     Gdx.app.log("GamePiece", "Drop fired : move.");
-                    GamePiece gamePiece = (GamePiece) source.getActor();
-                    gamePiece.gameManager.latestGamePieceCommand = new Command(gamePiece, possibleMoveTarget.indexOnBoard, possibleMoveTarget.type, gameManager.selectedMoveSet);
-                    gamePiece.gameManager.latestGamePieceCommand.Execute();
+                    DefaultPawn defaultPawn = (DefaultPawn) source.getActor();
+                    defaultPawn.gameManager.latestGamePieceCommand = new Command(defaultPawn, possibleMoveTarget.indexOnBoard, possibleMoveTarget.type, gameManager.selectedMoveSet);
+                    defaultPawn.gameManager.latestGamePieceCommand.Execute();
                     possibleMoveTarget.getParent().remove();
                 }
             });
@@ -369,9 +381,9 @@ public class GamePiece extends Actor{
                 @Override
                 public void drop(DragAndDrop.Source source, DragAndDrop.Payload payload, float x, float y, int pointer) {
                     Gdx.app.log("GamePiece", "Drop fired : hit.");
-                    GamePiece gamePiece = (GamePiece) source.getActor();
-                    gamePiece.gameManager.latestGamePieceCommand = new Command(gamePiece, possibleMoveHit.indexOnBoard, possibleMoveHit.type, gameManager.selectedMoveSet);
-                    gamePiece.gameManager.latestGamePieceCommand.Execute();
+                    DefaultPawn defaultPawn = (DefaultPawn) source.getActor();
+                    defaultPawn.gameManager.latestGamePieceCommand = new Command(defaultPawn, possibleMoveHit.indexOnBoard, possibleMoveHit.type, gameManager.selectedMoveSet);
+                    defaultPawn.gameManager.latestGamePieceCommand.Execute();
                     //if execute
                     possibleMoveHit.getParent().remove();
                 }
@@ -381,7 +393,7 @@ public class GamePiece extends Actor{
         this.getStage().addActor(this.possibleMovesAndTargets);
     }
 
-    public void addHPandAttackLabels(){
+    public void addHpAndAttackLabels(){
         //TODO: try using TextButton and setDisabled
         this.hitPointsLabel = new Label(String.valueOf(this.hitPoints), skin, "hpStatsLabel");
         this.attackPointsLabel = new Label(String.valueOf(this.attackPoints), skin, "atkStatsLabel");
@@ -402,12 +414,13 @@ public class GamePiece extends Actor{
         this.SetLabelPositions();
     }
 
-    private void SetLabelPositions (){
+    public void SetLabelPositions (){
         attackPointsLabel.setBounds(this.getX() + 2, this.getY() + 2, 20, 20);
         attackPointsLabel.setAlignment(Align.center);
         hitPointsLabel.setBounds(this.getX()+this.getWidth() - 22,this.getY() + 2, 20, 20);
         hitPointsLabel.setAlignment(Align.center);
     }
+
 
     public void DisplayGamePieceInfo(){
         TextButton gamePieceInfo = new TextButton("", skin);
@@ -436,33 +449,4 @@ public class GamePiece extends Actor{
         }
         Gdx.app.log("GamePiece", "GamePiece removed.");
     }
-=======
-public interface GamePiece {
-    //get MetaData
-    GameManager GetGameManager();
-    Board GetBoard();
-    IntPair GetIndexOnBoard();
-    int GetGamePiecesID();
-    boolean GetIsKing();
-    boolean GetIsAlive();
-    int GetHitPoints();
-    void SetHitPoints(int hitPoints);
-    int GetAttackPoints();
-    void SetAttackPoints(int atkPoints);
-
-
-    //housekeeping
-    void addHpAndAttackLabels();
-    void SetLabelPositions();
-    String GetName();
-
-
-    //interactions
-    boolean HitGamePiece(GamePiece gamePiece);
-    boolean GetHitAndIsFatal(int attackDamage);
-    void MoveToTile(IntPair coordinates, float jumpDelay);
-    void Teleport(IntPair coordinateBoardPair);
-    boolean IsValidMove(IntPair intPair);
-    boolean IsValidEnemyMove(IntPair intPair);
-
 }

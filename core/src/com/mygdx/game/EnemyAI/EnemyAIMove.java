@@ -1,6 +1,7 @@
 package com.mygdx.game.EnemyAI;
 
 import com.mygdx.game.Command.CommandType;
+import com.mygdx.game.GamePiece.DefaultPawn;
 import com.mygdx.game.GamePiece.GamePiece;
 import com.mygdx.game.MoveSets.MoveSet;
 import com.mygdx.game.Utils.IntPair;
