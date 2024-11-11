@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
@@ -31,7 +32,6 @@ import com.mygdx.game.Command.CommandType;
 import com.mygdx.game.GameManager.GameManager;
 import com.mygdx.game.GameManager.Team;
 import com.mygdx.game.MoveSets.MoveSet;
-import com.mygdx.game.Utils.Constants;
 import com.mygdx.game.Utils.Helpers;
 import com.mygdx.game.Utils.IntPair;
 import java.util.ArrayList;
@@ -68,15 +68,14 @@ public class GamePiece extends Actor{
     public GamePiece(Board board, IntPair coordinates, Team team, boolean isKing, int hitPoints, int attackPoints, GameManager gameManager){
         //metadata
         this.gameManager = gameManager;
-        Texture gamePieceTexture = gameManager.GetAssetManager().get("black_player.png", Texture.class);
-        this.textureRegion = new TextureRegion(gamePieceTexture, (int) Constants.TILE_SIZE, (int)Constants.TILE_SIZE);
+        this.textureRegion = gameManager.GetAssetManager().get("texturePacks/battleTextures.atlas", TextureAtlas.class).findRegion("black_player");
         this.setBounds(textureRegion.getRegionX(), textureRegion.getRegionY(),
                 textureRegion.getRegionWidth(), textureRegion.getRegionHeight());
         this.setPosition(board.GetBoardTilePosition(coordinates).x, board.GetBoardTilePosition(coordinates).y);
         this.board = board;
         this.team = team;
         this.isKing = isKing;
-        this.crown = new TextureRegion(new Texture(Gdx.files.internal("king_crown.png")), 19, 32);
+        this.crown = gameManager.GetAssetManager().get("texturePacks/battleTextures.atlas", TextureAtlas.class).findRegion("king_crown");
         this.isAlive = true;
         this.setName("GamePiece"+ coordinates.xVal + "," + coordinates.yVal);
 
@@ -109,7 +108,7 @@ public class GamePiece extends Actor{
 
                 //TODO: try show info panel on a timer, start drag will cancel timer?
                 if (gamePiece.team == Team.FRIENDLY && gameManager.selectedMoveSet != null) {
-                        Arrow arrow = new Arrow(new Vector2(gamePiece.getX() + gamePiece.getWidth()/2,gamePiece.getY()+gamePiece.getHeight()/2), gamePiece.getStage());
+                        Arrow arrow = new Arrow(new Vector2(gamePiece.getX() + gamePiece.getWidth()/2,gamePiece.getY()+gamePiece.getHeight()/2), gamePiece.getStage(), gamePiece.gameManager);
                         gamePiece.getStage().addActor(arrow);
                         payload.setDragActor(arrow);
                         arrow.toFront();
@@ -246,7 +245,7 @@ public class GamePiece extends Actor{
     }
 
     public List<IntPair> GetPossibleMoves(MoveSet moveSet){
-        List<IntPair> possibleMoves = new ArrayList<IntPair>();
+        List<IntPair> possibleMoves = new ArrayList<>();
         for (IntPair possibleMove : moveSet.possibleMoves){
             IntPair newMove = new IntPair(this.indexOnBoard.xVal + possibleMove.xVal, this.indexOnBoard.yVal + possibleMove.yVal);
             if (IsValidMove(possibleMove) && !gameManager.IsGamePieceAtBoardLocation(newMove)){
@@ -257,7 +256,7 @@ public class GamePiece extends Actor{
     }
 
     public List<IntPair> GetPossibleTargets(MoveSet moveSet){
-        List<IntPair> possibleMoves = new ArrayList<IntPair>();
+        List<IntPair> possibleMoves = new ArrayList<>();
         for (IntPair possibleMove : moveSet.possibleMoves){
             IntPair newMove = new IntPair(this.indexOnBoard.xVal + possibleMove.xVal, this.indexOnBoard.yVal + possibleMove.yVal);
             if (IsValidMove(possibleMove) && gameManager.IsTeamGamePieceAtBoardLocation(newMove, Team.ENEMY)){
@@ -352,7 +351,7 @@ public class GamePiece extends Actor{
             this.attackPointsLabel.draw(batch, parentAlpha);
         }
         if (isKing) {
-            batch.draw(crown.getTexture(), this.getX() + this.getWidth() / 2 - 16, this.getY() + this.getHeight() - 10, 32, 19);
+            batch.draw(crown, this.getX() + this.getWidth() / 2 - 16, this.getY() + this.getHeight() - 10, 32, 19);
         }
     }
 

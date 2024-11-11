@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.mygdx.game.MyChessGame;
 
@@ -28,7 +29,7 @@ public class MainMenuScreen implements Screen{
 
         loadingScreen = new Texture(Gdx.files.internal("loading_screen.png"));
 
-        game.GetAssetManager().load("black_player.png", Texture.class);
+        game.GetAssetManager().load("texturePacks/battleTextures.atlas", TextureAtlas.class);
         Gdx.app.log("MainMenu", "Game Started");
     }
 

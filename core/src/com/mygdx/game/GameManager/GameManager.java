@@ -2,13 +2,13 @@ package com.mygdx.game.GameManager;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.mygdx.game.Board.Board;
-import com.mygdx.game.BoardUI.MoveCardLocations;
 import com.mygdx.game.BoardUI.MoveConfirmation;
 import com.mygdx.game.BoardUI.MoveSelectCards;
 import com.mygdx.game.BoardUI.TurnCounterMenu;
@@ -17,7 +17,6 @@ import com.mygdx.game.Command.Command;
 import com.mygdx.game.EnemyAI.EnemyAI;
 import com.mygdx.game.GamePiece.GamePiece;
 import com.mygdx.game.MoveSets.MoveSet;
-import com.mygdx.game.MyChessGame;
 import com.mygdx.game.Screens.GameScreen;
 import com.mygdx.game.Utils.IntPair;
 import java.util.ArrayList;
@@ -30,8 +29,8 @@ public class GameManager extends Actor{
     final GameScreen gameScreen;
 
     //background
-    public Texture smallStar;
-    public Texture mediumStar;
+    public TextureRegion smallStar;
+    public TextureRegion mediumStar;
 
     //turn
     public int turnNumber = 1;
@@ -50,7 +49,7 @@ public class GameManager extends Actor{
     public List<MoveSet> availableMoveSets;
     public List<MoveSet> enemyMoves = new ArrayList<>(2);
     public List<MoveSet> freeMove = new ArrayList<>(1);
-    public List<MoveSet> playerMoves = new ArrayList<>(2);;
+    public List<MoveSet> playerMoves = new ArrayList<>(2);
     public MoveSet selectedMoveSet = null;
 
     //menu
@@ -62,8 +61,8 @@ public class GameManager extends Actor{
         this.stage = stage;
         this.board = board;
         this.gameScreen = gameScreen;
-        smallStar = new Texture(Gdx.files.internal("smallstar1.png"));
-        mediumStar = new Texture(Gdx.files.internal("mediumstar.png"));
+        smallStar = GetAssetManager().get("texturePacks/battleTextures.atlas", TextureAtlas.class).findRegion("smallstar1");
+        mediumStar = GetAssetManager().get("texturePacks/battleTextures.atlas", TextureAtlas.class).findRegion("mediumstar.png");
         this.availableMoveSets = availableMoveSets;
         AssignStartingChemicals();
         this.moveSelectCards = new MoveSelectCards(this, stage);
@@ -200,11 +199,11 @@ public class GameManager extends Actor{
     }
 
     public void DisplayPlayerMessage(String headerMessage){
-        DisplayMessage message = new DisplayMessage(this, headerMessage, 3f);
+        new DisplayMessage(this, headerMessage, 3f);
     }
 
     public void DisplayPlayerMessage(String headerMessage, String subMessage){
-        DisplayMessage message = new DisplayMessage(this, headerMessage, subMessage, 3f);
+        new DisplayMessage(this, headerMessage, subMessage, 3f);
     }
 
     public void EndPlayerTurn(){

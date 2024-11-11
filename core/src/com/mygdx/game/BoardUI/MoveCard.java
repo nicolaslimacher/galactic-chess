@@ -2,9 +2,8 @@ package com.mygdx.game.BoardUI;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector2;
@@ -13,20 +12,12 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.actions.MoveToAction;
-import com.badlogic.gdx.scenes.scene2d.actions.ParallelAction;
-import com.badlogic.gdx.scenes.scene2d.actions.RunnableAction;
-import com.badlogic.gdx.scenes.scene2d.actions.ScaleToAction;
 import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Align;
-import com.mygdx.game.Actions.ArcToAction;
-import com.mygdx.game.Board.BoardTile;
 import com.mygdx.game.GameManager.GameManager;
-import com.mygdx.game.GamePiece.GamePiece;
-import com.mygdx.game.GamePiece.LandingClouds;
 import com.mygdx.game.MoveSets.MoveSet;
-import com.mygdx.game.Utils.IntPair;
 
 public class MoveCard extends Actor {
     public MoveSet moveSet;
@@ -35,13 +26,13 @@ public class MoveCard extends Actor {
     TextureRegion textureRegion;
     Label moveSymbolLabel, moveNameLabel;
     Skin moveSelectSkin;
-    PossibleMoveImageCreator possibleMoveImage;
     public MoveCard(MoveSet moveSet, GameManager gameManager, boolean selectable, float x, float y) {
         this.moveSet = moveSet;
         this.gameManager = gameManager;
         this.selectable = selectable;
-        Texture texture = new Texture(Gdx.files.internal("moveCardBackground.png"));
-        textureRegion = new TextureRegion(texture, (int) MoveCardLocations.CARD_WIDTH, (int) MoveCardLocations.CHEMICAL_CARDS_HEIGHT);
+        textureRegion = gameManager.GetAssetManager().get("texturePacks/battleTextures.atlas", TextureAtlas.class).findRegion("moveCardBackground");
+        this.setWidth((int) MoveCardLocations.CARD_WIDTH);
+        this.setHeight((int) MoveCardLocations.CHEMICAL_CARDS_HEIGHT);
         this.setBounds(textureRegion.getRegionX(), textureRegion.getRegionY(),
                 textureRegion.getRegionWidth(), textureRegion.getRegionHeight());
         this.setPosition(x, y);

@@ -4,6 +4,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.ScreenUtils;
@@ -17,6 +19,7 @@ import com.mygdx.game.GameManager.Team;
 import com.mygdx.game.MoveSets.MoveSet;
 import com.mygdx.game.GamePiece.GamePiece;
 import com.mygdx.game.MyChessGame;
+import com.mygdx.game.Utils.Constants;
 import com.mygdx.game.Utils.Helpers;
 import com.mygdx.game.Utils.IntPair;
 import java.util.ArrayList;
@@ -33,20 +36,13 @@ public class GameScreen implements Screen {
 	Texture fightDialog;
 	List<MoveSet> availableMoveSets;
 	private long lastDropTimeSmall, timeToSmallCreation, lastDropTimeMedium, timeToMediumCreation;
-	private final Texture starryBackground;
+	private final TextureRegion starryBackground;
 
 
 	public GameScreen(final MyChessGame game, final Stage stage) {
 		this.game = game;
 		this.stage = stage;
 		Gdx.input.setInputProcessor(stage);
-
-		//background stars
-		starryBackground = new Texture(Gdx.files.internal("starrybackground.png"));
-		lastDropTimeSmall = TimeUtils.millis();
-		timeToSmallCreation = 750L;
-		lastDropTimeMedium = TimeUtils.millis();
-		timeToMediumCreation = 2000L;
 
 		availableMoveSets = Helpers.GetRandomMoveSets(0,15);
 		for (MoveSet moveSet: availableMoveSets) {
@@ -99,7 +95,14 @@ public class GameScreen implements Screen {
 
 		batch = new SpriteBatch();
 
+		//background stars
 		startTime = TimeUtils.millis();
+
+		starryBackground = gameManager.GetAssetManager().get("texturePacks/battleTextures.atlas", TextureAtlas.class).findRegion("starrybackground");
+		lastDropTimeSmall = TimeUtils.millis();
+		timeToSmallCreation = 750L;
+		lastDropTimeMedium = TimeUtils.millis();
+		timeToMediumCreation = 2000L;
 
 		gameManager.DisplayPlayerMessage("FIGHT!", "now");
 
@@ -113,7 +116,7 @@ public class GameScreen implements Screen {
 		batch.begin();
 		//for performance reasons disable blend before drawing background
 		batch.disableBlending();
-		batch.draw(starryBackground,0,0);
+		batch.draw(starryBackground,0,0, Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT);
 		batch.enableBlending();
 
 		stage.draw();
@@ -162,7 +165,6 @@ public class GameScreen implements Screen {
 		stage.dispose();
 		fightDialog.dispose();
 		batch.dispose();
-		starryBackground.dispose();
 		Gdx.app.log("GameScreen", "Dispose called.");
 	}
 
