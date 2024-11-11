@@ -1,9 +1,7 @@
 package com.mygdx.game.Screens;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
@@ -14,7 +12,6 @@ public class EndGameScreen implements Screen{
     OrthographicCamera camera;
     BitmapFont font;
     SpriteBatch batch;
-    Texture loadingScreen;
 
     public EndGameScreen(final MyChessGame game) {
         this.game = game;
@@ -24,8 +21,6 @@ public class EndGameScreen implements Screen{
 
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 800, 480);
-
-        loadingScreen = new Texture(Gdx.files.internal("loading_screen.png"));
     }
 
     @Override
@@ -74,7 +69,6 @@ public class EndGameScreen implements Screen{
     @Override
     public void dispose() {
         batch.dispose();
-        loadingScreen.dispose();
         font.dispose();
     }
 }

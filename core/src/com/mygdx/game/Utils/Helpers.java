@@ -21,7 +21,7 @@ public class Helpers {
 
     public static List<MoveSet> GetRandomMoveSets(int lowerBound, int upperBound){
         List<MoveSet> availableMoveSets = new ArrayList<>(5);
-        MoveSet[] moveSets = json.fromJson(MoveSet[].class, Gdx.files.internal("MoveSet.json"));
+        MoveSet[] moveSets = json.fromJson(MoveSet[].class, Gdx.files.internal("JSONs/MoveSet.json"));
         for ( int moveSetNumber : Helpers.GetShuffledIntsInRange(lowerBound,upperBound).subList(0,5) ) {
             availableMoveSets.add(moveSets[moveSetNumber]);
         }

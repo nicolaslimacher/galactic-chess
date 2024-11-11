@@ -1,9 +1,8 @@
 package com.mygdx.game.GamePiece;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.mygdx.game.Command.CommandType;
@@ -26,12 +25,13 @@ public class PossibleMove extends Actor {
         this.type = type;
         this.gameManager = parentDefaultPawn.gameManager;
         if (this.type == CommandType.MOVE){
-            Texture gamePieceTexture = parentDefaultPawn.textureRegion.getTexture();
-            this.textureRegion = new TextureRegion(gamePieceTexture, (int) Constants.TILE_SIZE, (int)Constants.TILE_SIZE);
+
+            this.textureRegion = parentGamePiece.textureRegion;
             this.transparency = 0.6f;
         }else{
-            Texture texture = new Texture(Gdx.files.internal("target.png"));
-            this.textureRegion = new TextureRegion(texture, (int) Constants.TILE_SIZE, (int)Constants.TILE_SIZE);
+            this.textureRegion = gameManager.GetAssetManager().get("texturePacks/battleTextures.atlas", TextureAtlas.class).findRegion("target");
+            this.setWidth((int) Constants.TILE_SIZE);
+            this.setHeight((int)Constants.TILE_SIZE);
             this.transparency = 1f;
             this.targetDefaultPawn = gameManager.board.GetGamePieceAtCoordinate(coordinates);
         }

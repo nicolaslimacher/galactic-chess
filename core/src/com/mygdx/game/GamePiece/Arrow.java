@@ -3,8 +3,8 @@ package com.mygdx.game.GamePiece;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Bezier;
 import com.badlogic.gdx.math.MathUtils;
@@ -12,13 +12,15 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.mygdx.game.GameManager.GameManager;
+
 import java.util.ArrayList;
 import java.util.stream.IntStream;
 
 public class Arrow extends Actor {
     TextureRegion textureRegion;
-    private Vector2 p0, p1, p2, p3;
-    private Bezier bezier;
+    private final Vector2 p0, p1, p2, p3;
+    private final Bezier bezier;
     Vector2 pos = new Vector2(); //overwritten by bezier.valueAt
     final int arrowTrailNum = 9;
     final Vector2 p1transform = new Vector2(-0.3f, 0.8f);
@@ -27,8 +29,8 @@ public class Arrow extends Actor {
     ArrayList<ArrowTrail> trails;
 
 
-    public Arrow(Vector2 pos, Stage stage) {
-        this.textureRegion = new TextureRegion(new Texture(Gdx.files.internal("small_arrow.png")));
+    public Arrow(Vector2 pos, Stage stage, GameManager gameManager) {
+        this.textureRegion = gameManager.GetAssetManager().get("texturePacks/battleTextures.atlas", TextureAtlas.class).findRegion("small_arrow");
         this.setBounds(pos.x,pos.y,64,64);
         this.setOrigin(this.getWidth()/2, this.getHeight()/2);
         Gdx.app.log("GamePiece", "Drag arrow created.");
@@ -48,9 +50,9 @@ public class Arrow extends Actor {
         trails = new ArrayList<>();
 
         IntStream.range(0, arrowTrailNum).forEachOrdered(n -> {
-            float t = (1f / (arrowTrailNum+1))*(n+1);;
+            float t = (1f / (arrowTrailNum+1))*(n+1);
             bezier.valueAt(pos, t);
-            ArrowTrail trail = new ArrowTrail(pos);
+            ArrowTrail trail = new ArrowTrail(pos, gameManager);
             trail.setScale(0.3f + ((0.3f / arrowTrailNum) * n));
             trails.add(trail);
             trailsGroup.addActor(trail);
@@ -95,7 +97,6 @@ public class Arrow extends Actor {
     private float GetBezierCurveRotation(){
         ArrowTrail lastArrowTrail = trails.get(trails.size()-1);
         Vector2 lastArrowTrailPos = new Vector2(lastArrowTrail.getX() + (lastArrowTrail.getWidth() * lastArrowTrail.getScaleX())/2, lastArrowTrail.getY() + (lastArrowTrail.getHeight() * lastArrowTrail.getScaleY())/2);
-        float angle = (float) (MathUtils.radiansToDegrees * Math.atan2(p3.y - lastArrowTrailPos.y, p3.x - lastArrowTrailPos.x));
-        return angle;
+        return (float) (MathUtils.radiansToDegrees * Math.atan2(p3.y - lastArrowTrailPos.y, p3.x - lastArrowTrailPos.x));
     }
 }

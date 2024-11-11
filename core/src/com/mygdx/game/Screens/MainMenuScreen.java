@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.mygdx.game.MyChessGame;
 
@@ -27,6 +28,8 @@ public class MainMenuScreen implements Screen{
         camera.setToOrtho(false, 800, 480);
 
         loadingScreen = new Texture(Gdx.files.internal("loading_screen.png"));
+
+        game.GetAssetManager().load("texturePacks/battleTextures.atlas", TextureAtlas.class);
         Gdx.app.log("MainMenu", "Game Started");
     }
 
@@ -51,12 +54,12 @@ public class MainMenuScreen implements Screen{
         batch.draw(loadingScreen, 0,0);
         batch.end();
 
-
-        //pass to character selection
-        if (Gdx.input.isTouched()) {
-            game.setScreen(new CharacterSelectScreen(game, game.stage));
-            Gdx.app.log("MainMenu", "Input received, creating GameScreen instance.");
-            dispose();
+        if(game.GetAssetManager().update()) {
+            if (Gdx.input.isTouched()) {
+                game.setScreen(new GameScreen(game, game.stage));
+                Gdx.app.log("MainMenu", "Input received, creating GameScreen instance.");
+                dispose();
+            }
         }
     }
 

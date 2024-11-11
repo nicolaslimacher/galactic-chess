@@ -4,6 +4,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.ScreenUtils;
@@ -18,6 +20,8 @@ import com.mygdx.game.GamePiece.GamePiece;
 import com.mygdx.game.MoveSets.MoveSet;
 import com.mygdx.game.GamePiece.DefaultPawn;
 import com.mygdx.game.MyChessGame;
+import com.mygdx.game.Utils.Constants;
+import com.mygdx.game.Utils.Helpers;
 import com.mygdx.game.Utils.IntPair;
 
 import java.util.ArrayList;
@@ -34,7 +38,7 @@ public class GameScreen implements Screen {
 	Texture fightDialog;
 	List<MoveSet> availableMoveSets;
 	private long lastDropTimeSmall, timeToSmallCreation, lastDropTimeMedium, timeToMediumCreation;
-	private final Texture starryBackground;
+	private final TextureRegion starryBackground;
 
 
 	public GameScreen(final MyChessGame game, final Stage stage, List<MoveSet> availableMoveSets) {
@@ -42,6 +46,7 @@ public class GameScreen implements Screen {
 		this.stage = stage;
 		Gdx.input.setInputProcessor(stage);
 
+		availableMoveSets = Helpers.GetRandomMoveSets(0,15);
 		this.availableMoveSets = availableMoveSets;
 		for (MoveSet moveSet: availableMoveSets) {
 			Gdx.app.log("GameScreen", "Move Set Chosen: " + moveSet.getName() + ".");
@@ -53,7 +58,6 @@ public class GameScreen implements Screen {
 		timeToSmallCreation = 750L;
 		lastDropTimeMedium = TimeUtils.millis();
 		timeToMediumCreation = 2000L;
-
 
 		//adding actors
 		board = new Board(5, 5);
@@ -102,7 +106,14 @@ public class GameScreen implements Screen {
 
 		batch = new SpriteBatch();
 
+		//background stars
 		startTime = TimeUtils.millis();
+
+		starryBackground = gameManager.GetAssetManager().get("texturePacks/battleTextures.atlas", TextureAtlas.class).findRegion("starrybackground");
+		lastDropTimeSmall = TimeUtils.millis();
+		timeToSmallCreation = 750L;
+		lastDropTimeMedium = TimeUtils.millis();
+		timeToMediumCreation = 2000L;
 
 		gameManager.DisplayPlayerMessage("FIGHT!", "now");
 
@@ -116,7 +127,7 @@ public class GameScreen implements Screen {
 		batch.begin();
 		//for performance reasons disable blend before drawing background
 		batch.disableBlending();
-		batch.draw(starryBackground,0,0);
+		batch.draw(starryBackground,0,0, Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT);
 		batch.enableBlending();
 
 		stage.draw();
@@ -144,6 +155,10 @@ public class GameScreen implements Screen {
 		//rainMusic.play();
 	}
 
+	public MyChessGame GetGame() {
+		return game;
+	}
+
 	@Override
 	public void hide(){
 
@@ -161,7 +176,6 @@ public class GameScreen implements Screen {
 		stage.dispose();
 		fightDialog.dispose();
 		batch.dispose();
-		starryBackground.dispose();
 		Gdx.app.log("GameScreen", "Dispose called.");
 	}
 

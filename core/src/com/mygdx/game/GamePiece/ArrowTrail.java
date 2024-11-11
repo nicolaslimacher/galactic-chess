@@ -1,19 +1,21 @@
 package com.mygdx.game.GamePiece;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.mygdx.game.GameManager.GameManager;
 
 public class ArrowTrail extends Actor {
 
     public final TextureRegion textureRegion;
 
-    public ArrowTrail(Vector2 pos) {
-        this.textureRegion = new TextureRegion(new Texture(Gdx.files.internal("black_player.png")), 64, 64);
+    public ArrowTrail(Vector2 pos, GameManager gameManager) {
+        this.textureRegion = gameManager.GetAssetManager().get("texturePacks/battleTextures.atlas", TextureAtlas.class).findRegion("black_player");
+        this.setWidth(64);
+        this.setHeight(64);
         this.setBounds(pos.x, pos.y, 32, 32);
         //this.setDebug(true);
     }

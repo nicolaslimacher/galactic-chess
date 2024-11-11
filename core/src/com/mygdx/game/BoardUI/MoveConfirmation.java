@@ -2,8 +2,8 @@ package com.mygdx.game.BoardUI;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -32,8 +32,7 @@ public class MoveConfirmation extends Actor {
 
     public MoveConfirmation(GameManager gameManager, MoveSet moveSet) {
         moveConfirmationSkin = new Skin(Gdx.files.internal("skins/uiskin.json"));
-        Texture bottleImage = new Texture(Gdx.files.internal("bottle.png"));
-        this.textureRegion = new TextureRegion(bottleImage, 480, 1000);
+        this.textureRegion = gameManager.GetAssetManager().get("texturePacks/battleTextures.atlas", TextureAtlas.class).findRegion("bottle");
         this.setWidth(MoveCardLocations.CHEMICAL_CARDS_WIDTH);
         this.setHeight(MoveCardLocations.ALL_CHEMICAL_TOP - MoveCardLocations.ALL_CHEMICAL_BOTTOM);
         this.setPosition(MoveCardLocations.CHEMICAL_START_LOCATION_X, MoveCardLocations.ALL_CHEMICAL_BOTTOM);
@@ -107,7 +106,8 @@ public class MoveConfirmation extends Actor {
     public void draw(Batch batch, float parentAlpha){
         Color color = getColor();
         batch.setColor(color.r, color.g, color.b, 1f);
-        batch.draw(textureRegion, getX(), getY(), getWidth(), getHeight());
+        batch.draw(textureRegion, getX(), getY(), getOriginX(), getOriginY(),
+                getWidth(), getHeight(), getScaleX(), getScaleY(), getRotation());
     }
 
     public void ReturnToMoveSelectCards(){

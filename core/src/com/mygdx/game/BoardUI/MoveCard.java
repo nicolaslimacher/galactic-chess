@@ -2,8 +2,8 @@ package com.mygdx.game.BoardUI;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector2;
@@ -26,13 +26,13 @@ public class MoveCard extends Actor {
     TextureRegion textureRegion;
     Label moveSymbolLabel, moveNameLabel;
     Skin moveSelectSkin;
-    PossibleMoveImageCreator possibleMoveImage;
     public MoveCard(MoveSet moveSet, GameManager gameManager, boolean selectable, float x, float y) {
         this.moveSet = moveSet;
         this.gameManager = gameManager;
         this.selectable = selectable;
-        Texture texture = new Texture(Gdx.files.internal("moveCardBackground.png"));
-        textureRegion = new TextureRegion(texture, (int) MoveCardLocations.CARD_WIDTH, (int) MoveCardLocations.CHEMICAL_CARDS_HEIGHT);
+        textureRegion = gameManager.GetAssetManager().get("texturePacks/battleTextures.atlas", TextureAtlas.class).findRegion("moveCardBackground");
+        this.setWidth((int) MoveCardLocations.CARD_WIDTH);
+        this.setHeight((int) MoveCardLocations.CHEMICAL_CARDS_HEIGHT);
         this.setBounds(textureRegion.getRegionX(), textureRegion.getRegionY(),
                 textureRegion.getRegionWidth(), textureRegion.getRegionHeight());
         this.setPosition(x, y);
