@@ -55,6 +55,9 @@ public class MainMenuScreen implements Screen{
         batch.end();
 
         if(game.GetAssetManager().update()) {
+            batch.begin();
+            font.draw(batch, "You can actually click to start now", 100, 100);
+            batch.end();
             if (Gdx.input.isTouched()) {
                 game.setScreen(new GameScreen(game, game.stage));
                 Gdx.app.log("MainMenu", "Input received, creating GameScreen instance.");

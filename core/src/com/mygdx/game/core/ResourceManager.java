@@ -1,0 +1,28 @@
+package com.mygdx.game.core;
+
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.assets.loaders.FileHandleResolver;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGeneratorLoader;
+import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
+import com.mygdx.game.core.ui.SkinLoader;
+import com.mygdx.game.core.ui.TTFSkin;
+
+
+public class ResourceManager extends AssetManager {
+    public ResourceManager() {
+        super();
+
+        final FileHandleResolver resolver = getFileHandleResolver();
+        setLoader(FreeTypeFontGenerator.class, new FreeTypeFontGeneratorLoader(resolver));
+        setLoader(BitmapFont.class, ".ttf", new FreetypeFontLoader(resolver));
+        setLoader(TTFSkin.class, new SkinLoader(resolver));
+    }
+
+    public TTFSkin loadSkinSynchronously(final String skinJsonFilePath, final String ttfFilePath, final int... fontSizesToCreate) {
+        load(skinJsonFilePath, TTFSkin.class, new SkinLoader.SkinParameter(ttfFilePath, fontSizesToCreate));
+        finishLoading();
+        return get(skinJsonFilePath, TTFSkin.class);
+    }
+}
