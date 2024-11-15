@@ -18,7 +18,6 @@ import com.mygdx.game.GameManager.GameManager;
 import com.mygdx.game.GameManager.Team;
 import com.mygdx.game.GamePiece.GamePiece;
 import com.mygdx.game.MoveSets.MoveSet;
-import com.mygdx.game.GamePiece.DefaultPawn;
 import com.mygdx.game.MyChessGame;
 import com.mygdx.game.Utils.Constants;
 import com.mygdx.game.Utils.Helpers;
@@ -41,19 +40,19 @@ public class GameScreen implements Screen {
 	private final TextureRegion starryBackground;
 
 
-	public GameScreen(final MyChessGame game, final Stage stage, List<MoveSet> availableMoveSets) {
+	public GameScreen(final MyChessGame game, final Stage stage) {
 		this.game = game;
 		this.stage = stage;
 		Gdx.input.setInputProcessor(stage);
 
 		availableMoveSets = Helpers.GetRandomMoveSets(0,15);
-		this.availableMoveSets = availableMoveSets;
+		//this.availableMoveSets = availableMoveSets;
 		for (MoveSet moveSet: availableMoveSets) {
 			Gdx.app.log("GameScreen", "Move Set Chosen: " + moveSet.getName() + ".");
 		}
 
 		//background stars
-		starryBackground = new Texture(Gdx.files.internal("starrybackground.png"));
+		//starryBackground = new TextureRegion(new Texture(Gdx.files.internal("starrybackground.png")));
 		lastDropTimeSmall = TimeUtils.millis();
 		timeToSmallCreation = 750L;
 		lastDropTimeMedium = TimeUtils.millis();
@@ -68,16 +67,16 @@ public class GameScreen implements Screen {
 
 		if (board.boardColumns > 0) {
 			for (int i = 0; i < board.boardColumns; i++) {
-				DefaultPawn defaultPawn;
+				GamePiece gamePiece;
 				if (i == 2){
 					//add king
-					defaultPawn = new DefaultPawn(board, gameManager, new IntPair(i, 0), Team.FRIENDLY, true,  1);
+					gamePiece = new GamePiece(board, new IntPair(i, 0), Team.FRIENDLY, true,  1,1, gameManager);
 				}else {
 					//add pawns
-					defaultPawn = new DefaultPawn(board, gameManager, new IntPair(i, 0), Team.FRIENDLY, false,  1);
+					gamePiece = new GamePiece(board, new IntPair(i, 0), Team.FRIENDLY, false,  1,1, gameManager);
 				}
-				friendlyPieces.add(defaultPawn);
-				stage.addActor(defaultPawn);
+				friendlyPieces.add(gamePiece);
+				stage.addActor(gamePiece);
                 }
 
 
@@ -90,7 +89,7 @@ public class GameScreen implements Screen {
 //		enemyPieces.add(enemyKing1);
 //		stage.addActor(enemyKing1);
 
-		DefaultPawn enemyKing1 = new DefaultPawn(board, gameManager, new IntPair(2, 4), Team.ENEMY, true,1);
+		GamePiece enemyKing1 = new GamePiece(board, new IntPair(2, 4), Team.ENEMY, true,1,1, gameManager);
 		enemyPieces.add(enemyKing1);
 		stage.addActor(enemyKing1);
 

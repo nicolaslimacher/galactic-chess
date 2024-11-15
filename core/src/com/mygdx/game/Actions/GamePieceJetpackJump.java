@@ -8,24 +8,24 @@ import com.badlogic.gdx.scenes.scene2d.actions.RunnableAction;
 import com.badlogic.gdx.scenes.scene2d.actions.ScaleToAction;
 import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
 import com.mygdx.game.Board.BoardTile;
-import com.mygdx.game.GamePiece.DefaultPawn;
+import com.mygdx.game.GamePiece.GamePiece;
 import com.mygdx.game.GamePiece.LandingClouds;
 import com.mygdx.game.Utils.IntPair;
 
 public class GamePieceJetpackJump extends SequenceAction {
 
-    DefaultPawn defaultPawnToJump;
+    GamePiece gamePieceToJump;
 
-    public GamePieceJetpackJump(DefaultPawn defaultPawnToJump, IntPair coordinates, float jumpDelay) {
-        this.defaultPawnToJump = defaultPawnToJump;
-        Gdx.app.log("JetpackJump", "GamePiece " + defaultPawnToJump.getName() + " is moving to " + coordinates.xVal + "," + coordinates.yVal + ".");
+    public GamePieceJetpackJump(GamePiece gamePieceToJump, IntPair coordinates, float jumpDelay) {
+        this.gamePieceToJump = gamePieceToJump;
+        Gdx.app.log("JetpackJump", "GamePiece " + gamePieceToJump.getName() + " is moving to " + coordinates.xVal + "," + coordinates.yVal + ".");
 
         //squish GamePiece for cartoon-ish jump effect
         ScaleToAction squish = Actions.scaleTo(1f, 0.75f, 0.03f);
 
         //movement action (and undo squish)
         ArcToAction arcMove = new ArcToAction();
-        arcMove.setPosition(defaultPawnToJump.board.GetBoardTilePosition(coordinates).x, defaultPawnToJump.board.GetBoardTilePosition(coordinates).y);
+        arcMove.setPosition(gamePieceToJump.board.GetBoardTilePosition(coordinates).x, gamePieceToJump.board.GetBoardTilePosition(coordinates).y);
         arcMove.setDuration(0.6f);
         arcMove.setInterpolation(Interpolation.exp10);
         ScaleToAction unSquish = Actions.scaleTo(1f, 1f, 0.6f);
@@ -34,12 +34,12 @@ public class GamePieceJetpackJump extends SequenceAction {
         //adding landing cloud effect and tile bounce
         RunnableAction clouds = new RunnableAction();
         clouds.setRunnable(() -> {
-            new LandingClouds(coordinates, defaultPawnToJump.gameManager);
+            new LandingClouds(coordinates, gamePieceToJump.gameManager);
         });
         RunnableAction tileBounce = new RunnableAction();
         tileBounce.setRunnable(() -> {
-            if (defaultPawnToJump.board.GetBoardTileAtCoordinate(coordinates) != null) {
-                BoardTile tile = defaultPawnToJump.board.GetBoardTileAtCoordinate(coordinates);
+            if (gamePieceToJump.board.GetBoardTileAtCoordinate(coordinates) != null) {
+                BoardTile tile = gamePieceToJump.board.GetBoardTileAtCoordinate(coordinates);
                 tile.BounceWhenLandedOn();
             }
         });
@@ -47,11 +47,11 @@ public class GamePieceJetpackJump extends SequenceAction {
 
         //add clouds after movement
         SequenceAction jetpackJump = new SequenceAction(Actions.delay(jumpDelay), squish, jump, landing);
-        defaultPawnToJump.addAction(jetpackJump);
+        gamePieceToJump.addAction(jetpackJump);
 
-        defaultPawnToJump.indexOnBoard = coordinates;
-        defaultPawnToJump.setName("GamePiece"+coordinates.xVal+","+coordinates.yVal);
-        defaultPawnToJump.SetLabelPositions();
+        gamePieceToJump.indexOnBoard = coordinates;
+        gamePieceToJump.setName("GamePiece"+coordinates.xVal+","+coordinates.yVal);
+        gamePieceToJump.SetLabelPositions();
     }
 
 

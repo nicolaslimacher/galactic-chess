@@ -47,7 +47,7 @@ public class CharacterSelectScreen implements Screen{
             @Override
             public void changed(ChangeEvent changeEvent, Actor actor) {
                 Gdx.app.log("CharacterSelect","button1 Stop poking me! How rude!!!");
-                game.setScreen(new GameScreen(game, game.stage, availableMoveSets));
+                game.setScreen(new GameScreen(game, game.stage));
                 Gdx.app.log("MainMenu", "Input received, creating GameScreen instance.");
                 dispose();
             }
@@ -59,7 +59,7 @@ public class CharacterSelectScreen implements Screen{
             @Override
             public void changed(ChangeEvent changeEvent, Actor actor) {
                 Gdx.app.log("CharacterSelect","button2 Stop poking me! How rude!!!");
-                game.setScreen(new GameScreen(game, game.stage, availableMoveSets));
+                game.setScreen(new GameScreen(game, game.stage));
                 Gdx.app.log("MainMenu", "Input received, creating GameScreen instance.");
                 dispose();
             }
@@ -71,7 +71,7 @@ public class CharacterSelectScreen implements Screen{
             @Override
             public void changed(ChangeEvent changeEvent, Actor actor) {
                 Gdx.app.log("CharacterSelect","button3 Stop poking me! How rude!!!");
-                game.setScreen(new GameScreen(game, game.stage, availableMoveSets));
+                game.setScreen(new GameScreen(game, game.stage));
                 Gdx.app.log("MainMenu", "Input received, creating GameScreen instance.");
                 dispose();
             }
