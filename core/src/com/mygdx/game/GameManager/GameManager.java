@@ -1,13 +1,10 @@
 package com.mygdx.game.GameManager;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.mygdx.game.Board.Board;
 import com.mygdx.game.BoardUI.MoveConfirmation;
@@ -16,7 +13,6 @@ import com.mygdx.game.BoardUI.TurnCounterMenu;
 import com.mygdx.game.BoardUI.UndoEndTurnMenu;
 import com.mygdx.game.Command.Command;
 import com.mygdx.game.EnemyAI.EnemyAI;
-import com.mygdx.game.GamePiece.DefaultPawn;
 import com.mygdx.game.GamePiece.GamePiece;
 import com.mygdx.game.MoveSets.MoveSet;
 import com.mygdx.game.Screens.GameScreen;
@@ -112,12 +108,12 @@ public class GameManager extends Actor{
     public Boolean IsTeamGamePieceAtBoardLocation(IntPair coordinates, Team team) {
         return GetGamePieceAtCoordinate(coordinates) != null && (GetGamePieceAtCoordinate(coordinates).team == team);
     }
-    public DefaultPawn GetGamePieceAtCoordinate(IntPair coordinateBoardPair){
+    public GamePiece GetGamePieceAtCoordinate(IntPair coordinateBoardPair){
         for(Actor actor:this.getStage().getActors()){
-            if(actor.getClass() == DefaultPawn.class) {
-                DefaultPawn defaultPawn = (DefaultPawn) actor;
-                if (defaultPawn.indexOnBoard.equals(coordinateBoardPair)) {
-                    return defaultPawn;
+            if(actor.getClass() == GamePiece.class) {
+                GamePiece gamePiece = (GamePiece) actor;
+                if (gamePiece.indexOnBoard.equals(coordinateBoardPair)) {
+                    return gamePiece;
                 }
             }
         }
@@ -127,7 +123,7 @@ public class GameManager extends Actor{
     private boolean IsValidKingLeft(Team team){
         ArrayList<GamePiece> gamePieces = (team == Team.FRIENDLY) ? friendlyGamePieces : enemyGamePieces;
         for ( GamePiece gamePiece : gamePieces) {
-            if (gamePiece.GetIsKing() && gamePiece.GetIsAlive()) {
+            if (gamePiece.isKing && gamePiece.isAlive) {
                 return true;
                 //this.gameScreen.SwitchScreenEndGame();
             }
@@ -141,7 +137,7 @@ public class GameManager extends Actor{
 
     private boolean PlayerHasAValidMove(){
         for (GamePiece gamePieceToMove :  this.friendlyGamePieces) {
-            if (gamePieceToMove.GetIsAlive()) {
+            if (gamePieceToMove.isAlive) {
                 for (MoveSet moveSet : this.playerMoves) {
                     for (IntPair possibleMove : moveSet.possibleMoves) {
                         if (gamePieceToMove.IsValidMove(possibleMove) && !IsTeamGamePieceAtBoardLocation(possibleMove, Team.FRIENDLY)) {

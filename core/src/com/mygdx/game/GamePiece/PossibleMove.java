@@ -13,17 +13,17 @@ import com.mygdx.game.Utils.IntPair;
 public class PossibleMove extends Actor {
     private final TextureRegion textureRegion;
     public IntPair indexOnBoard;
-    public DefaultPawn parentDefaultPawn;
-    public DefaultPawn targetDefaultPawn;
+    public GamePiece parentGamePiece;
+    public GamePiece targetGamePiece;
     final GameManager gameManager;
     final CommandType type;
     final float transparency;
 
 
-    public PossibleMove(DefaultPawn parentDefaultPawn, IntPair coordinates, CommandType type){
-        this.parentDefaultPawn = parentDefaultPawn;
+    public PossibleMove(GamePiece gamePiece, IntPair coordinates, CommandType type){
+        this.parentGamePiece = gamePiece;
         this.type = type;
-        this.gameManager = parentDefaultPawn.gameManager;
+        this.gameManager = gamePiece.gameManager;
         if (this.type == CommandType.MOVE){
 
             this.textureRegion = parentGamePiece.textureRegion;
@@ -33,7 +33,7 @@ public class PossibleMove extends Actor {
             this.setWidth((int) Constants.TILE_SIZE);
             this.setHeight((int)Constants.TILE_SIZE);
             this.transparency = 1f;
-            this.targetDefaultPawn = gameManager.board.GetGamePieceAtCoordinate(coordinates);
+            this.targetGamePiece = gameManager.board.GetGamePieceAtCoordinate(coordinates);
         }
 
         this.setBounds(textureRegion.getRegionX(), textureRegion.getRegionY(),
