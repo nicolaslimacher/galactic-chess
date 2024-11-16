@@ -12,11 +12,11 @@ import com.mygdx.game.GamePiece.GamePiece;
 import com.mygdx.game.GamePiece.LandingClouds;
 import com.mygdx.game.Utils.IntPair;
 
-public class GamePieceJetpackJump extends SequenceAction {
+public class JetpackJump extends SequenceAction {
 
     GamePiece gamePieceToJump;
 
-    public GamePieceJetpackJump(GamePiece gamePieceToJump, IntPair coordinates, float jumpDelay) {
+    public JetpackJump(GamePiece gamePieceToJump, IntPair coordinates, float jumpDelay) {
         this.gamePieceToJump = gamePieceToJump;
         Gdx.app.log("JetpackJump", "GamePiece " + gamePieceToJump.getName() + " is moving to " + coordinates.xVal + "," + coordinates.yVal + ".");
 
@@ -51,7 +51,6 @@ public class GamePieceJetpackJump extends SequenceAction {
 
         gamePieceToJump.indexOnBoard = coordinates;
         gamePieceToJump.setName("GamePiece"+coordinates.xVal+","+coordinates.yVal);
-        gamePieceToJump.SetLabelPositions();
     }
 
 
