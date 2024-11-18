@@ -12,7 +12,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.mygdx.game.GameManager.GameManager;
+import com.mygdx.game.Manager.GameManager;
 
 import java.util.ArrayList;
 import java.util.stream.IntStream;

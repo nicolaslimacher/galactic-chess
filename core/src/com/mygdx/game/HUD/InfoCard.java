@@ -1,10 +1,10 @@
-package com.mygdx.game.BoardUI;
+package com.mygdx.game.HUD;
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.mygdx.game.GameManager.GameManager;
+import com.mygdx.game.Manager.GameManager;
 import com.mygdx.game.MoveSets.MoveSet;
 
 public class InfoCard extends TextButton{

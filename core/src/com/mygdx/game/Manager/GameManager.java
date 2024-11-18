@@ -1,4 +1,4 @@
-package com.mygdx.game.GameManager;
+package com.mygdx.game.Manager;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
@@ -7,10 +7,9 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.mygdx.game.Board.Board;
-import com.mygdx.game.BoardUI.MoveConfirmation;
-import com.mygdx.game.BoardUI.MoveSelectCards;
-import com.mygdx.game.BoardUI.TurnCounterMenu;
-import com.mygdx.game.BoardUI.UndoEndTurnMenu;
+import com.mygdx.game.HUD.HUD;
+import com.mygdx.game.HUD.MoveConfirmation;
+import com.mygdx.game.HUD.MoveSelectCards;
 import com.mygdx.game.Command.Command;
 import com.mygdx.game.EnemyAI.EnemyAI;
 import com.mygdx.game.GamePiece.GamePiece;
@@ -32,7 +31,6 @@ public class GameManager extends Actor{
 
     //turn
     public int turnNumber = 1;
-    public TurnCounterMenu turnCounterMenu;
     public Team currentTurn;
     public boolean movedThisTurn = false;
 
@@ -51,7 +49,6 @@ public class GameManager extends Actor{
 
     //menu
     public MoveSelectCards moveSelectCards;
-    public UndoEndTurnMenu undoEndTurnMenu;
     public MoveConfirmation moveConfirmation;
 
     public GameManager(Stage stage, Board board, List<MoveSet> availableMoveSets, GameScreen gameScreen) {
@@ -63,14 +60,11 @@ public class GameManager extends Actor{
         this.availableMoveSets = availableMoveSets;
         AssignStartingChemicals();
         this.moveSelectCards = new MoveSelectCards(this, stage);
-        this.undoEndTurnMenu = new UndoEndTurnMenu();
-        this.turnCounterMenu = new TurnCounterMenu(this);
+
 
         this.currentTurn = Team.FRIENDLY;
         this.setName("GameManager");
         stage.addActor(this.moveSelectCards);
-        stage.addActor(this.undoEndTurnMenu);
-        stage.addActor(this.turnCounterMenu);
 //        stage.addListener(stageInputListener);
         Gdx.app.log("GameManager", "GameManager created.");
     }
@@ -140,7 +134,7 @@ public class GameManager extends Actor{
             if (gamePieceToMove.isAlive) {
                 for (MoveSet moveSet : this.playerMoves) {
                     for (IntPair possibleMove : moveSet.possibleMoves) {
-                        if (gamePieceToMove.IsValidMove(possibleMove) && !IsTeamGamePieceAtBoardLocation(possibleMove, Team.FRIENDLY)) {
+                        if (MoveManager.IsValidMove(gamePieceToMove, possibleMove) && !IsTeamGamePieceAtBoardLocation(possibleMove, Team.FRIENDLY)) {
                             return true;
                         }
                     }
@@ -228,8 +222,8 @@ public class GameManager extends Actor{
         this.moveSelectCards.setVisible(true);
         this.moveSelectCards.UpdateCardLocations();
         //call AI to make turn
-        undoEndTurnMenu.DisableEndTurnButton();
-        undoEndTurnMenu.DisableUndoButton();
+        gameScreen.getHUD().DisableEndTurnButton();
+        gameScreen.getHUD().DisableUndoButton();
 
         enemyAI.MakeMove();
     }
@@ -239,7 +233,7 @@ public class GameManager extends Actor{
         ShuffleCardsAfterEnemy(enemyMoveSetUsed);
         this.moveSelectCards.UpdateCardLocations();
 
-        turnCounterMenu.UpdateTurn();
+        gameScreen.getHUD().UpdateTurn();
 
         //after AI see if player has any possible moves
         if(!PlayerHasAValidMove()){

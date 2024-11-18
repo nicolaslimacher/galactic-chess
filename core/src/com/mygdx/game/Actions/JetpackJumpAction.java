@@ -12,13 +12,12 @@ import com.mygdx.game.GamePiece.GamePiece;
 import com.mygdx.game.GamePiece.LandingClouds;
 import com.mygdx.game.Utils.IntPair;
 
-public class JetpackJump extends SequenceAction {
+public class JetpackJumpAction {
 
-    GamePiece gamePieceToJump;
+    public SequenceAction JumpAction;
 
-    public JetpackJump(GamePiece gamePieceToJump, IntPair coordinates, float jumpDelay) {
-        this.gamePieceToJump = gamePieceToJump;
-        Gdx.app.log("JetpackJump", "GamePiece " + gamePieceToJump.getName() + " is moving to " + coordinates.xVal + "," + coordinates.yVal + ".");
+    public JetpackJumpAction(GamePiece gamePieceToJump, IntPair coordinates, float jumpDelay) {
+        Gdx.app.log("JetpackJumpAction", "GamePiece " + gamePieceToJump.getName() + " is moving to " + coordinates.xVal + "," + coordinates.yVal + ".");
 
         //squish GamePiece for cartoon-ish jump effect
         ScaleToAction squish = Actions.scaleTo(1f, 0.75f, 0.03f);
@@ -46,11 +45,7 @@ public class JetpackJump extends SequenceAction {
         ParallelAction landing = new ParallelAction(clouds, tileBounce);
 
         //add clouds after movement
-        SequenceAction jetpackJump = new SequenceAction(Actions.delay(jumpDelay), squish, jump, landing);
-        gamePieceToJump.addAction(jetpackJump);
-
-        gamePieceToJump.indexOnBoard = coordinates;
-        gamePieceToJump.setName("GamePiece"+coordinates.xVal+","+coordinates.yVal);
+        JumpAction = new SequenceAction(Actions.delay(jumpDelay), squish, jump, landing);
     }
 
 

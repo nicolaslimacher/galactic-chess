@@ -47,31 +47,31 @@ public class CharacterSelectScreen implements Screen{
             @Override
             public void changed(ChangeEvent changeEvent, Actor actor) {
                 Gdx.app.log("CharacterSelect","button1 Stop poking me! How rude!!!");
-                game.setScreen(new GameScreen(game, game.stage));
+                game.setScreen(new GameScreen(game, game.stage, 3));
                 Gdx.app.log("MainMenu", "Input received, creating GameScreen instance.");
                 dispose();
             }
         });
         root.add(button1);
 
-        button2 = new TextButton("Click for\nRed Character",skin);
+        button2 = new TextButton("Click for\nWhite Character",skin);
         button2.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent changeEvent, Actor actor) {
                 Gdx.app.log("CharacterSelect","button2 Stop poking me! How rude!!!");
-                game.setScreen(new GameScreen(game, game.stage));
+                game.setScreen(new GameScreen(game, game.stage, 2));
                 Gdx.app.log("MainMenu", "Input received, creating GameScreen instance.");
                 dispose();
             }
         });
         root.add(button2);
 
-        button3 = new TextButton("Click for\nYellow Character",skin);
+        button3 = new TextButton("Click for\nBlack Character",skin);
         button3.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent changeEvent, Actor actor) {
                 Gdx.app.log("CharacterSelect","button3 Stop poking me! How rude!!!");
-                game.setScreen(new GameScreen(game, game.stage));
+                game.setScreen(new GameScreen(game, game.stage, 1));
                 Gdx.app.log("MainMenu", "Input received, creating GameScreen instance.");
                 dispose();
             }
@@ -110,7 +110,7 @@ public class CharacterSelectScreen implements Screen{
 
     @Override
     public void resize(int width, int height) {
-
+        stage.getViewport().update(width, height, true);
     }
 
     @Override

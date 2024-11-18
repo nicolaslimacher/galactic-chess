@@ -4,7 +4,10 @@ import static com.badlogic.gdx.net.HttpRequestBuilder.json;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.mygdx.game.Manager.GameManager;
 import com.mygdx.game.MoveSets.MoveSet;
+import com.mygdx.game.MyChessGame;
+import com.mygdx.game.Screens.GameScreen;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -40,5 +43,15 @@ public class Helpers {
         } else finalY = Math.max(desiredY, Constants.SCREEN_HEIGHT * 0.1f);
 
         button.setBounds(finalX, finalY, desiredWidth, desiredHeight);
+    }
+
+    public static GameScreen getGameScreen(){
+        //may god have mercy on my soul for this abomination
+        return ((GameScreen) ((MyChessGame) Gdx.app.getApplicationListener()).getScreen());
+    }
+
+    public static GameManager getGameManager(){
+        //may god have mercy on my soul for this abomination
+        return getGameScreen().getGameManager();
     }
 }
