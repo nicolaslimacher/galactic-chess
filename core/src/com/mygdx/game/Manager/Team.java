@@ -1,4 +1,4 @@
-package com.mygdx.game.GameManager;
+package com.mygdx.game.Manager;
 
 public enum Team {
     FRIENDLY,

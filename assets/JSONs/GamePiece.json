@@ -1,0 +1,24 @@
+{
+    "1": {
+      "id": "1",
+      "name": "Default GamePiece",
+      "attack": "3",
+      "hit points": "2",
+      "texture name": "black_player",
+      "ability": "NULL"
+    },
+    "2": {
+      "name": "White GamePiece",
+      "attack": "5",
+      "hit points": "4",
+      "texture name": "white_player",
+      "ability": "CRITICAL"
+    },
+    "3": {
+      "name": "Green GamePiece",
+      "attack": "10",
+      "hit points": "10",
+      "texture name": "green_player",
+      "ability": "CRITICAL"
+    }
+  }

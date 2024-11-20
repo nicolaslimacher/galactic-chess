@@ -1,13 +1,13 @@
 package com.mygdx.game.Command;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.mygdx.game.Actions.MoveActionFactory;
 import com.mygdx.game.Board.Board;
-import com.mygdx.game.GameManager.GameManager;
-import com.mygdx.game.GameManager.Team;
+import com.mygdx.game.Manager.GameManager;
+import com.mygdx.game.Manager.Team;
 import com.mygdx.game.GamePiece.GamePiece;
-import com.mygdx.game.GamePiece.GamePieceFactory;
 import com.mygdx.game.MoveSets.MoveSet;
+import com.mygdx.game.Utils.Helpers;
 import com.mygdx.game.Utils.IntPair;
 
 public class Command {
@@ -20,6 +20,7 @@ public class Command {
     final IntPair previousPosition;
     final IntPair targetPosition;
     final boolean isKing;
+    final int gamePieceID;
 
 
     //hit-specific fields
@@ -29,8 +30,9 @@ public class Command {
     private int targetGamePiecePreviousHealth;
 
 
-    public Command(GamePiece gamePiece, IntPair targetPosition, CommandType commandType, MoveSet moveSet) {
-        this.gamePiece = gamePiece;
+    public Command(GamePiece actingGamePiece, IntPair targetPosition, CommandType commandType, MoveSet moveSet) {
+        this.gamePiece = actingGamePiece;
+        gamePieceID = gamePiece.gamePieceID;
         this.gameManager = gamePiece.gameManager;
         this.board = gamePiece.board;
         //this.gamePiecesID = gamePiece.GetGamePiecesID();
@@ -50,37 +52,37 @@ public class Command {
 
     public void Execute() {
         if (commandType == CommandType.MOVE) {
-            this.gamePiece.JetpackJump(this.targetPosition, 0f); //no delay for player move
+            this.gamePiece.MoveToWithAction(MoveActionFactory.MoveActionType.JETPACKJUMP, this.targetPosition, 0f); //no delay for player move
         }else {
             if (this.gamePiece.HitGamePiece(this.targetGamePiece)) {
-                this.gamePiece.JetpackJump(this.targetPosition, 0f); //no delay for player move
+                this.gamePiece.MoveToWithAction(MoveActionFactory.MoveActionType.JETPACKJUMP, this.targetPosition, 0f); //no delay for player move
             }
 
         }
         this.gameManager.movedThisTurn = true;
-        this.gameManager.undoEndTurnMenu.EnableUndoButton();
-        this.gameManager.undoEndTurnMenu.EnableEndTurnButton();
+        Helpers.getGameScreen().getHUD().EnableUndoButton();
+        Helpers.getGameScreen().getHUD().EnableEndTurnButton();
 
         Gdx.app.log("Command", "Player executed move: " + this.moveSet.getName() + ".");
     }
 
     public void Undo() {
+        //TODO: might need to replace acting game piece as well. take, for example, if ability added to reflect damage
         if (commandType == CommandType.MOVE) {
-            this.gamePiece.teleport(this.previousPosition);
+            this.gamePiece.MoveToWithAction(MoveActionFactory.MoveActionType.TELEPORT, this.previousPosition, 0f);
         }else{
-            this.gamePiece.teleport(this.previousPosition);
+            this.gamePiece.MoveToWithAction(MoveActionFactory.MoveActionType.TELEPORT, this.previousPosition, 0f);
 
-            //GamePiece replacedGamePiece = GamePieceFactory.CreateGamePiece(this.board, this.gameManager, this.targetPosition, this.targetTeam, this.isKing, this.gamePiecesID, this.targetGamePiecePreviousHealth, this.targetGamePiecePreviousAtk);
-            GamePiece replacedGamePiece = new GamePiece(this.board, this.targetPosition, this.targetTeam, this.isKing, this.targetGamePiecePreviousHealth, this.targetGamePiecePreviousAtk, this.gameManager);
+            GamePiece replacedGamePiece = new GamePiece(this.board, this.gameManager, this.gamePieceID, this.targetPosition, this.targetTeam, this.isKing);
+            replacedGamePiece.SetAttackPoints(this.targetGamePiecePreviousAtk);
+            replacedGamePiece.SetHitPoints(this.targetGamePiecePreviousHealth);
             this.gameManager.enemyGamePieces.add(replacedGamePiece);
-            //TODO: better way to cast GamePiece to Actor?
-            this.gameManager.getStage().addActor( replacedGamePiece);
-            replacedGamePiece.addHPandAttackLabels();
+            this.gameManager.getStage().addActor(replacedGamePiece);
         }
 
         this.gameManager.movedThisTurn = false;
-        this.gameManager.undoEndTurnMenu.DisableUndoButton();
-        this.gameManager.undoEndTurnMenu.DisableEndTurnButton();
+        Helpers.getGameScreen().getHUD().DisableUndoButton();
+        Helpers.getGameScreen().getHUD().DisableEndTurnButton();
 
         Gdx.app.log("Command", "Player undid move: " + this.moveSet.getName() + ".");
     }

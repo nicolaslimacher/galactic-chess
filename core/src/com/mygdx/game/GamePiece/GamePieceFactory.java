@@ -1,10 +1,5 @@
 package com.mygdx.game.GamePiece;
 
-import com.mygdx.game.Board.Board;
-import com.mygdx.game.GameManager.GameManager;
-import com.mygdx.game.GameManager.Team;
-import com.mygdx.game.Utils.IntPair;
-
 public class GamePieceFactory {
 
 //    public static GamePiece CreateGamePiece(Board board, GameManager gameManager, IntPair coordinates, Team team, boolean isKing, int gamePiecesID, int hp, int atkp){

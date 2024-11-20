@@ -1,4 +1,4 @@
-package com.mygdx.game.BoardUI;
+package com.mygdx.game.HUD;
 
 import static java.util.Map.entry;
 
@@ -9,7 +9,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.mygdx.game.MoveSets.MoveSet;
 import com.mygdx.game.Utils.IntPair;
 
-import java.util.HashMap; // import the HashMap class
 import java.util.Map;
 
 public class PossibleMoveImageCreator extends Group {

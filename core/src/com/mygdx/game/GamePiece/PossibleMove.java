@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.mygdx.game.Command.CommandType;
-import com.mygdx.game.GameManager.GameManager;
+import com.mygdx.game.Manager.GameManager;
 import com.mygdx.game.Utils.Constants;
 import com.mygdx.game.Utils.IntPair;
 

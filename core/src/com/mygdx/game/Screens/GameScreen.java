@@ -14,12 +14,12 @@ import com.mygdx.game.Background.Star;
 import com.mygdx.game.Background.StarType;
 import com.mygdx.game.Board.Board;
 import com.mygdx.game.EnemyAI.EnemyAI;
-import com.mygdx.game.GameManager.GameManager;
-import com.mygdx.game.GameManager.Team;
+import com.mygdx.game.HUD.HUD;
+import com.mygdx.game.Manager.GameManager;
+import com.mygdx.game.Manager.Team;
 import com.mygdx.game.GamePiece.GamePiece;
 import com.mygdx.game.MoveSets.MoveSet;
 import com.mygdx.game.MyChessGame;
-import com.mygdx.game.Utils.Constants;
 import com.mygdx.game.Utils.Helpers;
 import com.mygdx.game.Utils.IntPair;
 
@@ -31,6 +31,7 @@ public class GameScreen implements Screen {
 	final Stage stage;
 	SpriteBatch batch;
 	GameManager gameManager;
+	HUD HUD;
 	Board board;
 	EnemyAI enemyAI;
 	long startTime;
@@ -40,7 +41,7 @@ public class GameScreen implements Screen {
 	private final TextureRegion starryBackground;
 
 
-	public GameScreen(final MyChessGame game, final Stage stage) {
+	public GameScreen(final MyChessGame game, final Stage stage, int playerKingID) {
 		this.game = game;
 		this.stage = stage;
 		Gdx.input.setInputProcessor(stage);
@@ -63,6 +64,7 @@ public class GameScreen implements Screen {
 		stage.addActor(board);
 		gameManager = new GameManager(stage, board, availableMoveSets, this);
 		stage.addActor(gameManager);
+
 		ArrayList<GamePiece> friendlyPieces = new ArrayList<>();
 
 		if (board.boardColumns > 0) {
@@ -70,10 +72,10 @@ public class GameScreen implements Screen {
 				GamePiece gamePiece;
 				if (i == 2){
 					//add king
-					gamePiece = new GamePiece(board, new IntPair(i, 0), Team.FRIENDLY, true,  1,1, gameManager);
+					gamePiece = new GamePiece(board, gameManager, playerKingID, new IntPair(i, 0), Team.FRIENDLY, true);
 				}else {
 					//add pawns
-					gamePiece = new GamePiece(board, new IntPair(i, 0), Team.FRIENDLY, false,  1,1, gameManager);
+					gamePiece = new GamePiece(board, gameManager, 1, new IntPair(i, 0), Team.FRIENDLY, false);
 				}
 				friendlyPieces.add(gamePiece);
 				stage.addActor(gamePiece);
@@ -89,7 +91,7 @@ public class GameScreen implements Screen {
 //		enemyPieces.add(enemyKing1);
 //		stage.addActor(enemyKing1);
 
-		GamePiece enemyKing1 = new GamePiece(board, new IntPair(2, 4), Team.ENEMY, true,1,1, gameManager);
+		GamePiece enemyKing1 = new GamePiece(board, gameManager, 1, new IntPair(2, 4), Team.ENEMY, true);
 		enemyPieces.add(enemyKing1);
 		stage.addActor(enemyKing1);
 
@@ -126,7 +128,7 @@ public class GameScreen implements Screen {
 		batch.begin();
 		//for performance reasons disable blend before drawing background
 		batch.disableBlending();
-		batch.draw(starryBackground,0,0, Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT);
+		batch.draw(starryBackground,0,0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		batch.enableBlending();
 
 		stage.draw();
@@ -198,5 +200,13 @@ public class GameScreen implements Screen {
 		star.setBounds(MathUtils.random(25, 769), MathUtils.random(100, 454), 6, 6);
 		lastDropTimeMedium = TimeUtils.millis();
 		timeToMediumCreation = MathUtils.random(10000, 15000);
+	}
+
+	public GameManager getGameManager(){
+		return gameManager;
+	}
+
+	public HUD getHUD(){
+		return HUD;
 	}
 }

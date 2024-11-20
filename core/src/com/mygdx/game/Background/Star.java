@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.utils.TimeUtils;
-import com.mygdx.game.GameManager.GameManager;
+import com.mygdx.game.Manager.GameManager;
 
 public class Star extends Actor {
     GameManager gameManager;

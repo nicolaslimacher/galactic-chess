@@ -56,7 +56,8 @@ public class MainMenuScreen implements Screen{
 
         if(game.GetAssetManager().update()) {
             if (Gdx.input.isTouched()) {
-                game.setScreen(new GameScreen(game, game.stage));
+                //game.setScreen(new GameScreen(game, game.stage));
+                game.setScreen(new CharacterSelectScreen(game, game.stage));
                 Gdx.app.log("MainMenu", "Input received, creating GameScreen instance.");
                 dispose();
             }

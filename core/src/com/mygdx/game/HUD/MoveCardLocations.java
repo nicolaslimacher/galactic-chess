@@ -1,4 +1,4 @@
-package com.mygdx.game.BoardUI;
+package com.mygdx.game.HUD;
 
 import com.mygdx.game.Utils.Constants;
 

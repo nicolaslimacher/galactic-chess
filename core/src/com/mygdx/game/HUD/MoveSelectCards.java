@@ -1,4 +1,4 @@
-package com.mygdx.game.BoardUI;
+package com.mygdx.game.HUD;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
@@ -7,7 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Align;
-import com.mygdx.game.GameManager.GameManager;
+import com.mygdx.game.Manager.GameManager;
 import com.mygdx.game.MoveSets.MoveSet;
 import java.util.ArrayList;
 import java.util.List;

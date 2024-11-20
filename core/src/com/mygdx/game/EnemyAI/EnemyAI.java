@@ -5,9 +5,11 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.actions.RunnableAction;
 import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
+import com.mygdx.game.Actions.MoveActionFactory;
 import com.mygdx.game.Command.CommandType;
-import com.mygdx.game.GameManager.GameManager;
-import com.mygdx.game.GameManager.Team;
+import com.mygdx.game.Manager.GameManager;
+import com.mygdx.game.Manager.MoveManager;
+import com.mygdx.game.Manager.Team;
 import com.mygdx.game.GamePiece.GamePiece;
 import com.mygdx.game.MoveSets.MoveSet;
 import com.mygdx.game.Utils.IntPair;
@@ -40,11 +42,11 @@ public class EnemyAI extends Actor {
         int rnd = getRandomNumber(0, allPossibleMoves.size()-1);
         EnemyAIMove enemyAIMove = allPossibleMoves.get(rnd);
         if(enemyAIMove.commandType == CommandType.MOVE) {
-            enemyAIMove.gamePiece.JetpackJump(enemyAIMove.coordinates, enemyAIDelay);
+            enemyAIMove.gamePiece.MoveToWithAction(MoveActionFactory.MoveActionType.JETPACKJUMP, enemyAIMove.coordinates, enemyAIDelay);
             Gdx.app.log("EnemyAI", "Enemy executed move: " + enemyAIMove.moveSet.getName());
         }else{
             if (enemyAIMove.gamePiece.HitGamePiece(gameManager.GetGamePieceAtCoordinate(enemyAIMove.coordinates))) {
-                enemyAIMove.gamePiece.JetpackJump(enemyAIMove.coordinates, enemyAIDelay);
+                enemyAIMove.gamePiece.MoveToWithAction(MoveActionFactory.MoveActionType.JETPACKJUMP,enemyAIMove.coordinates, enemyAIDelay);
             }
             Gdx.app.log("EnemyAI", "Enemy executed move: " + enemyAIMove.moveSet.getName());
         }
@@ -60,7 +62,7 @@ public class EnemyAI extends Actor {
                 for (MoveSet moveSet : gameManager.enemyMoves) {
                     for (IntPair possibleMove : moveSet.possibleMoves) {
                         IntPair newMove = new IntPair(defaultPawnToMove.indexOnBoard.xVal + (-1 * possibleMove.xVal), defaultPawnToMove.indexOnBoard.yVal + (-1 * possibleMove.yVal));
-                        if (defaultPawnToMove.IsValidEnemyMove(possibleMove)) {
+                        if (MoveManager.IsValidEnemyMove(defaultPawnToMove, possibleMove)) {
                             if (gameManager.IsGamePieceAtBoardLocation(newMove) && gameManager.GetGamePieceAtCoordinate(newMove).team == Team.FRIENDLY) {
                                 //check if piece at location AND is friendly
                                 allPossibleMoves.add(new EnemyAIMove(CommandType.HIT, newMove, defaultPawnToMove, moveSet));
