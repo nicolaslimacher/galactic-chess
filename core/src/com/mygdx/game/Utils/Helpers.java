@@ -4,10 +4,11 @@ import static com.badlogic.gdx.net.HttpRequestBuilder.json;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.mygdx.game.Manager.GameManager;
+import com.mygdx.game.Manager.BattleManager;
+import com.mygdx.game.Manager.PRNGManager;
 import com.mygdx.game.MoveSets.MoveSet;
-import com.mygdx.game.MyChessGame;
-import com.mygdx.game.Screens.GameScreen;
+import com.mygdx.game.Screens.BattleScreen;
+import com.mygdx.game.WranglerGiddyUp;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,6 +17,8 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class Helpers {
+    private static final String TAG = Helpers.class.getSimpleName();
+
     public static List<Integer> GetShuffledIntsInRange(int lowerBound, int upperBound){
         List<Integer> range = IntStream.range(lowerBound, upperBound).boxed().collect(Collectors.toList());
         Collections.shuffle(range);
@@ -45,13 +48,19 @@ public class Helpers {
         button.setBounds(finalX, finalY, desiredWidth, desiredHeight);
     }
 
-    public static GameScreen getGameScreen(){
+    public static BattleScreen getGameScreen(){
         //may god have mercy on my soul for this abomination
-        return ((GameScreen) ((MyChessGame) Gdx.app.getApplicationListener()).getScreen());
+        return ((BattleScreen) ((WranglerGiddyUp) Gdx.app.getApplicationListener()).getScreen());
     }
 
-    public static GameManager getGameManager(){
-        //may god have mercy on my soul for this abomination
-        return getGameScreen().getGameManager();
+    public static BattleManager getCurrentBattleManager(){
+        Gdx.app.debug(TAG, "Getting Battle Manager");
+        //ONLY CALL IN GAME SCREEN
+        return ((WranglerGiddyUp) Gdx.app.getApplicationListener()).getRunManager().getCurrentBattleManager();
+    }
+
+    public static PRNGManager getPRNGManager(){
+        Gdx.app.debug(TAG, "Getting PRNG Manager");
+        return ((WranglerGiddyUp) Gdx.app.getApplicationListener()).getPrngManager();
     }
 }

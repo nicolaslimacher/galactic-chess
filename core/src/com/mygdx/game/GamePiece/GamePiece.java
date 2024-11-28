@@ -6,14 +6,12 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
-import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -26,7 +24,7 @@ import com.mygdx.game.Board.Board;
 import com.mygdx.game.Command.Command;
 import com.mygdx.game.Command.CommandType;
 import com.mygdx.game.Components.AbilityComponent;
-import com.mygdx.game.Manager.GameManager;
+import com.mygdx.game.Manager.BattleManager;
 import com.mygdx.game.Manager.MoveManager;
 import com.mygdx.game.Manager.Team;
 import com.mygdx.game.MoveSets.MoveSet;
@@ -34,8 +32,10 @@ import com.mygdx.game.Utils.Helpers;
 import com.mygdx.game.Utils.IntPair;
 
 public class GamePiece extends Actor {
+    private static final String TAG = GamePiece.class.getSimpleName();
+
     //metadata
-    public final GameManager gameManager;
+    public final BattleManager battleManager;
     public final Board board;
     public final int gamePieceID;
     public IntPair indexOnBoard;
@@ -65,28 +65,28 @@ public class GamePiece extends Actor {
     Skin skin = new Skin(Gdx.files.internal("skins/uiskin.json"));
 
 
-    public GamePiece(Board board, GameManager gameManager, int gamePieceID, IntPair coordinates, Team team, boolean isKing ) {
+    public GamePiece(Board board, BattleManager battleManager, int gamePieceID, IntPair coordinates, Team team, boolean isKing, int health, int attack) {
         //metadata
-        this.gameManager = gameManager;
+        this.battleManager = battleManager;
         this.gamePieceID = gamePieceID;
         GamePieceData gamePieceData = new GamePieceData(gamePieceID);
-        this.textureRegion = gameManager.GetAssetManager().get("texturePacks/battleTextures.atlas", TextureAtlas.class).findRegion(gamePieceData.getTextureName());
+        this.textureRegion = battleManager.GetAssetManager().get("texturePacks/battleTextures.atlas", TextureAtlas.class).findRegion(gamePieceData.getTextureName());
         this.setBounds(textureRegion.getRegionX(), textureRegion.getRegionY(),
                 textureRegion.getRegionWidth(), textureRegion.getRegionHeight());
         this.setPosition(board.GetBoardTilePosition(coordinates).x, board.GetBoardTilePosition(coordinates).y);
         this.board = board;
         this.team = team;
         this.isKing = isKing;
-        this.crown = gameManager.GetAssetManager().get("texturePacks/battleTextures.atlas", TextureAtlas.class).findRegion("king_crown");
+        this.crown = battleManager.GetAssetManager().get("texturePacks/battleTextures.atlas", TextureAtlas.class).findRegion("king_crown");
         this.isAlive = true;
         this.setName("GamePiece" + coordinates.xVal + "," + coordinates.yVal);
 
         //stats
-        this.SetAttackPoints(gamePieceData.getAttackPoints());
-        this.SetHitPoints(gamePieceData.getHitPoints());
+        this.setAttackPoints(attack);
+        this.setHitPoints(health);
         this.indexOnBoard = coordinates;
         this.statsLabels = new Group();
-        addHPandAttackLabels();
+        addHpAndAttackLabels();
 
         //components
         this.abilityType = gamePieceData.getAbility();
@@ -99,7 +99,7 @@ public class GamePiece extends Actor {
             @Override
             public DragAndDrop.Payload dragStart(InputEvent event, float x, float y, int pointer) {
                 GamePiece gamePiece = (GamePiece) event.getListenerActor();
-                Gdx.app.log("GamePiece", "MovedThisTurn? :" + gamePiece.gameManager.movedThisTurn + ".");
+                Gdx.app.log("GamePiece", "MovedThisTurn? :" + gamePiece.battleManager.movedThisTurn + ".");
 
                 //store position to place back after null drop
                 gamePiece.preDragXPosition = gamePiece.getX();
@@ -107,12 +107,12 @@ public class GamePiece extends Actor {
 
                 RemoveGamePieceInfo();
 
-                if (gamePiece.gameManager.movedThisTurn) {
+                if (gamePiece.battleManager.movedThisTurn) {
                     return null;
                 }
 
-                if (gamePiece.team == Team.FRIENDLY && gameManager.selectedMoveSet != null) {
-                    Arrow arrow = new Arrow(new Vector2(gamePiece.getX() + gamePiece.getWidth() / 2, gamePiece.getY() + gamePiece.getHeight() / 2), gamePiece.getStage(), gamePiece.gameManager);
+                if (gamePiece.team == Team.FRIENDLY && battleManager.selectedMoveSet != null) {
+                    Arrow arrow = new Arrow(new Vector2(gamePiece.getX() + gamePiece.getWidth() / 2, gamePiece.getY() + gamePiece.getHeight() / 2), gamePiece.getStage(), gamePiece.battleManager);
                     gamePiece.getStage().addActor(arrow);
                     payload.setDragActor(arrow);
                     arrow.toFront();
@@ -122,10 +122,10 @@ public class GamePiece extends Actor {
 
                     //draw possible moves
                     //only show targets if player can move
-                    if (gamePiece.team == Team.FRIENDLY && gamePiece.gameManager.selectedMoveSet != null) {
+                    if (gamePiece.team == Team.FRIENDLY && gamePiece.battleManager.selectedMoveSet != null) {
                         gamePiece.possibleMovesAndTargets = new Group();
                         gamePiece.possibleMovesAndTargets.setName("possibleMovesGroup" + gamePiece.getName());
-                        gamePiece.drawPossibleMoves(gameManager.selectedMoveSet);
+                        gamePiece.drawPossibleMoves(battleManager.selectedMoveSet);
                         Gdx.app.log("GamePiece", "Possible moves group : " + gamePiece.possibleMovesAndTargets.getChildren() + ".");
                         gamePiece.toFront();
                         Gdx.app.log("GamePiece", "Drag targets created.");
@@ -164,6 +164,13 @@ public class GamePiece extends Actor {
         Gdx.app.log("GamePiece", "GamePiece " + this.getName() + "created.");
     }
 
+    public GamePiece (Board board, BattleManager battleManager, int gamePieceID, IntPair coordinates, Team team, boolean isKing) {
+        this(board, battleManager, gamePieceID, coordinates, team, isKing, 0, 0);
+        GamePieceData gamePieceData = new GamePieceData(gamePieceID);
+        setHitPoints(gamePieceData.getHitPoints());
+        setAttackPoints(gamePieceData.getAttackPoints());
+    }
+
     private final InputListener gamePieceInputListener = new InputListener() {
         @Override
         public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -189,11 +196,11 @@ public class GamePiece extends Actor {
     //                            INTERACTING WITH OTHER GAME PIECES                              //
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    public int GetHitPoints() {
+    public int getHitPoints() {
         return hitPoints;
     }
 
-    public void SetHitPoints(int hitPoints) {
+    public void setHitPoints(int hitPoints) {
         this.hitPoints = hitPoints;
         if (this.hitPointsLabel != null) {
             this.hitPointsLabel.remove();
@@ -201,11 +208,12 @@ public class GamePiece extends Actor {
         this.hitPointsLabel = new Label(String.valueOf(hitPoints), skin);
     }
 
-    public int GetAttackPoints() {
+    public int getAttackPoints() {
         return attackPoints;
     }
 
-    public void SetAttackPoints(int attackPoints) {
+    public void setAttackPoints(int attackPoints) {
+        Gdx.app.debug(TAG, "GamePiece " + this.getName() + " is setting attack to: " + attackPoints);
         this.attackPoints = attackPoints;
         if (this.attackPointsLabel != null) {
             this.attackPointsLabel.remove();
@@ -214,16 +222,16 @@ public class GamePiece extends Actor {
     }
 
     public boolean HitGamePiece(GamePiece enemyGamePiece) {
-        Gdx.app.log("GamePiece", "GamePiece " + this.getName() + " is hitting " + enemyGamePiece.getName() + ".");
+        Gdx.app.log(TAG, "GamePiece " + this.getName() + " is hitting " + enemyGamePiece.getName() + ".");
         return enemyGamePiece.GetHitAndIsFatal(this.attackPoints);
     }
 
     //TODO: I returned bool for something? to move game piece to enemy location?
     public boolean GetHitAndIsFatal(int AtkDmg) {
-        this.SetHitPoints(this.GetHitPoints() - AtkDmg);
+        this.setHitPoints(this.getHitPoints() - AtkDmg);
         this.hitPointsLabel.remove();
         this.attackPointsLabel.remove();
-        this.addHPandAttackLabels();
+        this.addHpAndAttackLabels();
         if (this.hitPoints == 0) {
             this.isAlive = false;
             this.hitPointsLabel.remove();
@@ -278,8 +286,8 @@ public class GamePiece extends Actor {
                 public void drop(DragAndDrop.Source source, DragAndDrop.Payload payload, float x, float y, int pointer) {
                     Gdx.app.log("GamePiece", "Drop fired : move.");
                     GamePiece gamePiece = (GamePiece) source.getActor();
-                    gamePiece.gameManager.latestGamePieceCommand = new Command(gamePiece, possibleMoveTarget.indexOnBoard, possibleMoveTarget.type, gameManager.selectedMoveSet);
-                    gamePiece.gameManager.latestGamePieceCommand.Execute();
+                    gamePiece.battleManager.latestGamePieceCommand = new Command(gamePiece, possibleMoveTarget.indexOnBoard, possibleMoveTarget.type, battleManager.selectedMoveSet);
+                    gamePiece.battleManager.latestGamePieceCommand.Execute();
                     possibleMoveTarget.getParent().remove();
                 }
             });
@@ -298,8 +306,8 @@ public class GamePiece extends Actor {
                 public void drop(DragAndDrop.Source source, DragAndDrop.Payload payload, float x, float y, int pointer) {
                     Gdx.app.log("GamePiece", "Drop fired : hit.");
                     GamePiece gamePiece = (GamePiece) source.getActor();
-                    gamePiece.gameManager.latestGamePieceCommand = new Command(gamePiece, possibleMoveHit.indexOnBoard, possibleMoveHit.type, gameManager.selectedMoveSet);
-                    gamePiece.gameManager.latestGamePieceCommand.Execute();
+                    gamePiece.battleManager.latestGamePieceCommand = new Command(gamePiece, possibleMoveHit.indexOnBoard, possibleMoveHit.type, battleManager.selectedMoveSet);
+                    gamePiece.battleManager.latestGamePieceCommand.Execute();
                     //if execute
                     possibleMoveHit.getParent().remove();
                 }
@@ -309,7 +317,8 @@ public class GamePiece extends Actor {
         this.getStage().addActor(this.possibleMovesAndTargets);
     }
 
-    private void addHPandAttackLabels() {
+    private void addHpAndAttackLabels() {
+        Gdx.app.debug(TAG, "adding HP and Attack labels");
         //TODO: try using TextButton and setDisabled
         this.hitPointsLabel = new Label(String.valueOf(this.hitPoints), skin, "hpStatsLabel");
         this.attackPointsLabel = new Label(String.valueOf(this.attackPoints), skin, "atkStatsLabel");

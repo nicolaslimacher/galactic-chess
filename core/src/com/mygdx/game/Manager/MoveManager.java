@@ -1,7 +1,6 @@
 package com.mygdx.game.Manager;
 
 import com.badlogic.gdx.utils.Array;
-import com.mygdx.game.Board.Board;
 import com.mygdx.game.GamePiece.GamePiece;
 import com.mygdx.game.MoveSets.MoveSet;
 import com.mygdx.game.Utils.IntPair;
@@ -17,7 +16,7 @@ public class MoveManager {
         List<IntPair> possibleMoves = new ArrayList<>();
         for (IntPair possibleMove : new Array.ArrayIterator<>(moveSet.possibleMoves)) {
             IntPair newMove = new IntPair(gamePiece.indexOnBoard.xVal + possibleMove.xVal, gamePiece.indexOnBoard.yVal + possibleMove.yVal);
-            if (IsValidMove(gamePiece, possibleMove) && !gamePiece.gameManager.IsGamePieceAtBoardLocation(newMove)) {
+            if (IsValidMove(gamePiece, possibleMove) && !gamePiece.battleManager.IsGamePieceAtBoardLocation(newMove)) {
                 possibleMoves.add(newMove);
             }
         }
@@ -28,8 +27,8 @@ public class MoveManager {
         List<IntPair> possibleMoves = new ArrayList<>();
         for (IntPair possibleMove : new Array.ArrayIterator<>(moveSet.possibleMoves)) {
             IntPair newMove = new IntPair(gamePiece.indexOnBoard.xVal + possibleMove.xVal, gamePiece.indexOnBoard.yVal + possibleMove.yVal);
-            if (IsValidMove(gamePiece, possibleMove) && gamePiece.gameManager.IsTeamGamePieceAtBoardLocation(newMove, Team.ENEMY)) {
-                if (gamePiece.gameManager.IsGamePieceAtBoardLocation(newMove)) {
+            if (IsValidMove(gamePiece, possibleMove) && gamePiece.battleManager.IsTeamGamePieceAtBoardLocation(newMove, Team.ENEMY)) {
+                if (gamePiece.battleManager.IsGamePieceAtBoardLocation(newMove)) {
                     possibleMoves.add(newMove);
                 }
             }

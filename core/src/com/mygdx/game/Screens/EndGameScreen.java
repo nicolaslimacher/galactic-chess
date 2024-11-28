@@ -5,15 +5,15 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
-import com.mygdx.game.MyChessGame;
+import com.mygdx.game.WranglerGiddyUp;
 
 public class EndGameScreen implements Screen{
-    final MyChessGame game;
+    final WranglerGiddyUp game;
     OrthographicCamera camera;
     BitmapFont font;
     SpriteBatch batch;
 
-    public EndGameScreen(final MyChessGame game) {
+    public EndGameScreen(final WranglerGiddyUp game) {
         this.game = game;
         batch = new SpriteBatch();
 
@@ -40,7 +40,7 @@ public class EndGameScreen implements Screen{
         batch.end();
 
 //        if (Gdx.input.isTouched()) {
-//            game.setScreen(new GameScreen(game));
+//            game.setScreen(new BattleScreen(game));
 //            dispose();
 //        }
     }

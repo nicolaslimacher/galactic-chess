@@ -7,7 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.actions.RunnableAction;
 import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
 import com.mygdx.game.Actions.MoveActionFactory;
 import com.mygdx.game.Command.CommandType;
-import com.mygdx.game.Manager.GameManager;
+import com.mygdx.game.Manager.BattleManager;
 import com.mygdx.game.Manager.MoveManager;
 import com.mygdx.game.Manager.Team;
 import com.mygdx.game.GamePiece.GamePiece;
@@ -19,13 +19,13 @@ import java.util.List;
 
 public class EnemyAI extends Actor {
     //extends actor so that runnable actions can be added to EnemyAI (for delay)
-    final GameManager gameManager;
+    final BattleManager battleManager;
     final float enemyAIDelay = 3f;
 
 
-    public EnemyAI(GameManager gameManager) {
-        this.gameManager = gameManager;
-        this.gameManager.getStage().addActor(this);
+    public EnemyAI(BattleManager battleManager) {
+        this.battleManager = battleManager;
+        this.battleManager.getStage().addActor(this);
     }
 
     public int getRandomNumber(int min, int max) {
@@ -45,7 +45,7 @@ public class EnemyAI extends Actor {
             enemyAIMove.gamePiece.MoveToWithAction(MoveActionFactory.MoveActionType.JETPACKJUMP, enemyAIMove.coordinates, enemyAIDelay);
             Gdx.app.log("EnemyAI", "Enemy executed move: " + enemyAIMove.moveSet.getName());
         }else{
-            if (enemyAIMove.gamePiece.HitGamePiece(gameManager.GetGamePieceAtCoordinate(enemyAIMove.coordinates))) {
+            if (enemyAIMove.gamePiece.HitGamePiece(battleManager.GetGamePieceAtCoordinate(enemyAIMove.coordinates))) {
                 enemyAIMove.gamePiece.MoveToWithAction(MoveActionFactory.MoveActionType.JETPACKJUMP,enemyAIMove.coordinates, enemyAIDelay);
             }
             Gdx.app.log("EnemyAI", "Enemy executed move: " + enemyAIMove.moveSet.getName());
@@ -57,17 +57,17 @@ public class EnemyAI extends Actor {
 
     private List<EnemyAIMove> GetAllPossibleMoves(){
         List<EnemyAIMove> allPossibleMoves = new ArrayList<>();
-        for (GamePiece defaultPawnToMove :  gameManager.enemyGamePieces) {
+        for (GamePiece defaultPawnToMove :  battleManager.enemyGamePieces) {
             if (defaultPawnToMove.isAlive) {
-                for (MoveSet moveSet : gameManager.enemyMoves) {
+                for (MoveSet moveSet : battleManager.enemyMoves) {
                     for (IntPair possibleMove : moveSet.possibleMoves) {
                         IntPair newMove = new IntPair(defaultPawnToMove.indexOnBoard.xVal + (-1 * possibleMove.xVal), defaultPawnToMove.indexOnBoard.yVal + (-1 * possibleMove.yVal));
                         if (MoveManager.IsValidEnemyMove(defaultPawnToMove, possibleMove)) {
-                            if (gameManager.IsGamePieceAtBoardLocation(newMove) && gameManager.GetGamePieceAtCoordinate(newMove).team == Team.FRIENDLY) {
+                            if (battleManager.IsGamePieceAtBoardLocation(newMove) && battleManager.GetGamePieceAtCoordinate(newMove).team == Team.FRIENDLY) {
                                 //check if piece at location AND is friendly
                                 allPossibleMoves.add(new EnemyAIMove(CommandType.HIT, newMove, defaultPawnToMove, moveSet));
                                 Gdx.app.log("EnemyAI", "possible move - HIT:" + newMove.xVal + "," + newMove.yVal + " with gamepiece:" + defaultPawnToMove.getName());
-                            } else if (!gameManager.IsGamePieceAtBoardLocation(newMove)) {
+                            } else if (!battleManager.IsGamePieceAtBoardLocation(newMove)) {
                                 //check if space is free (so enemy doesn't move on top of own piece)
                                 allPossibleMoves.add(new EnemyAIMove(CommandType.MOVE, newMove, defaultPawnToMove, moveSet));
                                 Gdx.app.log("EnemyAI", "possible move - MOVE:" + newMove.xVal + "," + newMove.yVal + " with gamepiece:" + defaultPawnToMove.getName());
@@ -92,7 +92,7 @@ public class EnemyAI extends Actor {
     }
 
     private void CallEndTurn(MoveSet moveSet){
-        this.gameManager.EndEnemyTurn(moveSet);
+        this.battleManager.EndEnemyTurn(moveSet);
     }
 
 }

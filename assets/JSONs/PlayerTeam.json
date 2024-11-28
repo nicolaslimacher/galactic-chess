@@ -1,0 +1,42 @@
+[
+      {
+        "gamePieceID": 1,
+        "xVal": 0,
+        "yVal": 0,
+        "isKing": false,
+        "health": 1,
+        "attack": 2
+      },
+      {
+        "gamePieceID": 1,
+        "xVal": 1,
+        "yVal": 0,
+        "isKing": false,
+        "health": 1,
+        "attack": 2
+      },
+      {
+        "gamePieceID": 2,
+        "xVal": 2,
+        "yVal": 0,
+        "isKing": true,
+        "health": 1,
+        "attack": 2
+      },
+      {
+        "gamePieceID": 1,
+        "xVal": 3,
+        "yVal": 0,
+        "isKing": false,
+        "health": 1,
+        "attack": 2
+      },
+      {
+        "gamePieceID": 1,
+        "xVal": 4,
+        "yVal": 0,
+        "isKing": false,
+        "health": 1,
+        "attack": 2
+      }
+]

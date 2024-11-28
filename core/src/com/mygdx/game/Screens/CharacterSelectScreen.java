@@ -2,34 +2,34 @@ package com.mygdx.game.Screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.mygdx.game.MoveSets.MoveSet;
-import com.mygdx.game.MyChessGame;
+import com.mygdx.game.WranglerGiddyUp;
 import com.mygdx.game.Utils.Helpers;
 
 import java.util.List;
 
 public class CharacterSelectScreen implements Screen{
-    final MyChessGame game;
+    private static final String TAG = CharacterSelectScreen.class.getSimpleName();
+
+    final WranglerGiddyUp game;
     BitmapFont font;
     SpriteBatch batch;
     Stage stage;
     Skin skin = new Skin(Gdx.files.internal("skins/uiskin.json"));
     TextButton button1, button2, button3;
     List<MoveSet> availableMoveSets;
+    int playerKingIDSelected;
 
-    public CharacterSelectScreen(final MyChessGame game, final Stage stage) {
+    public CharacterSelectScreen(final WranglerGiddyUp game, final Stage stage) {
         this.game = game;
         this.stage = stage;
         Gdx.input.setInputProcessor(stage);
@@ -46,9 +46,9 @@ public class CharacterSelectScreen implements Screen{
         button1.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent changeEvent, Actor actor) {
-                Gdx.app.log("CharacterSelect","button1 Stop poking me! How rude!!!");
-                game.setScreen(new GameScreen(game, game.stage, 3));
-                Gdx.app.log("MainMenu", "Input received, creating GameScreen instance.");
+                Gdx.app.log(TAG,"button1 selected");
+                playerKingIDSelected = 3; //used later to change player king
+                game.setScreen(new BattleScreen(game, game.stage, 3));
                 dispose();
             }
         });
@@ -58,9 +58,8 @@ public class CharacterSelectScreen implements Screen{
         button2.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent changeEvent, Actor actor) {
-                Gdx.app.log("CharacterSelect","button2 Stop poking me! How rude!!!");
-                game.setScreen(new GameScreen(game, game.stage, 2));
-                Gdx.app.log("MainMenu", "Input received, creating GameScreen instance.");
+                Gdx.app.log(TAG,"button2 selected");
+                game.setScreen(new BattleScreen(game, game.stage, 2));
                 dispose();
             }
         });
@@ -70,9 +69,8 @@ public class CharacterSelectScreen implements Screen{
         button3.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent changeEvent, Actor actor) {
-                Gdx.app.log("CharacterSelect","button3 Stop poking me! How rude!!!");
-                game.setScreen(new GameScreen(game, game.stage, 1));
-                Gdx.app.log("MainMenu", "Input received, creating GameScreen instance.");
+                Gdx.app.log(TAG,"button3 selected");
+                game.setScreen(new BattleScreen(game, game.stage, 1));
                 dispose();
             }
         });

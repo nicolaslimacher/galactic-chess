@@ -33,7 +33,7 @@ public class JetpackJumpAction {
         //adding landing cloud effect and tile bounce
         RunnableAction clouds = new RunnableAction();
         clouds.setRunnable(() -> {
-            new LandingClouds(coordinates, gamePieceToJump.gameManager);
+            new LandingClouds(coordinates, gamePieceToJump.battleManager);
         });
         RunnableAction tileBounce = new RunnableAction();
         tileBounce.setRunnable(() -> {

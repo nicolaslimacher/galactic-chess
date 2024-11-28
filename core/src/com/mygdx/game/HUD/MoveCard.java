@@ -16,21 +16,21 @@ import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Align;
-import com.mygdx.game.Manager.GameManager;
+import com.mygdx.game.Manager.BattleManager;
 import com.mygdx.game.MoveSets.MoveSet;
 
 public class MoveCard extends Actor {
     public MoveSet moveSet;
-    public GameManager gameManager;
+    public BattleManager battleManager;
     private boolean selectable;
     TextureRegion textureRegion;
     Label moveSymbolLabel, moveNameLabel;
     Skin moveSelectSkin;
-    public MoveCard(MoveSet moveSet, GameManager gameManager, boolean selectable, float x, float y) {
+    public MoveCard(MoveSet moveSet, BattleManager battleManager, boolean selectable, float x, float y) {
         this.moveSet = moveSet;
-        this.gameManager = gameManager;
+        this.battleManager = battleManager;
         this.selectable = selectable;
-        textureRegion = gameManager.GetAssetManager().get("texturePacks/battleTextures.atlas", TextureAtlas.class).findRegion("moveCardBackground");
+        textureRegion = battleManager.GetAssetManager().get("texturePacks/battleTextures.atlas", TextureAtlas.class).findRegion("moveCardBackground");
         this.setWidth((int) MoveCardLocations.CARD_WIDTH);
         this.setHeight((int) MoveCardLocations.CHEMICAL_CARDS_HEIGHT);
         this.setBounds(textureRegion.getRegionX(), textureRegion.getRegionY(),
@@ -52,17 +52,17 @@ public class MoveCard extends Actor {
     private final InputListener MoveSelectButtonListener = new InputListener(){
         public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
             MoveCard thisMoveCard = (MoveCard) event.getListenerActor();
-            GameManager gameManager = event.getStage().getRoot().findActor("GameManager");
+            BattleManager battleManager = event.getStage().getRoot().findActor("BattleManager");
             if(thisMoveCard.selectable) {
-                gameManager.selectedMoveSet = thisMoveCard.moveSet; //make this move active allowed moveset if selectable
-                Gdx.app.log("MoveCard", "move card selected, Game Manager selected moveset: " + gameManager.selectedMoveSet.name);
+                battleManager.selectedMoveSet = thisMoveCard.moveSet; //make this move active allowed moveset if selectable
+                Gdx.app.log("MoveCard", "move card selected, Game Manager selected moveset: " + battleManager.selectedMoveSet.name);
             }
-            gameManager.moveSelectCards.SetCardsVisibility(false); //make select menu non-visible
+            battleManager.moveSelectCards.SetCardsVisibility(false); //make select menu non-visible
             //create new confirmation menu
-            MoveConfirmation moveConfirmation = new MoveConfirmation(thisMoveCard.gameManager, thisMoveCard.moveSet);
+            MoveConfirmation moveConfirmation = new MoveConfirmation(thisMoveCard.battleManager, thisMoveCard.moveSet);
             thisMoveCard.getStage().addActor(moveConfirmation);
 
-            gameManager.moveConfirmation = moveConfirmation;
+            battleManager.moveConfirmation = moveConfirmation;
             return true;
         }
     };

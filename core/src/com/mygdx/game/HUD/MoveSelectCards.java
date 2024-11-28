@@ -7,7 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Align;
-import com.mygdx.game.Manager.GameManager;
+import com.mygdx.game.Manager.BattleManager;
 import com.mygdx.game.MoveSets.MoveSet;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +20,7 @@ import java.util.List;
  */
 
 public class MoveSelectCards extends Actor {
-    GameManager gameManager;
+    BattleManager battleManager;
     Skin chemicalLabelSkin = new Skin(Gdx.files.internal("skins/uiskin.json"));
     Label enemyChemicalLabel, freeChemicalLabel, playerChemicalLabel;
     ArrayList<MoveCard> moveCards;
@@ -28,8 +28,8 @@ public class MoveSelectCards extends Actor {
     ArrayList<Vector2> freeMoveCardsLocations= new ArrayList<>(1);
     ArrayList<Vector2> playerMoveCardsLocations = new ArrayList<>(2);
 
-    public MoveSelectCards(GameManager gameManager, Stage stage) {
-        this.gameManager = gameManager;
+    public MoveSelectCards(BattleManager battleManager, Stage stage) {
+        this.battleManager = battleManager;
         this.moveCards = new ArrayList<>();
 
         enemyChemicalLabel = new Label("Enemy Chemicals" ,chemicalLabelSkin);
@@ -64,11 +64,11 @@ public class MoveSelectCards extends Actor {
     public void CreateCards (Stage stage){
         UpdateCardLocationsReferences();
 
-        if (!this.gameManager.enemyMoves.isEmpty()){
+        if (!this.battleManager.enemyMoves.isEmpty()){
             int cardNumberIndex = 0;
-            for (MoveSet moveSet : this.gameManager.enemyMoves) {
+            for (MoveSet moveSet : this.battleManager.enemyMoves) {
                 MoveCard moveCard = new MoveCard(moveSet,
-                        this.gameManager,
+                        this.battleManager,
                         false,
                         enemyMoveCardsLocations.get(cardNumberIndex).x,
                         enemyMoveCardsLocations.get(cardNumberIndex).y);
@@ -78,13 +78,13 @@ public class MoveSelectCards extends Actor {
             }
         }
 
-        if (!this.gameManager.freeMove.isEmpty()){
-            int enemyMoveCardNumber = gameManager.freeMove.size();
+        if (!this.battleManager.freeMove.isEmpty()){
+            int enemyMoveCardNumber = battleManager.freeMove.size();
             float moveCardSegmentWidth = MoveCardLocations.CHEMICAL_CARDS_WIDTH/enemyMoveCardNumber;
             int cardNumberIndex = 0;
-            for (MoveSet moveSet : this.gameManager.freeMove) {
+            for (MoveSet moveSet : this.battleManager.freeMove) {
                 MoveCard moveCard = new MoveCard(moveSet,
-                        this.gameManager,
+                        this.battleManager,
                         false,
                         freeMoveCardsLocations.get(cardNumberIndex).x,
                         freeMoveCardsLocations.get(cardNumberIndex).y);
@@ -94,11 +94,11 @@ public class MoveSelectCards extends Actor {
             }
         }
 
-        if (!this.gameManager.playerMoves.isEmpty()){
+        if (!this.battleManager.playerMoves.isEmpty()){
             int cardNumberIndex = 0;
-            for (MoveSet moveSet : this.gameManager.playerMoves) {
+            for (MoveSet moveSet : this.battleManager.playerMoves) {
                 MoveCard moveCard = new MoveCard(moveSet,
-                        this.gameManager,
+                        this.battleManager,
                         true,
                         playerMoveCardsLocations.get(cardNumberIndex).x,
                         playerMoveCardsLocations.get(cardNumberIndex).y);
@@ -114,7 +114,7 @@ public class MoveSelectCards extends Actor {
         Gdx.app.log("MoveSelectCards", "Updating Card Locations");
         UpdateCardLocationsReferences();
         int enemyCardIndex = 0;
-        for (MoveSet moveSet : gameManager.enemyMoves){
+        for (MoveSet moveSet : battleManager.enemyMoves){
             for (MoveCard moveCard : moveCards){
                 if (moveCard.moveSet == moveSet){
                     moveCard.JumpTo(enemyMoveCardsLocations.get(enemyCardIndex), 0.35f);
@@ -124,7 +124,7 @@ public class MoveSelectCards extends Actor {
             }
         }
         int freeCardIndex = 0;
-        for (MoveSet moveSet : gameManager.freeMove){
+        for (MoveSet moveSet : battleManager.freeMove){
             for (MoveCard moveCard : moveCards){
                 if (moveCard.moveSet == moveSet){
                     moveCard.JumpTo(freeMoveCardsLocations.get(freeCardIndex), 0.3f);
@@ -134,7 +134,7 @@ public class MoveSelectCards extends Actor {
             }
         }
         int playerCardIndex = 0;
-        for (MoveSet moveSet : gameManager.playerMoves){
+        for (MoveSet moveSet : battleManager.playerMoves){
             for (MoveCard moveCard : moveCards){
                 if (moveCard.moveSet == moveSet){
                     moveCard.JumpTo(playerMoveCardsLocations.get(playerCardIndex), 0.28f);
@@ -157,9 +157,9 @@ public class MoveSelectCards extends Actor {
 
     private void UpdateCardLocationsReferences(){
         Gdx.app.log("MoveSelectCards", "Calculating new locations for cards");
-        CalculateCardLocationsForRow(this.gameManager.enemyMoves, enemyMoveCardsLocations, MoveCardLocations.ENEMY_CHEMICAL_LOCATION_Y);
-        CalculateCardLocationsForRow(this.gameManager.freeMove, freeMoveCardsLocations, MoveCardLocations.FREE_CHEMICAL_LOCATION_Y);
-        CalculateCardLocationsForRow(this.gameManager.playerMoves, playerMoveCardsLocations, MoveCardLocations.PLAYER_CHEMICAL_LOCATION_Y);
+        CalculateCardLocationsForRow(this.battleManager.enemyMoves, enemyMoveCardsLocations, MoveCardLocations.ENEMY_CHEMICAL_LOCATION_Y);
+        CalculateCardLocationsForRow(this.battleManager.freeMove, freeMoveCardsLocations, MoveCardLocations.FREE_CHEMICAL_LOCATION_Y);
+        CalculateCardLocationsForRow(this.battleManager.playerMoves, playerMoveCardsLocations, MoveCardLocations.PLAYER_CHEMICAL_LOCATION_Y);
     }
 
     private void CalculateCardLocationsForRow(List<MoveSet> moveSetList, List<Vector2> targetLocationList, float yLocationForRow){

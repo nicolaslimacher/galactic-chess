@@ -9,16 +9,16 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.utils.ScreenUtils;
-import com.mygdx.game.MyChessGame;
+import com.mygdx.game.WranglerGiddyUp;
 
 public class MainMenuScreen implements Screen{
-    final MyChessGame game;
+    final WranglerGiddyUp game;
     OrthographicCamera camera;
     BitmapFont font;
     SpriteBatch batch;
     Texture loadingScreen;
 
-    public MainMenuScreen(final MyChessGame game) {
+    public MainMenuScreen(final WranglerGiddyUp game) {
         this.game = game;
         batch = new SpriteBatch();
 
@@ -29,7 +29,7 @@ public class MainMenuScreen implements Screen{
 
         loadingScreen = new Texture(Gdx.files.internal("loading_screen.png"));
 
-        game.GetAssetManager().load("texturePacks/battleTextures.atlas", TextureAtlas.class);
+        game.getAssetManager().load("texturePacks/battleTextures.atlas", TextureAtlas.class);
         Gdx.app.log("MainMenu", "Game Started");
     }
 
@@ -54,11 +54,11 @@ public class MainMenuScreen implements Screen{
         batch.draw(loadingScreen, 0,0);
         batch.end();
 
-        if(game.GetAssetManager().update()) {
+        if(game.getAssetManager().update()) {
             if (Gdx.input.isTouched()) {
-                //game.setScreen(new GameScreen(game, game.stage));
+                //game.setScreen(new BattleScreen(game, game.stage));
                 game.setScreen(new CharacterSelectScreen(game, game.stage));
-                Gdx.app.log("MainMenu", "Input received, creating GameScreen instance.");
+                Gdx.app.log("MainMenu", "Input received, creating BattleScreen instance.");
                 dispose();
             }
         }

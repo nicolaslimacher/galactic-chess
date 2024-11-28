@@ -6,24 +6,30 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.utils.Json;
+import com.badlogic.gdx.utils.JsonReader;
+import com.badlogic.gdx.utils.JsonValue;
 import com.mygdx.game.Board.Board;
-import com.mygdx.game.HUD.HUD;
 import com.mygdx.game.HUD.MoveConfirmation;
 import com.mygdx.game.HUD.MoveSelectCards;
 import com.mygdx.game.Command.Command;
 import com.mygdx.game.EnemyAI.EnemyAI;
 import com.mygdx.game.GamePiece.GamePiece;
 import com.mygdx.game.MoveSets.MoveSet;
-import com.mygdx.game.Screens.GameScreen;
+import com.mygdx.game.Screens.BattleScreen;
+import com.mygdx.game.Utils.Helpers;
 import com.mygdx.game.Utils.IntPair;
+import com.mygdx.game.WranglerGiddyUp;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class GameManager extends Actor{
+public class BattleManager extends Actor{
+    private static final String TAG = BattleManager.class.getSimpleName();
     Stage stage;
     public Board board;
-    final GameScreen gameScreen;
+    final BattleScreen battleScreen;
 
     //background
     public TextureRegion smallStar;
@@ -51,46 +57,27 @@ public class GameManager extends Actor{
     public MoveSelectCards moveSelectCards;
     public MoveConfirmation moveConfirmation;
 
-    public GameManager(Stage stage, Board board, List<MoveSet> availableMoveSets, GameScreen gameScreen) {
+    public BattleManager(Stage stage, Board board, List<MoveSet> availableMoveSets, BattleScreen battleScreen) {
         this.stage = stage;
         this.board = board;
-        this.gameScreen = gameScreen;
+        this.battleScreen = battleScreen;
         smallStar = GetAssetManager().get("texturePacks/battleTextures.atlas", TextureAtlas.class).findRegion("smallstar1");
         mediumStar = GetAssetManager().get("texturePacks/battleTextures.atlas", TextureAtlas.class).findRegion("mediumstar.png");
+
         this.availableMoveSets = availableMoveSets;
         AssignStartingChemicals();
         this.moveSelectCards = new MoveSelectCards(this, stage);
+        stage.addActor(this.moveSelectCards);
 
+        friendlyGamePieces = new ArrayList<>(10);
+        enemyGamePieces = new ArrayList<>(10);
 
         this.currentTurn = Team.FRIENDLY;
-        this.setName("GameManager");
-        stage.addActor(this.moveSelectCards);
-//        stage.addListener(stageInputListener);
-        Gdx.app.log("GameManager", "GameManager created.");
+        this.setName("BattleManager");
+        Gdx.app.log("BattleManager", "BattleManager created.");
+        ((WranglerGiddyUp) Gdx.app.getApplicationListener()).getRunManager().setCurrentBattleManager(this);
     }
 
-//    private final InputListener stageInputListener = new InputListener(){
-//        public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-//            Object selectedObject = event.getTarget();
-//            GameManager gameManager = GameManager.this;
-//            for(Actor actor:stage.getActors()){
-//                if(actor.getClass() == DefaultPawn.class) {
-//                    DefaultPawn defaultPawn = (DefaultPawn) actor;
-//                    //doing this rather than just checking !gameManager.selectedGamePiece.equals(selectedObject)
-//                    //so that player can click menu items
-//                    if (!defaultPawn.equals(selectedObject) && defaultPawn == gameManager.selectedDefaultPawn) {
-//                        gameManager.selectedDefaultPawn = null;
-//                        if (stage.getRoot().findActor("possibleMovesGroup" + defaultPawn.getName()) != null){
-//                            stage.getRoot().findActor("possibleMovesGroup" + defaultPawn.getName()).remove();
-//                        }
-//
-//                    }
-//                }
-//            }
-//            Gdx.app.log("GameManager", "Stage-level input listener received input.");
-//            return false;
-//        }
-//    };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
     //                                       GamePiece Management                                 //
@@ -102,6 +89,8 @@ public class GameManager extends Actor{
     public Boolean IsTeamGamePieceAtBoardLocation(IntPair coordinates, Team team) {
         return GetGamePieceAtCoordinate(coordinates) != null && (GetGamePieceAtCoordinate(coordinates).team == team);
     }
+
+    //todo: check enemyGamePieces and friendlyGamePieces
     public GamePiece GetGamePieceAtCoordinate(IntPair coordinateBoardPair){
         for(Actor actor:this.getStage().getActors()){
             if(actor.getClass() == GamePiece.class) {
@@ -119,14 +108,14 @@ public class GameManager extends Actor{
         for ( GamePiece gamePiece : gamePieces) {
             if (gamePiece.isKing && gamePiece.isAlive) {
                 return true;
-                //this.gameScreen.SwitchScreenEndGame();
+                //this.battleScreen.SwitchScreenEndGame();
             }
         }
         return false;
     }
 
     public AssetManager GetAssetManager(){
-        return gameScreen.GetGame().GetAssetManager();
+        return battleScreen.GetGame().getAssetManager();
     }
 
     private boolean PlayerHasAValidMove(){
@@ -151,7 +140,7 @@ public class GameManager extends Actor{
         }else{
             System.out.println("There is no valid enemy king left");
             //switch screens
-            this.gameScreen.SwitchScreenEndGame();
+            this.battleScreen.SwitchScreenEndGame();
             return true;
         }
         return false;
@@ -222,8 +211,8 @@ public class GameManager extends Actor{
         this.moveSelectCards.setVisible(true);
         this.moveSelectCards.UpdateCardLocations();
         //call AI to make turn
-        gameScreen.getHUD().DisableEndTurnButton();
-        gameScreen.getHUD().DisableUndoButton();
+        battleScreen.getHUD().DisableEndTurnButton();
+        battleScreen.getHUD().DisableUndoButton();
 
         enemyAI.MakeMove();
     }
@@ -233,7 +222,7 @@ public class GameManager extends Actor{
         ShuffleCardsAfterEnemy(enemyMoveSetUsed);
         this.moveSelectCards.UpdateCardLocations();
 
-        gameScreen.getHUD().UpdateTurn();
+        battleScreen.getHUD().UpdateTurn();
 
         //after AI see if player has any possible moves
         if(!PlayerHasAValidMove()){
@@ -245,5 +234,44 @@ public class GameManager extends Actor{
 
         //check if enemy team has a king left, then check if king has any health
         EndGameScreenIfKingsDead(Team.FRIENDLY);
+    }
+
+    public void placeStartingEnemyGamePieces(JsonValue encounter){
+        Gdx.app.debug(TAG, "Placing Staring Enemy Game Pieces");
+        for (JsonValue gamePiece : encounter.get("gamePieces")){
+            GamePiece enemyGamePiece = new GamePiece(
+                    board,
+                    this,
+                    gamePiece.getInt("gamePieceID"),
+                    new IntPair(gamePiece.getInt("xVal"),gamePiece.getInt("yVal")),
+                    Team.ENEMY,
+                    gamePiece.getBoolean("isKing"),
+                    Helpers.getPRNGManager().getNextRand(PRNGManager.PRNGType.enemyStatsSeed, gamePiece.getInt("minHealth"), gamePiece.getInt("maxHealth")),
+                    Helpers.getPRNGManager().getNextRand(PRNGManager.PRNGType.enemyStatsSeed, gamePiece.getInt("minAttack"), gamePiece.getInt("maxAttack"))
+                    );
+            enemyGamePieces.add(enemyGamePiece);
+            stage.addActor(enemyGamePiece);
+        }
+    }
+
+    public void placeStartingFriendlyGamePieces(){
+        Gdx.app.debug(TAG, "Placing Staring Friendly Game Pieces");
+        JsonValue playerGamePieces = new JsonReader().parse(Gdx.files.internal("JSONs/PlayerTeam.json"));
+        for (JsonValue jsonGamePiece : playerGamePieces){
+            GamePiece playerGamePiece = new GamePiece(
+                    board,
+                    this,
+                    jsonGamePiece.getInt("gamePieceID"),
+                    new IntPair(jsonGamePiece.getInt("xVal"),jsonGamePiece.getInt("yVal")),
+                    Team.FRIENDLY,
+                    jsonGamePiece.getBoolean("isKing"),
+                    jsonGamePiece.getInt("health"),
+                    jsonGamePiece.getInt("attack")
+            );
+            Gdx.app.debug(TAG, "player gamePiece starting health: " + jsonGamePiece.getInt("health"));
+            Gdx.app.debug(TAG, "player gamePiece starting attack: " + jsonGamePiece.getInt("attack"));
+            friendlyGamePieces.add(playerGamePiece);
+            stage.addActor(playerGamePiece);
+        }
     }
 }

@@ -12,7 +12,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.mygdx.game.Manager.GameManager;
+import com.mygdx.game.Manager.BattleManager;
 
 import java.util.ArrayList;
 import java.util.stream.IntStream;
@@ -29,8 +29,8 @@ public class Arrow extends Actor {
     ArrayList<ArrowTrail> trails;
 
 
-    public Arrow(Vector2 pos, Stage stage, GameManager gameManager) {
-        this.textureRegion = gameManager.GetAssetManager().get("texturePacks/battleTextures.atlas", TextureAtlas.class).findRegion("small_arrow");
+    public Arrow(Vector2 pos, Stage stage, BattleManager battleManager) {
+        this.textureRegion = battleManager.GetAssetManager().get("texturePacks/battleTextures.atlas", TextureAtlas.class).findRegion("small_arrow");
         this.setBounds(pos.x,pos.y,64,64);
         this.setOrigin(this.getWidth()/2, this.getHeight()/2);
         Gdx.app.log("GamePiece", "Drag arrow created.");
@@ -52,7 +52,7 @@ public class Arrow extends Actor {
         IntStream.range(0, arrowTrailNum).forEachOrdered(n -> {
             float t = (1f / (arrowTrailNum+1))*(n+1);
             bezier.valueAt(pos, t);
-            ArrowTrail trail = new ArrowTrail(pos, gameManager);
+            ArrowTrail trail = new ArrowTrail(pos, battleManager);
             trail.setScale(0.3f + ((0.3f / arrowTrailNum) * n));
             trails.add(trail);
             trailsGroup.addActor(trail);
