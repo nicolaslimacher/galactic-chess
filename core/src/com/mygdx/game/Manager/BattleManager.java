@@ -152,7 +152,6 @@ public class BattleManager extends Actor{
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     public void AssignStartingChemicals () {
-        Collections.shuffle(availableMoveSets);
         enemyMoves.add(availableMoveSets.get(0));
         enemyMoves.add(availableMoveSets.get(1));
         freeMove.add(availableMoveSets.get(2));

@@ -52,8 +52,8 @@ public class BattleScreen implements Screen {
 
 
 
-
-		availableMoveSets = Helpers.GetRandomMoveSets(0,15);
+		availableMoveSets = game.getRunManager().getNextEncounterMoveSets(5);
+		//availableMoveSets = Helpers.GetRandomMoveSets(0,15);
 		//this.availableMoveSets = availableMoveSets;
 		for (MoveSet moveSet: availableMoveSets) {
 			Gdx.app.log("BattleScreen", "Move Set Chosen: " + moveSet.getName() + ".");

@@ -1,8 +1,11 @@
 package com.mygdx.game.Manager;
 
+import static com.badlogic.gdx.net.HttpRequestBuilder.json;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
+import com.mygdx.game.MoveSets.MoveSet;
 import com.mygdx.game.Utils.Helpers;
 
 import java.util.ArrayList;
@@ -21,7 +24,32 @@ public class RunManager {
         easyEncountersFought = new ArrayList<>();
     }
 
-    getNext
+    public List<MoveSet> getNextEncounterMoveSets(int moveSetsToChose){
+        List<MoveSet> availableMoveSets = new ArrayList<>(5);
+        List<Integer> moveSetNumberChosen = new ArrayList<>(5);
+        MoveSet[] moveSets = json.fromJson(MoveSet[].class, Gdx.files.internal("JSONs/MoveSet.json"));
+        int numberOfMoveSets = moveSets.length;
+
+        int i = 0;
+        int moveSetNumber;
+        while(i < moveSetsToChose) {
+            //getNextRand starts at index 1
+            do {
+                moveSetNumber = Helpers.getPRNGManager().getNextRand(PRNGManager.PRNGType.moveCardSeed, numberOfMoveSets);
+            }
+            while (!moveSetNumberChosen.isEmpty() && moveSetNumberChosen.contains(moveSetNumber-1));
+
+            moveSetNumberChosen.add(moveSetNumber-1);
+            availableMoveSets.add(moveSets[moveSetNumber-1]);
+            i++;
+        }
+
+        for (int num : moveSetNumberChosen){
+            Gdx.app.debug(TAG, "moveSetNumber chosen: " + num);
+        }
+
+        return availableMoveSets;
+    }
 
     public int getNumberOfEncounters() {return numberOfEncounters;}
     public void setNumberOfEncounters(int numberOfEncounters) {this.numberOfEncounters = numberOfEncounters;}

@@ -34,8 +34,9 @@ public class MoveCard extends Actor {
         this.setWidth((int) MoveCardLocations.CARD_WIDTH);
         this.setHeight((int) MoveCardLocations.CHEMICAL_CARDS_HEIGHT);
         this.setBounds(textureRegion.getRegionX(), textureRegion.getRegionY(),
-                textureRegion.getRegionWidth(), textureRegion.getRegionHeight());
+                this.getWidth(), this.getHeight());
         this.setPosition(x, y);
+        this.setDebug(true);
         Gdx.app.log("MoveCard", "MoveCard created, name: " + this.moveSet.name + ", selectable? : " + this.selectable + ", position: " + this.getX() + "," + this.getY());
 
         //create text labels
