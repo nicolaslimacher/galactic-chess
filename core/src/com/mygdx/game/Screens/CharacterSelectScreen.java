@@ -38,7 +38,6 @@ public class CharacterSelectScreen implements Screen{
     TextButton seedConfirmButton, seedClearButton;
     TextField seedInput;
 
-    List<MoveSet> availableMoveSets;
     int playerKingIDSelected;
     private final String usingRandomSeedNotification = "Using new random seed";
 
@@ -58,10 +57,6 @@ public class CharacterSelectScreen implements Screen{
         buttons.setPosition(Constants.SCREEN_WIDTH*0.1f, Constants.SCREEN_HEIGHT*0.4f);
         buttons.setDebug(true);
         stage.addActor(buttons);
-
-        availableMoveSets = Helpers.GetRandomMoveSets(0,15);
-
-
 
         button1 = new TextButton("Click for\nGreen King",skin);
         button1.addListener(new ChangeListener() {

@@ -11,7 +11,6 @@ import java.util.List;
 public class RunManager {
     private static final String TAG = RunManager.class.getSimpleName();
 
-    private long originalSeed;
     private int numberOfEncounters;
     private List<Integer> easyEncountersFought;
     private int characterID;
@@ -22,8 +21,7 @@ public class RunManager {
         easyEncountersFought = new ArrayList<>();
     }
 
-    public long getOriginalSeed() {return originalSeed;}
-    public void setOriginalSeed(long originalSeed) {this.originalSeed = originalSeed;}
+    getNext
 
     public int getNumberOfEncounters() {return numberOfEncounters;}
     public void setNumberOfEncounters(int numberOfEncounters) {this.numberOfEncounters = numberOfEncounters;}

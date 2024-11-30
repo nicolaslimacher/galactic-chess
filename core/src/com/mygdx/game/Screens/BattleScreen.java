@@ -51,6 +51,8 @@ public class BattleScreen implements Screen {
 		this.stage = stage;
 
 
+
+
 		availableMoveSets = Helpers.GetRandomMoveSets(0,15);
 		//this.availableMoveSets = availableMoveSets;
 		for (MoveSet moveSet: availableMoveSets) {
