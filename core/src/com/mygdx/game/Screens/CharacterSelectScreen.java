@@ -132,6 +132,7 @@ public class CharacterSelectScreen implements Screen{
                 Gdx.app.log(TAG,"seed confirm button selected");
                 Helpers.getPRNGManager().setSeedToPlayerSeed(seedInput.getText());
                 seedFeedbackLabel.setText("seed: " + seedInput.getText());
+                seedClearButton.setVisible(true);
             }
         });
         seedTable.add(seedConfirmButton);
@@ -140,14 +141,14 @@ public class CharacterSelectScreen implements Screen{
         seedFeedbackLabel = new Label(usingRandomSeedNotification, skin);
         seedTable.add(seedFeedbackLabel);
 
-        seedClearButton = new TextButton("Confirm", skin);
+        seedClearButton = new TextButton("X", skin);
         seedClearButton.setVisible(false);
         seedClearButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent changeEvent, Actor actor) {
                 Gdx.app.log(TAG,"seed clear button clicked");
-                Helpers.getPRNGManager().setSeedToPlayerSeed(seedInput.getText());
-                seedFeedbackLabel.setText("seed: " + seedInput.getText());
+                Helpers.getPRNGManager().revertPlayerSeed();
+                seedFeedbackLabel.setText(usingRandomSeedNotification);
             }
         });
         seedTable.add(seedClearButton);
