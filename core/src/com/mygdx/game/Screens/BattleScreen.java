@@ -17,9 +17,11 @@ import com.mygdx.game.Board.Board;
 import com.mygdx.game.EnemyAI.EnemyAI;
 import com.mygdx.game.HUD.HUD;
 import com.mygdx.game.Manager.BattleManager;
+import com.mygdx.game.Manager.RunManager;
 import com.mygdx.game.Manager.Team;
 import com.mygdx.game.GamePiece.GamePiece;
 import com.mygdx.game.MoveSets.MoveSet;
+import com.mygdx.game.Utils.Constants;
 import com.mygdx.game.WranglerGiddyUp;
 import com.mygdx.game.Utils.Helpers;
 import com.mygdx.game.Utils.IntPair;
@@ -28,6 +30,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BattleScreen implements Screen {
+	private static final String TAG = RunManager.class.getSimpleName();
+
 	final WranglerGiddyUp game;
 	final Stage stage;
 	SpriteBatch batch;
@@ -100,7 +104,7 @@ public class BattleScreen implements Screen {
 		batch.begin();
 		//for performance reasons disable blend before drawing background
 		batch.disableBlending();
-		batch.draw(starryBackground,0,0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		batch.draw(starryBackground,0,0, Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT);
 		batch.enableBlending();
 
 		stage.draw();

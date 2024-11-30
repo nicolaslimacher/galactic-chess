@@ -4,14 +4,19 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.mygdx.game.MoveSets.MoveSet;
+import com.mygdx.game.Utils.Constants;
 import com.mygdx.game.WranglerGiddyUp;
 import com.mygdx.game.Utils.Helpers;
 
@@ -25,24 +30,40 @@ public class CharacterSelectScreen implements Screen{
     SpriteBatch batch;
     Stage stage;
     Skin skin = new Skin(Gdx.files.internal("skins/uiskin.json"));
+    private final TextureRegion starryBackground;
+
+    Table buttons, seedTable;
     TextButton button1, button2, button3;
+    Label seedInfoLabel, seedFeedbackLabel;
+    TextButton seedConfirmButton, seedClearButton;
+    TextField seedInput;
+
     List<MoveSet> availableMoveSets;
     int playerKingIDSelected;
+    private final String usingRandomSeedNotification = "Using new random seed";
 
     public CharacterSelectScreen(final WranglerGiddyUp game, final Stage stage) {
         this.game = game;
         this.stage = stage;
         Gdx.input.setInputProcessor(stage);
 
+        starryBackground = game.getAssetManager().get("texturePacks/battleTextures.atlas", TextureAtlas.class).findRegion("starrybackground");
+
         batch = new SpriteBatch();
-        Table root = new Table();
-        root.defaults().space(10f);
-        root.setFillParent(true);
-        stage.addActor(root);
+
+        buttons = new Table();
+        buttons.defaults().space(10f);
+        buttons.setWidth(Constants.SCREEN_WIDTH*0.8f);
+        buttons.setHeight(Constants.SCREEN_HEIGHT*0.5f);
+        buttons.setPosition(Constants.SCREEN_WIDTH*0.1f, Constants.SCREEN_HEIGHT*0.4f);
+        buttons.setDebug(true);
+        stage.addActor(buttons);
 
         availableMoveSets = Helpers.GetRandomMoveSets(0,15);
 
-        button1 = new TextButton("Click for\nGreen Character",skin);
+
+
+        button1 = new TextButton("Click for\nGreen King",skin);
         button1.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent changeEvent, Actor actor) {
@@ -52,9 +73,9 @@ public class CharacterSelectScreen implements Screen{
                 dispose();
             }
         });
-        root.add(button1);
+        buttons.add(button1);
 
-        button2 = new TextButton("Click for\nWhite Character",skin);
+        button2 = new TextButton("Click for\nWhite King",skin);
         button2.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent changeEvent, Actor actor) {
@@ -63,9 +84,9 @@ public class CharacterSelectScreen implements Screen{
                 dispose();
             }
         });
-        root.add(button2);
+        buttons.add(button2);
 
-        button3 = new TextButton("Click for\nBlack Character",skin);
+        button3 = new TextButton("Click for\nBlack King",skin);
         button3.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent changeEvent, Actor actor) {
@@ -74,7 +95,64 @@ public class CharacterSelectScreen implements Screen{
                 dispose();
             }
         });
-        root.add(button3);
+        buttons.add(button3);
+
+        seedTable = new Table();
+        seedTable.defaults().space(10f);
+        seedTable.setWidth(Constants.SCREEN_WIDTH*0.8f);
+        seedTable.setHeight(Constants.SCREEN_HEIGHT*0.3f);
+        seedTable.setPosition(Constants.SCREEN_WIDTH*0.1f, Constants.SCREEN_HEIGHT*0.1f);
+        seedTable.setDebug(true);
+        stage.addActor(seedTable);
+
+
+        seedInfoLabel = new Label("Set a custom seed if you want", skin);
+        seedTable.add(seedInfoLabel);
+
+        seedTable.row();
+
+        seedInput = new TextField("", skin);
+        seedInput.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent changeEvent, Actor actor) {
+                Gdx.app.log(TAG,"seed input text field received input, text:" + seedInput.getText());
+                if (!seedInput.getText().isEmpty()) {
+                    seedConfirmButton.setDisabled(seedInput.getText().length() != 19 || !isDigitsOnly(seedInput.getText()));
+                }
+                Gdx.app.debug(TAG, "confirm button disabled? " + seedConfirmButton.isDisabled());
+            }
+        });
+        seedTable.add(seedInput).width(250f);
+
+        seedConfirmButton = new TextButton("Confirm", skin);
+        seedConfirmButton.setDisabled(true);
+        seedConfirmButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent changeEvent, Actor actor) {
+                Gdx.app.log(TAG,"seed confirm button selected");
+                Helpers.getPRNGManager().setSeedToPlayerSeed(seedInput.getText());
+                seedFeedbackLabel.setText("seed: " + seedInput.getText());
+            }
+        });
+        seedTable.add(seedConfirmButton);
+
+        seedTable.row();
+        seedFeedbackLabel = new Label(usingRandomSeedNotification, skin);
+        seedTable.add(seedFeedbackLabel);
+
+        seedClearButton = new TextButton("Confirm", skin);
+        seedClearButton.setVisible(false);
+        seedClearButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent changeEvent, Actor actor) {
+                Gdx.app.log(TAG,"seed clear button clicked");
+                Helpers.getPRNGManager().setSeedToPlayerSeed(seedInput.getText());
+                seedFeedbackLabel.setText("seed: " + seedInput.getText());
+            }
+        });
+        seedTable.add(seedClearButton);
+
+
 
         font = new BitmapFont(); // use libGDX's default Arial font
 
@@ -85,21 +163,34 @@ public class CharacterSelectScreen implements Screen{
 
     }
 
-    private void DeleteButtons(){
+    private void DeleteCharacterScreenWidgets(){
         button1.remove();
         button2.remove();
         button3.remove();
+        buttons.remove();
+
+        seedInfoLabel.remove();
+        seedFeedbackLabel.remove();
+        seedConfirmButton.remove();
+        seedClearButton.remove();
+        seedInput.remove();
+        seedTable.remove();
     }
 
     @Override
     public void render(float deltaTime) {
         ScreenUtils.clear(0.10f, 0.10f, 0.15f, 1f);
         stage.act(deltaTime);
+
         // begin a new batch and draw board
         batch.begin();
+
         //for performance reasons disable blend before drawing background
         batch.disableBlending();
+        batch.draw(starryBackground,0,0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         batch.enableBlending();
+
+
 
         stage.draw();
         batch.end();
@@ -130,6 +221,12 @@ public class CharacterSelectScreen implements Screen{
     public void dispose() {
         batch.dispose();
         font.dispose();
-        DeleteButtons();
+        DeleteCharacterScreenWidgets();
     }
+
+    private boolean isDigitsOnly(String string){
+        Gdx.app.debug(TAG, "checking that " + string + " is digits only: " + string.chars().allMatch(Character::isDigit));
+        return string.chars().allMatch(Character::isDigit);
+    }
+
 }

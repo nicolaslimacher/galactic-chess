@@ -1,5 +1,7 @@
 package com.mygdx.game.Manager;
 
+import static java.lang.Long.parseLong;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
 
@@ -9,9 +11,12 @@ public class PRNGManager {
     private static final String TAG = PRNGManager.class.getSimpleName();
 
     private final Random random;
-    private long originalSeed;
 
-    public static enum PRNGType{
+    private boolean useUserProvidedSeed;
+    private long originalSeed;
+    private long userProvidedSeed;
+
+    public enum PRNGType{
         //need more? itemRewardSeed? enemyAIseed?
         moveCardSeed(0L),
         enemyEncounterSeed(0L),
@@ -21,7 +26,7 @@ public class PRNGManager {
 
         private long seedValue;
 
-        private PRNGType (long seedValue){
+        PRNGType(long seedValue){
             this.seedValue = seedValue;
         }
 
@@ -37,12 +42,22 @@ public class PRNGManager {
         return originalSeed;
     }
 
+    public boolean usingUserProvidedSeed() {
+        return useUserProvidedSeed;
+    }
+
     public PRNGManager() {
-        Random random = new Random(System.currentTimeMillis());
+        this.random = new Random(System.currentTimeMillis());
         //using next long because i'm not sure system.currentTimeMillis is same format?
-        //want seeds to be consistent
+        //want seeds to be consistent and positive
         this.originalSeed = Math.abs(random.nextLong());
-        this.random = new Random(originalSeed);
+        setSpecificSeedsFromPrimary(originalSeed);
+        userProvidedSeed = 0L;
+        useUserProvidedSeed = false;
+    }
+
+    private void setSpecificSeedsFromPrimary(long seed){
+        random.setSeed(seed);
         PRNGType.moveCardSeed.setSeedValue(random.nextLong());
         PRNGType.enemyEncounterSeed.setSeedValue(random.nextLong());
         PRNGType.enemyStatsSeed.setSeedValue(random.nextLong());
@@ -50,13 +65,18 @@ public class PRNGManager {
         PRNGType.enemyAISeed.setSeedValue(random.nextLong());
     }
 
-    public void startGameWithSeed(long playerSeed){
-        this.originalSeed = playerSeed;
-        random.setSeed(originalSeed);
-        PRNGType.moveCardSeed.setSeedValue(random.nextLong());
-        PRNGType.enemyEncounterSeed.setSeedValue(random.nextLong());
-        PRNGType.pawnRewardSeed.setSeedValue(random.nextLong());
-        PRNGType.enemyAISeed.setSeedValue(random.nextLong());
+    public void setSeedToPlayerSeed(String playerSeed){
+        userProvidedSeed = parseLong(playerSeed);
+        useUserProvidedSeed = true;
+        setSpecificSeedsFromPrimary(userProvidedSeed);
+        Gdx.app.debug(TAG, "set to player seed: " + userProvidedSeed + ", using user provided seed? " + useUserProvidedSeed);
+    }
+
+    public void revertPlayerSeed(){
+        userProvidedSeed = 0L;
+        useUserProvidedSeed = false;
+        setSpecificSeedsFromPrimary(originalSeed);
+        Gdx.app.debug(TAG, "reverting to original seed: " + originalSeed + ", using user provided seed? " + useUserProvidedSeed);
     }
 
     public void updateFromSave(long originalSeed, long moveCardSeed, long enemyEncounterSeed, long pawnRewardSeed, long enemyAISeed){

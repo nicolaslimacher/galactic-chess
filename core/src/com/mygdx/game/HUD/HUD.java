@@ -23,7 +23,7 @@ public class HUD implements Disposable {
 
     //Scene2D Widgets
     Skin skin = new Skin(Gdx.files.internal("skins/uiskin.json"));
-    private TextButton turnCounter;
+    private final TextButton seedDisplau;
     private TextButton undoButton, endTurn;
 
     public HUD(SpriteBatch spriteBatch, BattleManager battleManager) {
@@ -31,10 +31,10 @@ public class HUD implements Disposable {
         viewport = new FitViewport(Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT, new OrthographicCamera());
         customHUDStage = new CustomHUDStage(viewport, spriteBatch, battleManager);
 
-        turnCounter = new TextButton("Seed: " + Helpers.getPRNGManager().getOriginalSeed(), skin);
-        turnCounter.setBounds(Constants.SCREEN_WIDTH - 350 , Constants.SCREEN_HEIGHT-40, 335, 35);
-        turnCounter.setName("TurnCounterMenu");
-        customHUDStage.addActor(turnCounter);
+        seedDisplau = new TextButton("Seed: " + Helpers.getPRNGManager().getOriginalSeed(), skin);
+        seedDisplau.setBounds(Constants.SCREEN_WIDTH - 350 , Constants.SCREEN_HEIGHT-40, 335, 35);
+        seedDisplau.setName("TurnCounterMenu");
+        customHUDStage.addActor(seedDisplau);
 
         Table table = new Table();
 
@@ -82,23 +82,23 @@ public class HUD implements Disposable {
     }
 
     public void UpdateTurn (){
-        //this.turnCounter.setText("Turn: " + Helpers.getCurrentBattleManager().turnNumber);
+        //this.seedDisplau.setText("Turn: " + Helpers.getCurrentBattleManager().turnNumber);
     }
     public void EnableUndoButton(){
         Gdx.app.debug("HUD", "Undo button enabled");
-        this.undoButton.setTouchable(Touchable.enabled);
+        this.undoButton.setDisabled(false);
     }
     public void DisableUndoButton(){
         Gdx.app.debug("HUD", "Undo button disabled");
-        this.undoButton.setTouchable(Touchable.disabled);
+        this.undoButton.setDisabled(true);
     }
 
     public void EnableEndTurnButton(){
         Gdx.app.debug("HUD", "End button enabled");
-        this.endTurn.setTouchable(Touchable.enabled);
+        this.endTurn.setDisabled(false);
     }
     public void DisableEndTurnButton(){
         Gdx.app.debug("HUD", "End button disabled");
-        this.endTurn.setTouchable(Touchable.disabled);
+        this.endTurn.setDisabled(true);
     }
 }
