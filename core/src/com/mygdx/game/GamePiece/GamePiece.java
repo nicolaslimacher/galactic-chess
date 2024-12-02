@@ -262,7 +262,7 @@ public class GamePiece extends Actor {
                 getWidth(), getHeight(), getScaleX(), getScaleY(), getRotation());
         //draw labels
         if (hitPointsLabel != null && attackPointsLabel != null) {
-            SetLabelPositions();
+            setLabelPositions();
             this.hitPointsLabel.draw(batch, parentAlpha);
             this.attackPointsLabel.draw(batch, parentAlpha);
         }
@@ -336,10 +336,10 @@ public class GamePiece extends Actor {
         attackPointsLabel.getStyle().background = atkBackground.getDrawable();
         attackPointsLabel.getStyle().fontColor = Color.BLACK;
 
-        this.SetLabelPositions();
+        this.setLabelPositions();
     }
 
-    private void SetLabelPositions() {
+    private void setLabelPositions() {
         attackPointsLabel.setBounds(this.getX() + 2, this.getY() + 2, 20, 20);
         attackPointsLabel.setAlignment(Align.center);
         hitPointsLabel.setBounds(this.getX() + this.getWidth() - 22, this.getY() + 2, 20, 20);

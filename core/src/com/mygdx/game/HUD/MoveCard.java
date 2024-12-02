@@ -20,22 +20,19 @@ import com.mygdx.game.Manager.BattleManager;
 import com.mygdx.game.MoveSets.MoveSet;
 
 public class MoveCard extends Actor {
+    private static final String TAG = MoveCard.class.getSimpleName();
     public MoveSet moveSet;
     public BattleManager battleManager;
     private boolean selectable;
     TextureRegion textureRegion;
     Label moveSymbolLabel, moveNameLabel;
     Skin moveSelectSkin;
+
     public MoveCard(MoveSet moveSet, BattleManager battleManager, boolean selectable, float x, float y) {
         this.moveSet = moveSet;
         this.battleManager = battleManager;
         this.selectable = selectable;
         textureRegion = battleManager.GetAssetManager().get("texturePacks/battleTextures.atlas", TextureAtlas.class).findRegion("moveCardBackground");
-        this.setWidth((int) MoveCardLocations.CARD_WIDTH);
-        this.setHeight((int) MoveCardLocations.CHEMICAL_CARDS_HEIGHT);
-        this.setBounds(textureRegion.getRegionX(), textureRegion.getRegionY(),
-                this.getWidth(), this.getHeight());
-        this.setPosition(x, y);
         this.setDebug(true);
         Gdx.app.log("MoveCard", "MoveCard created, name: " + this.moveSet.name + ", selectable? : " + this.selectable + ", position: " + this.getX() + "," + this.getY());
 
@@ -44,9 +41,19 @@ public class MoveCard extends Actor {
         moveSymbolLabel = new Label(moveSet.symbol, moveSelectSkin, "moveCardSelect");
         moveSymbolLabel.setFontScale(0.65f);
         moveSymbolLabel.setDebug(true);
+        moveSymbolLabel.setAlignment(Align.center);
+
         moveNameLabel = new Label(moveSet.name, moveSelectSkin, "moveCardSelect");
         moveNameLabel.setFontScale(0.40f);
         moveNameLabel.setDebug(true);
+        moveNameLabel.setAlignment(Align.left);
+
+        this.setWidth((int) MoveCardLocations.CARD_WIDTH);
+        this.setHeight((int) MoveCardLocations.CHEMICAL_CARDS_HEIGHT);
+        this.setBounds(textureRegion.getRegionX(), textureRegion.getRegionY(),
+                this.getWidth(), this.getHeight());
+        this.setPosition(x, y);
+
         this.addListener(MoveSelectButtonListener);
     }
 
@@ -84,22 +91,32 @@ public class MoveCard extends Actor {
         //sprite.draw(batch, parentAlpha);
         //draw labels
         if (moveNameLabel != null && moveSymbolLabel != null) {
-            SetLabelPositions();
             this.moveNameLabel.draw(batch, parentAlpha);
             this.moveSymbolLabel.draw(batch, parentAlpha);
         }
     }
 
-    private void SetLabelPositions (){
-        moveNameLabel.setPosition(this.getX() + 30f/75f*this.getWidth(),
-                this.getY() + 125f/150f*this.getHeight(),
-                Align.left);
-        moveSymbolLabel.setPosition(this.getX(),
-                this.getY() + 125f/150f*this.getHeight(),
-                Align.left);
+    @Override
+    protected void positionChanged() {
+        super.positionChanged();
+        setLabelPositions();
     }
 
-    public void JumpTo(Vector2 newPosition, float jumpDelay) {
+    private void setLabelPositions(){
+        Gdx.app.debug(TAG, "setting label positions");
+        float moveCardGetX = this.getX();
+        float moveNameLabelOffset = ((30f/75f)*this.getWidth());
+        Gdx.app.debug(TAG, "moveNameLabelOffset: " + moveNameLabelOffset);
+        Gdx.app.debug(TAG, "movecard getX: " + this.getX() + ", getY: " + this.getY() + ", getWidth: " + this.getWidth() + ", getHeight: " + this.getHeight());
+        moveSymbolLabel.setPosition(moveCardGetX,
+                this.getY() + 125f/150f*this.getHeight());
+        Gdx.app.debug(TAG, "moveSymbolLabel getX: " + moveSymbolLabel.getX() + ", getY: " + moveSymbolLabel.getY());
+        moveNameLabel.setPosition(moveCardGetX + moveNameLabelOffset,
+                this.getY() + 125f/150f*this.getHeight());
+        Gdx.app.debug(TAG, "movenamelabel getX: " + moveNameLabel.getX() + ", getY: " + moveNameLabel.getY());
+    }
+
+    public void jumpTo(Vector2 newPosition, float jumpDelay) {
         Gdx.app.log("MoveCard", "MoveCard " + this.moveSet.symbol + " is moving to " + newPosition.x + "," + newPosition.y + ".");
 
         //movement action (and undo squish)

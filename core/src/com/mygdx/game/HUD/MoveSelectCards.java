@@ -117,7 +117,7 @@ public class MoveSelectCards extends Actor {
         for (MoveSet moveSet : battleManager.enemyMoves){
             for (MoveCard moveCard : moveCards){
                 if (moveCard.moveSet == moveSet){
-                    moveCard.JumpTo(enemyMoveCardsLocations.get(enemyCardIndex), 0.35f);
+                    moveCard.jumpTo(enemyMoveCardsLocations.get(enemyCardIndex), 0.35f);
                     moveCard.setUnselectable();
                     enemyCardIndex += 1;
                 }
@@ -127,7 +127,7 @@ public class MoveSelectCards extends Actor {
         for (MoveSet moveSet : battleManager.freeMove){
             for (MoveCard moveCard : moveCards){
                 if (moveCard.moveSet == moveSet){
-                    moveCard.JumpTo(freeMoveCardsLocations.get(freeCardIndex), 0.3f);
+                    moveCard.jumpTo(freeMoveCardsLocations.get(freeCardIndex), 0.3f);
                     moveCard.setUnselectable();
                     freeCardIndex += 1;
                 }
@@ -137,7 +137,7 @@ public class MoveSelectCards extends Actor {
         for (MoveSet moveSet : battleManager.playerMoves){
             for (MoveCard moveCard : moveCards){
                 if (moveCard.moveSet == moveSet){
-                    moveCard.JumpTo(playerMoveCardsLocations.get(playerCardIndex), 0.28f);
+                    moveCard.jumpTo(playerMoveCardsLocations.get(playerCardIndex), 0.28f);
                     moveCard.setSelectable();
                     playerCardIndex += 1;
                 }
