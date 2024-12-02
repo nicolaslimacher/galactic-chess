@@ -62,7 +62,7 @@ public class GamePiece extends Actor {
     public float preDragXPosition;
     public float preDragYPosition;
 
-    Skin skin = new Skin(Gdx.files.internal("skins/uiskin.json"));
+    Skin skin = new Skin(Gdx.files.internal("skins/testskin.json"));
 
 
     public GamePiece(Board board, BattleManager battleManager, int gamePieceID, IntPair coordinates, Team team, boolean isKing, int health, int attack) {
@@ -320,21 +320,8 @@ public class GamePiece extends Actor {
     private void addHpAndAttackLabels() {
         Gdx.app.debug(TAG, "adding HP and Attack labels");
         //TODO: try using TextButton and setDisabled
-        this.hitPointsLabel = new Label(String.valueOf(this.hitPoints), skin, "hpStatsLabel");
-        this.attackPointsLabel = new Label(String.valueOf(this.attackPoints), skin, "atkStatsLabel");
-
-        Image hpBackground;
-        if (this.team == Team.FRIENDLY) {
-            hpBackground = new Image(new Texture(Gdx.files.internal("green_hp_background.png")));
-            hitPointsLabel.getStyle().fontColor = Color.BLACK;
-        } else {
-            hpBackground = new Image(new Texture(Gdx.files.internal("red_hp_background.png")));
-        }
-        hitPointsLabel.getStyle().background = hpBackground.getDrawable();
-
-        Image atkBackground = new Image(new Texture(Gdx.files.internal("atk_background.png")));
-        attackPointsLabel.getStyle().background = atkBackground.getDrawable();
-        attackPointsLabel.getStyle().fontColor = Color.BLACK;
+        this.hitPointsLabel = new Label(String.valueOf(hitPoints), skin, team == Team.FRIENDLY ? "friendlyHpStatsLabel" : "enemyHpStatsLabel");
+        this.attackPointsLabel = new Label(String.valueOf(attackPoints), skin, "atkStatsLabel");
 
         this.setLabelPositions();
     }
