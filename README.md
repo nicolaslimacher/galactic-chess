@@ -1,2 +1,2 @@
 # galactic-chess
-A reality-bending chess game!
+A reality-bending chess-inspired rogue-lite game!
