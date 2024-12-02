@@ -3,7 +3,7 @@ package com.mygdx.game.Command;
 import com.badlogic.gdx.Gdx;
 import com.mygdx.game.Actions.MoveActionFactory;
 import com.mygdx.game.Board.Board;
-import com.mygdx.game.Manager.GameManager;
+import com.mygdx.game.Manager.BattleManager;
 import com.mygdx.game.Manager.Team;
 import com.mygdx.game.GamePiece.GamePiece;
 import com.mygdx.game.MoveSets.MoveSet;
@@ -16,7 +16,7 @@ public class Command {
     public final MoveSet moveSet;
 
     private final Board board;
-    private final GameManager gameManager;
+    private final BattleManager battleManager;
     final IntPair previousPosition;
     final IntPair targetPosition;
     final boolean isKing;
@@ -33,7 +33,7 @@ public class Command {
     public Command(GamePiece actingGamePiece, IntPair targetPosition, CommandType commandType, MoveSet moveSet) {
         this.gamePiece = actingGamePiece;
         gamePieceID = gamePiece.gamePieceID;
-        this.gameManager = gamePiece.gameManager;
+        this.battleManager = gamePiece.battleManager;
         this.board = gamePiece.board;
         //this.gamePiecesID = gamePiece.GetGamePiecesID();
         this.commandType = commandType;
@@ -42,10 +42,10 @@ public class Command {
         this.isKing = gamePiece.isKing;
         this.moveSet = moveSet;
         if (commandType == CommandType.HIT) {
-            this.targetGamePiece = gameManager.GetGamePieceAtCoordinate(this.targetPosition);
+            this.targetGamePiece = battleManager.GetGamePieceAtCoordinate(this.targetPosition);
             this.targetTeam = Team.ENEMY;
-            this.targetGamePiecePreviousAtk = targetGamePiece.GetAttackPoints();
-            this.targetGamePiecePreviousHealth = targetGamePiece.GetHitPoints();
+            this.targetGamePiecePreviousAtk = targetGamePiece.getAttackPoints();
+            this.targetGamePiecePreviousHealth = targetGamePiece.getHitPoints();
         }
         Gdx.app.log("Command", "Command created: " + commandType + " to " + targetPosition.xVal + "," + targetPosition.yVal + ".");
     }
@@ -59,7 +59,7 @@ public class Command {
             }
 
         }
-        this.gameManager.movedThisTurn = true;
+        this.battleManager.movedThisTurn = true;
         Helpers.getGameScreen().getHUD().EnableUndoButton();
         Helpers.getGameScreen().getHUD().EnableEndTurnButton();
 
@@ -73,14 +73,14 @@ public class Command {
         }else{
             this.gamePiece.MoveToWithAction(MoveActionFactory.MoveActionType.TELEPORT, this.previousPosition, 0f);
 
-            GamePiece replacedGamePiece = new GamePiece(this.board, this.gameManager, this.gamePieceID, this.targetPosition, this.targetTeam, this.isKing);
-            replacedGamePiece.SetAttackPoints(this.targetGamePiecePreviousAtk);
-            replacedGamePiece.SetHitPoints(this.targetGamePiecePreviousHealth);
-            this.gameManager.enemyGamePieces.add(replacedGamePiece);
-            this.gameManager.getStage().addActor(replacedGamePiece);
+            GamePiece replacedGamePiece = new GamePiece(this.board, this.battleManager, this.gamePieceID, this.targetPosition, this.targetTeam, this.isKing);
+            replacedGamePiece.setAttackPoints(this.targetGamePiecePreviousAtk);
+            replacedGamePiece.setHitPoints(this.targetGamePiecePreviousHealth);
+            this.battleManager.enemyGamePieces.add(replacedGamePiece);
+            this.battleManager.getStage().addActor(replacedGamePiece);
         }
 
-        this.gameManager.movedThisTurn = false;
+        this.battleManager.movedThisTurn = false;
         Helpers.getGameScreen().getHUD().DisableUndoButton();
         Helpers.getGameScreen().getHUD().DisableEndTurnButton();
 

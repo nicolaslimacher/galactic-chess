@@ -10,17 +10,17 @@ import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
 import com.mygdx.game.Utils.Constants;
 
 public class DisplayMessage extends Actor {
-    private final GameManager gameManager;
+    private final BattleManager battleManager;
     private final BitmapFont bitmapFont;
     String headerMessage, subMessage;
 
-    public DisplayMessage(GameManager gameManager, String headerMessage, String subMessage, float displayTime) {
-        this.gameManager = gameManager;
+    public DisplayMessage(BattleManager battleManager, String headerMessage, String subMessage, float displayTime) {
+        this.battleManager = battleManager;
         this.bitmapFont = new BitmapFont(Gdx.files.internal("fonts/il-grinta-large.fnt"));
         this.headerMessage = headerMessage;
         this.subMessage = subMessage;
 
-        gameManager.getStage().addActor(this);
+        battleManager.getStage().addActor(this);
 
         RunnableAction destroy = new RunnableAction();
         destroy.setRunnable(DisplayMessage.this::remove);
@@ -30,12 +30,12 @@ public class DisplayMessage extends Actor {
         ));
     }
 
-    public DisplayMessage(GameManager gameManager, String headerMessage, float displayTime) {
-        this.gameManager = gameManager;
+    public DisplayMessage(BattleManager battleManager, String headerMessage, float displayTime) {
+        this.battleManager = battleManager;
         this.bitmapFont = new BitmapFont(Gdx.files.internal("fonts/il-grinta-large.fnt"));
         this.headerMessage = headerMessage;
 
-        gameManager.getStage().addActor(this);
+        battleManager.getStage().addActor(this);
 
         RunnableAction destroy = new RunnableAction();
         destroy.setRunnable(DisplayMessage.this::remove);

@@ -12,7 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
-import com.mygdx.game.Manager.GameManager;
+import com.mygdx.game.Manager.BattleManager;
 import com.mygdx.game.MoveSets.MoveSet;
 
 /**
@@ -23,25 +23,25 @@ import com.mygdx.game.MoveSets.MoveSet;
  */
 
 public class MoveConfirmation extends Actor {
-    GameManager gameManager;
+    BattleManager battleManager;
     TextureRegion textureRegion;
     private final MoveSet moveSet;
     Label moveSymbol, moveName, cancelText;
     Skin moveConfirmationSkin;
     PossibleMoveImageCreator possibleMoveImage;
 
-    public MoveConfirmation(GameManager gameManager, MoveSet moveSet) {
+    public MoveConfirmation(BattleManager battleManager, MoveSet moveSet) {
         moveConfirmationSkin = new Skin(Gdx.files.internal("skins/uiskin.json"));
-        this.textureRegion = gameManager.GetAssetManager().get("texturePacks/battleTextures.atlas", TextureAtlas.class).findRegion("bottle");
+        this.textureRegion = battleManager.GetAssetManager().get("texturePacks/battleTextures.atlas", TextureAtlas.class).findRegion("bottle");
         this.setWidth(MoveCardLocations.CHEMICAL_CARDS_WIDTH);
         this.setHeight(MoveCardLocations.ALL_CHEMICAL_TOP - MoveCardLocations.ALL_CHEMICAL_BOTTOM);
         this.setPosition(MoveCardLocations.CHEMICAL_START_LOCATION_X, MoveCardLocations.ALL_CHEMICAL_BOTTOM);
-        this.gameManager = gameManager;
+        this.battleManager = battleManager;
         this.moveSet = moveSet;
         this.setBounds(getX(), getY(), getWidth(), getHeight());
         this.setName("MoveConfirmationMenu");
 
-        gameManager.getStage().addActor(this);
+        battleManager.getStage().addActor(this);
 
         moveSymbol = new Label(moveSet.symbol, moveConfirmationSkin, "moveCardConfirmation");
         moveSymbol.setFontScale(0.55f);
@@ -111,9 +111,9 @@ public class MoveConfirmation extends Actor {
     }
 
     public void ReturnToMoveSelectCards(){
-        if (gameManager.selectedMoveSet == this.moveSet) //remove selected moveSet IF this was for selected move
-            gameManager.selectedMoveSet = null;
-        gameManager.moveSelectCards.SetCardsVisibility(true);
+        if (battleManager.selectedMoveSet == this.moveSet) //remove selected moveSet IF this was for selected move
+            battleManager.selectedMoveSet = null;
+        battleManager.moveSelectCards.SetCardsVisibility(true);
 
         //remove text over
         this.moveName.remove();

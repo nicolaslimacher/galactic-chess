@@ -4,16 +4,16 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.utils.TimeUtils;
-import com.mygdx.game.Manager.GameManager;
+import com.mygdx.game.Manager.BattleManager;
 
 public class Star extends Actor {
-    GameManager gameManager;
+    BattleManager battleManager;
     long timeAtCreation, timeToBrightest, timeToFade; //in nanos
     StarType starType;
 
-    public Star(GameManager gameManager, long timeToBrightest, long timeToFade, StarType starType) {
-        this.gameManager = gameManager;
-        gameManager.getStage().addActor(this);
+    public Star(BattleManager battleManager, long timeToBrightest, long timeToFade, StarType starType) {
+        this.battleManager = battleManager;
+        battleManager.getStage().addActor(this);
         this.toBack();
         this.timeAtCreation = TimeUtils.nanoTime();
         this.timeToBrightest = timeToBrightest;
@@ -40,9 +40,9 @@ public class Star extends Actor {
         Color color = getColor();
         batch.setColor(color.r, color.g, color.b, alphaDraw);
         if (starType == StarType.SMALL) {
-            batch.draw(this.gameManager.smallStar, getX(), getY());
+            batch.draw(this.battleManager.smallStar, getX(), getY());
         } else {
-            batch.draw(this.gameManager.mediumStar, getX(), getY());
+            batch.draw(this.battleManager.mediumStar, getX(), getY());
         }
     }
 }

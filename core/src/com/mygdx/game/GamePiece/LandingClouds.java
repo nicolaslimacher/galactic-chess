@@ -10,7 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.actions.ParallelAction;
 import com.badlogic.gdx.scenes.scene2d.actions.RunnableAction;
 import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
-import com.mygdx.game.Manager.GameManager;
+import com.mygdx.game.Manager.BattleManager;
 import com.mygdx.game.Utils.IntPair;
 
 public class LandingClouds extends Actor {
@@ -18,19 +18,19 @@ public class LandingClouds extends Actor {
     float sidewaysMovement;
     final float animationDuration = 0.25f;
 
-    public LandingClouds(IntPair coordinates, GameManager gameManager, boolean isLeftClouds) {
+    public LandingClouds(IntPair coordinates, BattleManager battleManager, boolean isLeftClouds) {
         if (isLeftClouds){
-            textureRegion = gameManager.GetAssetManager().get("texturePacks/battleTextures.atlas", TextureAtlas.class).findRegion("left_clouds");
+            textureRegion = battleManager.GetAssetManager().get("texturePacks/battleTextures.atlas", TextureAtlas.class).findRegion("left_clouds");
             sidewaysMovement = -5f;
         } else {
-            textureRegion = gameManager.GetAssetManager().get("texturePacks/battleTextures.atlas", TextureAtlas.class).findRegion("right_clouds");
+            textureRegion = battleManager.GetAssetManager().get("texturePacks/battleTextures.atlas", TextureAtlas.class).findRegion("right_clouds");
             sidewaysMovement = 4f;
         }
         this.setWidth(64);
         this.setHeight(20);
-        this.setPosition(gameManager.board.GetBoardTilePosition(coordinates).x+2f, gameManager.board.GetBoardTilePosition(coordinates).y);
-        this.setBounds(gameManager.board.GetBoardTilePosition(coordinates).x+2f, gameManager.board.GetBoardTilePosition(coordinates).y, 64, 20);
-        gameManager.getStage().addActor(this);
+        this.setPosition(battleManager.board.GetBoardTilePosition(coordinates).x+2f, battleManager.board.GetBoardTilePosition(coordinates).y);
+        this.setBounds(battleManager.board.GetBoardTilePosition(coordinates).x+2f, battleManager.board.GetBoardTilePosition(coordinates).y, 64, 20);
+        battleManager.getStage().addActor(this);
         this.toFront();
 
         //fadeout and movement
@@ -45,9 +45,9 @@ public class LandingClouds extends Actor {
         this.addAction(fadeInAndRemove);
     }
 
-    public LandingClouds(IntPair coordinates, GameManager gameManager){
-        new LandingClouds(coordinates, gameManager, true);
-        new LandingClouds(coordinates, gameManager, false);
+    public LandingClouds(IntPair coordinates, BattleManager battleManager){
+        new LandingClouds(coordinates, battleManager, true);
+        new LandingClouds(coordinates, battleManager, false);
     }
 
     @Override

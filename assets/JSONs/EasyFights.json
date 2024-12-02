@@ -1,0 +1,92 @@
+{
+  "1": {
+    "boardType": 1,
+    "gamePieces": [
+      {
+        "gamePieceID": 1,
+        "xVal": 0,
+        "yVal": 4,
+        "isKing": false,
+        "minHealth": 1,
+        "maxHealth": 2,
+        "minAttack": 1,
+        "maxAttack": 2
+      },
+      {
+        "gamePieceID": 1,
+        "xVal": 1,
+        "yVal": 4,
+        "isKing": false,
+        "minHealth": 1,
+        "maxHealth": 2,
+        "minAttack": 1,
+        "maxAttack": 2
+      },
+      {
+        "gamePieceID": 2,
+        "xVal": 2,
+        "yVal": 4,
+        "isKing": true,
+        "minHealth": 1,
+        "maxHealth": 2,
+        "minAttack": 1,
+        "maxAttack": 2
+      },
+      {
+        "gamePieceID": 1,
+        "xVal": 3,
+        "yVal": 4,
+        "isKing": false,
+        "minHealth": 1,
+        "maxHealth": 2,
+        "minAttack": 1,
+        "maxAttack": 2
+      },
+      {
+        "gamePieceID": 1,
+        "xVal": 4,
+        "yVal": 4,
+        "isKing": false,
+        "minHealth": 1,
+        "maxHealth": 2,
+        "minAttack": 1,
+        "maxAttack": 2
+      }
+    ]
+  },
+  "2": {
+    "boardType": 1,
+    "gamePieces": [
+      {
+        "gamePieceID": 1,
+        "xVal": 1,
+        "yVal": 4,
+        "isKing": false,
+        "minHealth": 2,
+        "maxHealth": 3,
+        "minAttack": 2,
+        "maxAttack": 3
+      },
+      {
+        "gamePieceID": 2,
+        "xVal": 2,
+        "yVal": 4,
+        "isKing": true,
+        "minHealth": 1,
+        "maxHealth": 2,
+        "minAttack": 1,
+        "maxAttack": 2
+      },
+      {
+        "gamePieceID": 1,
+        "xVal": 3,
+        "yVal": 4,
+        "isKing": false,
+        "minHealth": 2,
+        "maxHealth": 3,
+        "minAttack": 2,
+        "maxAttack": 3
+      }
+    ]
+  }
+}
