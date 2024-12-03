@@ -29,7 +29,7 @@ public class MainMenuScreen implements Screen{
 
         loadingScreen = new Texture(Gdx.files.internal("loading_screen.png"));
 
-        game.getAssetManager().load("texturePacks/battleTextures.atlas", TextureAtlas.class);
+        game.getResourceManager().load("texturePacks/battleTextures.atlas", TextureAtlas.class);
         Gdx.app.log("MainMenu", "Game Started");
     }
 
@@ -54,7 +54,7 @@ public class MainMenuScreen implements Screen{
         batch.draw(loadingScreen, 0,0);
         batch.end();
 
-        if(game.getAssetManager().update()) {
+        if(game.getResourceManager().update()) {
             if (Gdx.input.isTouched()) {
                 //game.setScreen(new BattleScreen(game, game.stage));
                 game.setScreen(new CharacterSelectScreen(game, game.stage));

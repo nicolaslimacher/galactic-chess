@@ -3,9 +3,12 @@ package com.mygdx.game.Utils;
 import static com.badlogic.gdx.net.HttpRequestBuilder.json;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.mygdx.game.Manager.BattleManager;
 import com.mygdx.game.Manager.PRNGManager;
+import com.mygdx.game.Manager.ResourceManager;
 import com.mygdx.game.MoveSets.MoveSet;
 import com.mygdx.game.Screens.BattleScreen;
 import com.mygdx.game.WranglerGiddyUp;
@@ -63,4 +66,14 @@ public class Helpers {
         Gdx.app.debug(TAG, "Getting PRNG Manager");
         return ((WranglerGiddyUp) Gdx.app.getApplicationListener()).getPrngManager();
     }
+
+    public static ResourceManager getResourceManager(){
+        Gdx.app.debug(TAG, "Getting PRNG Manager");
+        return ((WranglerGiddyUp) Gdx.app.getApplicationListener()).getResourceManager();
+    }
+
+    public static TextureRegion getTextureRegionFromTextureAtlas(String textureName){
+        return ((WranglerGiddyUp) Gdx.app.getApplicationListener()).getResourceManager().get("texturePacks/battleTextures.atlas", TextureAtlas.class).findRegion(textureName);
+    }
+
 }

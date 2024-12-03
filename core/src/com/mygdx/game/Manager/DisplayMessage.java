@@ -16,7 +16,7 @@ public class DisplayMessage extends Actor {
 
     public DisplayMessage(BattleManager battleManager, String headerMessage, String subMessage, float displayTime) {
         this.battleManager = battleManager;
-        this.bitmapFont = new BitmapFont(Gdx.files.internal("fonts/il-grinta-large.fnt"));
+        this.bitmapFont = new BitmapFont(Gdx.files. internal("fonts/il-grinta-large.fnt"));
         this.headerMessage = headerMessage;
         this.subMessage = subMessage;
 

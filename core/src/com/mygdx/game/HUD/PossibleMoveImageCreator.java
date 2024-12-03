@@ -4,15 +4,18 @@ import static java.util.Map.entry;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.mygdx.game.MoveSets.MoveSet;
+import com.mygdx.game.Utils.Helpers;
 import com.mygdx.game.Utils.IntPair;
 
 import java.util.Map;
 
 public class PossibleMoveImageCreator extends Group {
-    Image emptyGrid = new Image(new Texture(Gdx.files.internal("emptygrid.png")));
+    //Image emptyGrid = new Image(new Texture(Gdx.files.internal("emptygrid.png")));
+    Image emptyGrid = new Image(Helpers.getResourceManager().get("texturePacks/battleTextures.atlas",TextureAtlas .class).findRegion("emptygrid"));
 
     Map<Integer, Float> xCoords = Map.ofEntries(
             entry(0,0f ),
@@ -33,12 +36,14 @@ public class PossibleMoveImageCreator extends Group {
     public PossibleMoveImageCreator(MoveSet moveSetToMap) {
         this.addActor(emptyGrid);
         for (IntPair possibleMove: moveSetToMap.possibleMoves){
-            Image player = new Image(new Texture(Gdx.files.internal("black_player.png")));
+            //Image player = new Image(new Texture(Gdx.files.internal("black_player.png")));
+            //Image player = new Image(Helpers.getResourceManager().get("texturePacks/battleTextures.atlas",TextureAtlas .class).findRegion("black_player"));
+            Image player = new Image(Helpers.getTextureRegionFromTextureAtlas("black_player"));
             player.setScale(0.5625f);
             player.setPosition(xCoords.get(2+possibleMove.xVal), yCoords.get(2+possibleMove.yVal));
             this.addActor(player);
         }
-        Image player = new Image(new Texture(Gdx.files.internal("green_player.png")));
+        Image player = new Image(Helpers.getTextureRegionFromTextureAtlas("green_player"));
         player.setScale(0.5625f);
         player.setPosition(xCoords.get(2), yCoords.get(2));
         this.addActor(player);

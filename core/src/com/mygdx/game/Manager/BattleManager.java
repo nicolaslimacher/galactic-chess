@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import com.mygdx.game.Board.Board;
@@ -22,7 +21,6 @@ import com.mygdx.game.Utils.IntPair;
 import com.mygdx.game.WranglerGiddyUp;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class BattleManager extends Actor{
@@ -115,7 +113,7 @@ public class BattleManager extends Actor{
     }
 
     public AssetManager GetAssetManager(){
-        return battleScreen.GetGame().getAssetManager();
+        return battleScreen.GetGame().getResourceManager();
     }
 
     private boolean PlayerHasAValidMove(){

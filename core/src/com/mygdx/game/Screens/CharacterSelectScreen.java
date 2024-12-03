@@ -15,12 +15,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.ScreenUtils;
-import com.mygdx.game.MoveSets.MoveSet;
 import com.mygdx.game.Utils.Constants;
 import com.mygdx.game.WranglerGiddyUp;
 import com.mygdx.game.Utils.Helpers;
-
-import java.util.List;
 
 public class CharacterSelectScreen implements Screen{
     private static final String TAG = CharacterSelectScreen.class.getSimpleName();
@@ -46,7 +43,7 @@ public class CharacterSelectScreen implements Screen{
         this.stage = stage;
         Gdx.input.setInputProcessor(stage);
 
-        starryBackground = game.getAssetManager().get("texturePacks/battleTextures.atlas", TextureAtlas.class).findRegion("starrybackground");
+        starryBackground = game.getResourceManager().get("texturePacks/battleTextures.atlas", TextureAtlas.class).findRegion("starrybackground");
 
         batch = new SpriteBatch();
 

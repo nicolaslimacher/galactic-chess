@@ -59,13 +59,6 @@ public class BattleScreen implements Screen {
 			Gdx.app.log("BattleScreen", "Move Set Chosen: " + moveSet.getName() + ".");
 		}
 
-		//background stars
-		//starryBackground = new TextureRegion(new Texture(Gdx.files.internal("starrybackground.png")));
-		lastDropTimeSmall = TimeUtils.millis();
-		timeToSmallCreation = 750L;
-		lastDropTimeMedium = TimeUtils.millis();
-		timeToMediumCreation = 2000L;
-
 		//adding actors
 		board = new Board(5, 5);
 		stage.addActor(board);
