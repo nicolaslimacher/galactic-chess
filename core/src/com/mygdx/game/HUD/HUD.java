@@ -22,7 +22,7 @@ public class HUD implements Disposable {
     private BattleManager battleManager;
 
     //Scene2D Widgets
-    Skin skin = new Skin(Gdx.files.internal("skins/uiskin.json"));
+    Skin skin = Helpers.getGameSkin();
     private final TextButton seedDisplau;
     private TextButton undoButton, endTurn;
 

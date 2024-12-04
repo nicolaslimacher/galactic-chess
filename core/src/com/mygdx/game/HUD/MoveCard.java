@@ -18,6 +18,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Align;
 import com.mygdx.game.Manager.BattleManager;
 import com.mygdx.game.MoveSets.MoveSet;
+import com.mygdx.game.Utils.Helpers;
 
 public class MoveCard extends Actor {
     private static final String TAG = MoveCard.class.getSimpleName();
@@ -26,7 +27,7 @@ public class MoveCard extends Actor {
     private boolean selectable;
     TextureRegion textureRegion;
     Label moveSymbolLabel, moveNameLabel;
-    Skin moveSelectSkin;
+    Skin moveSelectSkin = Helpers.getGameSkin();
 
     public MoveCard(MoveSet moveSet, BattleManager battleManager, boolean selectable, float x, float y) {
         this.moveSet = moveSet;
@@ -37,7 +38,6 @@ public class MoveCard extends Actor {
         Gdx.app.log("MoveCard", "MoveCard created, name: " + this.moveSet.name + ", selectable? : " + this.selectable + ", position: " + this.getX() + "," + this.getY());
 
         //create text labels
-        moveSelectSkin = new Skin(Gdx.files.internal("skins/uiskin.json"));
         moveSymbolLabel = new Label(moveSet.symbol, moveSelectSkin, "moveCardSelect");
         moveSymbolLabel.setFontScale(0.65f);
         moveSymbolLabel.setDebug(true);

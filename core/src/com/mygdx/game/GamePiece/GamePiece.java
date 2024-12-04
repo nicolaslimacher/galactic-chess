@@ -2,7 +2,6 @@ package com.mygdx.game.GamePiece;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -12,7 +11,6 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -24,12 +22,14 @@ import com.mygdx.game.Board.Board;
 import com.mygdx.game.Command.Command;
 import com.mygdx.game.Command.CommandType;
 import com.mygdx.game.Components.AbilityComponent;
+import com.mygdx.game.HUD.TTFSkin;
 import com.mygdx.game.Manager.BattleManager;
 import com.mygdx.game.Manager.MoveManager;
 import com.mygdx.game.Manager.Team;
 import com.mygdx.game.MoveSets.MoveSet;
 import com.mygdx.game.Utils.Helpers;
 import com.mygdx.game.Utils.IntPair;
+import com.mygdx.game.WranglerGiddyUp;
 
 public class GamePiece extends Actor {
     private static final String TAG = GamePiece.class.getSimpleName();
@@ -63,7 +63,6 @@ public class GamePiece extends Actor {
     public float preDragYPosition;
 
     Skin skin = new Skin(Gdx.files.internal("skins/testskin.json"));
-
 
     public GamePiece(Board board, BattleManager battleManager, int gamePieceID, IntPair coordinates, Team team, boolean isKing, int health, int attack) {
         //metadata
@@ -340,7 +339,7 @@ public class GamePiece extends Actor {
 
         gamePieceInfo.setName("gamePieceInfo");
         gamePieceInfo.setText("NAME: " + this.getName());
-        Helpers.KeepPopUpOverBoard(gamePieceInfo, this.getX() + this.getWidth() / 2 - 125, this.getY() + this.getWidth() + 10, 250, 250);
+        Helpers.keepPopUpOverBoard(gamePieceInfo, this.getX() + this.getWidth() / 2 - 125, this.getY() + this.getWidth() + 10, 250, 250);
         gamePieceInfo.addListener(new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {

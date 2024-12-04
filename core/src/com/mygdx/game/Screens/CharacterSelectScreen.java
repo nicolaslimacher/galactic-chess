@@ -26,7 +26,7 @@ public class CharacterSelectScreen implements Screen{
     BitmapFont font;
     SpriteBatch batch;
     Stage stage;
-    Skin skin = new Skin(Gdx.files.internal("skins/uiskin.json"));
+    Skin skin = Helpers.getGameSkin();
     private final TextureRegion starryBackground;
 
     Table buttons, seedTable;
@@ -55,7 +55,7 @@ public class CharacterSelectScreen implements Screen{
         buttons.setDebug(true);
         stage.addActor(buttons);
 
-        button1 = new TextButton("Click for\nGreen King",skin);
+        button1 = new TextButton("Click for\nGreen King", skin);
         button1.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent changeEvent, Actor actor) {

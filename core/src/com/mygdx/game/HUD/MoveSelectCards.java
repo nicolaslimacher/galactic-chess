@@ -9,6 +9,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Align;
 import com.mygdx.game.Manager.BattleManager;
 import com.mygdx.game.MoveSets.MoveSet;
+import com.mygdx.game.Utils.Helpers;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +23,7 @@ import java.util.List;
 
 public class MoveSelectCards extends Actor {
     BattleManager battleManager;
-    Skin chemicalLabelSkin = new Skin(Gdx.files.internal("skins/uiskin.json"));
+    Skin chemicalLabelSkin = Helpers.getGameSkin();
     Label enemyChemicalLabel, freeChemicalLabel, playerChemicalLabel;
     ArrayList<MoveCard> moveCards;
     ArrayList<Vector2> enemyMoveCardsLocations  = new ArrayList<>(2);

@@ -11,6 +11,9 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.mygdx.game.HUD.SkinLoader;
 import com.mygdx.game.HUD.TTFSkin;
 
+import java.util.List;
+import java.util.Map;
+
 public class ResourceManager extends AssetManager {
     public ResourceManager() {
         super();
@@ -22,8 +25,8 @@ public class ResourceManager extends AssetManager {
         setLoader(TiledMap.class, new TmxMapLoader(resolver));
     }
 
-    public TTFSkin loadSkinSynchronously(final String skinJsonFilePath, final String ttfFilePath, final int... fontSizesToCreate) {
-        load(skinJsonFilePath, TTFSkin.class, new SkinLoader.SkinParameter(ttfFilePath, fontSizesToCreate));
+    public TTFSkin loadSkinSynchronously(final String skinJsonFilePath, Map<String, List<Integer>> fontMap) {
+        load(skinJsonFilePath, TTFSkin.class, new SkinLoader.SkinParameter(fontMap));
         finishLoading();
         return get(skinJsonFilePath, TTFSkin.class);
     }

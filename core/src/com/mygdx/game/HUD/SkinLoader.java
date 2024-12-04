@@ -14,6 +14,10 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
 /**
  * Custom SkinLoader class for our custom {@link TTFSkin} class to create bitmap fonts on runtime
  * according to the density of the display.
@@ -41,16 +45,30 @@ public class SkinLoader extends AsynchronousAssetLoader<TTFSkin, SkinLoader.Skin
         final Array<AssetDescriptor> dependencies = new Array<>();
         dependencies.add(new AssetDescriptor(file.pathWithoutExtension() + ".atlas", TextureAtlas.class));
 
+//        // bitmap font dependencies
+//        for (int fontSize : parameter.fontSizesToCreate) {
+//            final FreetypeFontLoader.FreeTypeFontLoaderParameter fontParam = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
+//            fontParam.fontFileName = parameter.fontPath;
+//            // enable anti-aliasing
+//            fontParam.fontParameters.minFilter = Texture.TextureFilter.Linear;
+//            fontParam.fontParameters.magFilter = Texture.TextureFilter.Linear;
+//            // create font according to density of target device display
+//            fontParam.fontParameters.size = fontSize;
+//            dependencies.add(new AssetDescriptor("font" + fontSize + ".ttf", BitmapFont.class, fontParam));
+//        }
+
         // bitmap font dependencies
-        for (int fontSize : parameter.fontSizesToCreate) {
-            final FreetypeFontLoader.FreeTypeFontLoaderParameter fontParam = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
-            fontParam.fontFileName = parameter.fontPath;
-            // enable anti-aliasing
-            fontParam.fontParameters.minFilter = Texture.TextureFilter.Linear;
-            fontParam.fontParameters.magFilter = Texture.TextureFilter.Linear;
-            // create font according to density of target device display
-            fontParam.fontParameters.size = fontSize;
-            dependencies.add(new AssetDescriptor("font" + fontSize + ".ttf", BitmapFont.class, fontParam));
+        for (Map.Entry<String, List<Integer>> font : parameter.fontMap.entrySet()) {
+            for (int fontSize : font.getValue()) {
+                final FreetypeFontLoader.FreeTypeFontLoaderParameter fontParam = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
+                fontParam.fontFileName = font.getKey();
+                // enable anti-aliasing
+                fontParam.fontParameters.minFilter = Texture.TextureFilter.Linear;
+                fontParam.fontParameters.magFilter = Texture.TextureFilter.Linear;
+                // create font according to density of target device display
+                fontParam.fontParameters.size = fontSize;
+                dependencies.add(new AssetDescriptor(font.getKey().replace("skins/", "").replace(".ttf", "") + fontSize + ".ttf", BitmapFont.class, fontParam));
+            }
         }
 
         return dependencies;
@@ -63,10 +81,18 @@ public class SkinLoader extends AsynchronousAssetLoader<TTFSkin, SkinLoader.Skin
         final TextureAtlas atlas = manager.get(textureAtlasPath, TextureAtlas.class);
         final TTFSkin skin = new TTFSkin(atlas);
 
-        // add bitmap fonts to skin
-        for (int fontSize : parameter.fontSizesToCreate) {
-            skin.add("font_" + fontSize, manager.get("font" + fontSize + ".ttf"));
+        for (Map.Entry<String, List<Integer>> font : parameter.fontMap.entrySet()){
+            // add bitmap fonts to skin
+            for (int fontSize : font.getValue()) {
+                skin.add(font.getKey().replace("skins/","").replace(".ttf", "") + fontSize,
+                        manager.get(font.getKey().replace("skins/","").replace(".ttf","") + fontSize + ".ttf"));
+            }
         }
+
+//        // add bitmap fonts to skin
+//        for (int fontSize : parameter.fontSizesToCreate) {
+//            skin.add("font_" + fontSize, manager.get("font" + fontSize + ".ttf"));
+//        }
 
         // load skin now because the fonts in the json file are now available
         skin.load(file);
@@ -79,19 +105,32 @@ public class SkinLoader extends AsynchronousAssetLoader<TTFSkin, SkinLoader.Skin
     }
 
     public static class SkinParameter extends AssetLoaderParameters<TTFSkin> {
-        private final String fontPath;
-        private final int[] fontSizesToCreate;
+        private final Map<String, List<Integer>> fontMap;
 
-        public SkinParameter(final String fontPath, final int... fontSizesToCreate) {
-            if (fontPath == null || fontPath.trim().isEmpty()) {
-                throw new GdxRuntimeException("fontPath cannot be null or empty");
-            }
-            if (fontSizesToCreate.length == 0) {
-                throw new GdxRuntimeException("fontSizesToCreate has to contain at least one value");
-            }
+//        public SkinParameter(final String fontPath, final int... fontSizesToCreate) {
+//            if (fontPath == null || fontPath.trim().isEmpty()) {
+//                throw new GdxRuntimeException("fontPath cannot be null or empty");
+//            }
+//            if (fontSizesToCreate.length == 0) {
+//                throw new GdxRuntimeException("fontSizesToCreate has to contain at least one value");
+//            }
+//
+//            this.fontPath = fontPath;
+//            this.fontSizesToCreate = fontSizesToCreate;
+//        }
 
-            this.fontPath = fontPath;
-            this.fontSizesToCreate = fontSizesToCreate;
+        public SkinParameter(Map<String, List<Integer>> fontMap) {
+            this.fontMap = fontMap;
+            for (Map.Entry<String, List<Integer>> font : fontMap.entrySet()) {
+                String fontName = font.getKey();
+                List<Integer> fontSizesToCreate = font.getValue();
+                if (fontName == null || fontName.trim().isEmpty()) {
+                    throw new GdxRuntimeException("fontPath cannot be null or empty");
+                }
+                if (fontSizesToCreate.size() == 0) {
+                    throw new GdxRuntimeException("fontSizesToCreate has to contain at least one value");
+                }
+            }
         }
     }
 }

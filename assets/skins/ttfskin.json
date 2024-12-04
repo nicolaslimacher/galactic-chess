@@ -1,13 +1,4 @@
 {
-	BitmapFont: { default-font: { file: fonts/default.fnt},
-		small-font: { file: fonts/small.fnt},
-		medium-font: { file: fonts/medium.fnt},
-		large-font: { file: fonts/large.fnt},
-		il-grinta-font: { file: fonts/il-grinta.fnt},
-		il-grinta-large-font: { file: fonts/il-grinta-large.fnt},
-		fontinaredsuit-font: { file: fonts/fontinaredsuit.fnt},
-		jaini-font: { file: fonts/jaini-regular.fnt}
-	},
 	Color: {
 		green: { a: 1, b: 0, g: 1, r: 0 },
 		white: { a: 1, b: 1, g: 1, r: 1 },
@@ -23,8 +14,8 @@
 		toggle: { parent: default, checked: default-round-down }
 	},
 	TextButtonStyle: {
-		default: { font: jaini-font, fontColor: black, disabledFontColor: gray },
-		jaini-small: { font: jaini-font, fontColor: white, disabledFontColor: gray },
+		default: { font: jaini20, fontColor: black, disabledFontColor: gray, up: default-round, down: default-round-down },
+		jaini-small: { parent: default, font: jaini16, fontColor: white, disabledFontColor: gray },
 		toggle: { parent: default, checked: default-round-down, downFontColor: red }
 	},
 	ScrollPaneStyle: {
@@ -32,9 +23,9 @@
 	},
 	SelectBoxStyle: {
 		default: {
-			font: default-font, fontColor: white, background: default-select,
+			font: jaini20, fontColor: white, background: default-select,
 			scrollStyle: default,
-			listStyle: { font: default-font, selection: default-select-selection }
+			listStyle: { font: jaini20, selection: default-select-selection }
 		}
 	},
 	SplitPaneStyle: {
@@ -42,7 +33,7 @@
 		default-horizontal: { handle: default-splitpane }
 	},
 	WindowStyle: {
-		default: { titleFont: default-font, background: default-window, titleFontColor: white },
+		default: { titleFont: jaini20, background: default-window, titleFontColor: white },
 		dialog: { parent: default, stageBackground: dialogDim }
 	},
 	ProgressBarStyle: {
@@ -54,33 +45,33 @@
 		default-vertical: { parent: default-vertical }
 	},
 	LabelStyle: {
-		default: { font: il-grinta-font, fontColor: white },
-		moveCardConfirmation: { font: il-grinta-large-font, fontColor: black },
-		moveCardSelect: { font: il-grinta-font, fontColor: black },
+		default: { font: il_grinta20, fontColor: white },
+		moveCardConfirmation: { font: il_grinta20, fontColor: black },
+		moveCardSelect: { font: il_grinta20, fontColor: black },
 		small: {
-			font: small-font, fontColor: white
+			font: jaini16, fontColor: white
 		},
 		large: {
-			font: large-font, fontColor: white
+			font: jaini16, fontColor: white
 		},
 		friendlyHpStatsLabel: {
-			font: small-font, fontColor: black, background: green_hp_background
+			font: jaini16, fontColor: black, background: green_hp_background
 		},
 		enemyHpStatsLabel: {
-			font: small-font, fontColor: white, background: red_hp_background
+			font: jaini16, fontColor: white, background: red_hp_background
 		},
 		atkStatsLabel: {
-			font: small-font, fontColor: black, background: atk_background
+			font: jaini16, fontColor: black, background: atk_background
 		}
 	},
 	TextFieldStyle: {
-		default: { selection: selection, background: textfield, font: il-grinta-font, fontColor: white, cursor: cursor }
+		default: { selection: selection, background: textfield, font: il_grinta20, fontColor: white, cursor: cursor }
 	},
 	CheckBoxStyle: {
-		default: { checkboxOn: check-on, checkboxOff: check-off, font: default-font, fontColor: white }
+		default: { checkboxOn: check-on, checkboxOff: check-off, font: jaini16, fontColor: white }
 	},
 	ListStyle: {
-		default: { fontColorUnselected: white, selection: selection, fontColorSelected: white, font: default-font }
+		default: { fontColorUnselected: white, selection: selection, fontColorSelected: white, font: jaini16 }
 	},
 	TouchpadStyle: {
 		default: { background: default-pane, knob: default-round-large }
@@ -90,7 +81,7 @@
 	},
 	TextTooltipStyle: {
 		default: {
-			label: { font: default-font, fontColor: white },
+			label: { font: jaini16, fontColor: white },
 			background: default-pane, wrapWidth: 150
 		}
 	},

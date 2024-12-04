@@ -14,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.mygdx.game.Manager.BattleManager;
 import com.mygdx.game.MoveSets.MoveSet;
+import com.mygdx.game.Utils.Helpers;
 
 /**
  * Displays a selected move card with more info and allows it to be played
@@ -27,11 +28,10 @@ public class MoveConfirmation extends Actor {
     TextureRegion textureRegion;
     private final MoveSet moveSet;
     Label moveSymbol, moveName, cancelText;
-    Skin moveConfirmationSkin;
+    Skin moveConfirmationSkin = Helpers.getGameSkin();
     PossibleMoveImageCreator possibleMoveImage;
 
     public MoveConfirmation(BattleManager battleManager, MoveSet moveSet) {
-        moveConfirmationSkin = new Skin(Gdx.files.internal("skins/uiskin.json"));
         this.textureRegion = battleManager.GetAssetManager().get("texturePacks/battleTextures.atlas", TextureAtlas.class).findRegion("bottle");
         this.setWidth(MoveCardLocations.CHEMICAL_CARDS_WIDTH);
         this.setHeight(MoveCardLocations.ALL_CHEMICAL_TOP - MoveCardLocations.ALL_CHEMICAL_BOTTOM);
