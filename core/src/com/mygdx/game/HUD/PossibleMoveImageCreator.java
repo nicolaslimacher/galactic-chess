@@ -14,7 +14,6 @@ import com.mygdx.game.Utils.IntPair;
 import java.util.Map;
 
 public class PossibleMoveImageCreator extends Group {
-    //Image emptyGrid = new Image(new Texture(Gdx.files.internal("emptygrid.png")));
     Image emptyGrid = new Image(Helpers.getResourceManager().get("texturePacks/battleTextures.atlas",TextureAtlas .class).findRegion("emptygrid"));
 
     Map<Integer, Float> xCoords = Map.ofEntries(
@@ -36,8 +35,6 @@ public class PossibleMoveImageCreator extends Group {
     public PossibleMoveImageCreator(MoveSet moveSetToMap) {
         this.addActor(emptyGrid);
         for (IntPair possibleMove: moveSetToMap.possibleMoves){
-            //Image player = new Image(new Texture(Gdx.files.internal("black_player.png")));
-            //Image player = new Image(Helpers.getResourceManager().get("texturePacks/battleTextures.atlas",TextureAtlas .class).findRegion("black_player"));
             Image player = new Image(Helpers.getTextureRegionFromTextureAtlas("black_player"));
             player.setScale(0.5625f);
             player.setPosition(xCoords.get(2+possibleMove.xVal), yCoords.get(2+possibleMove.yVal));

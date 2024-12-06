@@ -23,7 +23,6 @@ public class CharacterSelectScreen implements Screen{
     private static final String TAG = CharacterSelectScreen.class.getSimpleName();
 
     final WranglerGiddyUp game;
-    BitmapFont font;
     SpriteBatch batch;
     Stage stage;
     Skin skin = Helpers.getGameSkin();
@@ -35,7 +34,6 @@ public class CharacterSelectScreen implements Screen{
     TextButton seedConfirmButton, seedClearButton;
     TextField seedInput;
 
-    int playerKingIDSelected;
     private final String usingRandomSeedNotification = "Using new random seed";
 
     public CharacterSelectScreen(final WranglerGiddyUp game, final Stage stage) {
@@ -59,8 +57,7 @@ public class CharacterSelectScreen implements Screen{
         button1.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent changeEvent, Actor actor) {
-                Gdx.app.log(TAG,"button1 selected");
-                playerKingIDSelected = 3; //used later to change player king
+                Gdx.app.log(TAG,"button1 selected");//used later to change player king
                 game.setScreen(new BattleScreen(game, game.stage, 3));
                 dispose();
             }
@@ -145,10 +142,6 @@ public class CharacterSelectScreen implements Screen{
         });
         seedTable.add(seedClearButton);
 
-
-
-        font = new BitmapFont(); // use libGDX's default Arial font
-
     }
 
     @Override
@@ -213,7 +206,6 @@ public class CharacterSelectScreen implements Screen{
     @Override
     public void dispose() {
         batch.dispose();
-        font.dispose();
         DeleteCharacterScreenWidgets();
     }
 

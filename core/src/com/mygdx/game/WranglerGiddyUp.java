@@ -8,6 +8,7 @@ import com.mygdx.game.Manager.PRNGManager;
 import com.mygdx.game.Manager.ResourceManager;
 import com.mygdx.game.Manager.RunManager;
 import com.mygdx.game.Screens.MainMenuScreen;
+import com.mygdx.game.Utils.Constants;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,7 +25,7 @@ public class WranglerGiddyUp extends Game{
 
 
     public void create() {
-        stage = new Stage(new FitViewport(800, 480));
+        stage = new Stage(new FitViewport(Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT));
         resourceManager = new ResourceManager();
         prngManager = new PRNGManager();
         runManager = new RunManager();
