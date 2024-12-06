@@ -62,6 +62,12 @@
 		},
 		atkStatsLabel: {
 			font: jaini16, fontColor: black, background: atk_background
+		},
+		headerDisplayMessage: {
+			font: il_grinta96, fontColor: white
+		},
+		subDisplayMessage: {
+			font: il_grinta60, fontColor: white
 		}
 	},
 	TextFieldStyle: {

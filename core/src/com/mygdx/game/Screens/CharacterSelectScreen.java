@@ -180,9 +180,8 @@ public class CharacterSelectScreen implements Screen{
 
         //for performance reasons disable blend before drawing background
         batch.disableBlending();
-        batch.draw(starryBackground,0,0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        batch.draw(starryBackground,0,0, Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT);
         batch.enableBlending();
-
 
 
         stage.draw();
@@ -193,6 +192,7 @@ public class CharacterSelectScreen implements Screen{
     @Override
     public void resize(int width, int height) {
         stage.getViewport().update(width, height, true);
+        Gdx.app.debug(TAG, "Resizing, new screen width: " + Gdx.graphics.getWidth() + ", height: " + Gdx.graphics.getHeight());
     }
 
     @Override

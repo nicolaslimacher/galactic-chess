@@ -31,8 +31,8 @@ public class WranglerGiddyUp extends Game{
 
 
         Map<String,List<Integer>> fonts = new HashMap<String,List<Integer>>(){};
-        fonts.put("skins/fontinaredsuit.ttf", Arrays.asList(26, 32));
-        fonts.put("skins/il_grinta.ttf", Arrays.asList(16, 20, 26));
+        //fonts.put("skins/fontinaredsuit.ttf", Arrays.asList(26, 32, 48, 72));
+        fonts.put("skins/il_grinta.ttf", Arrays.asList(16, 20, 26, 60, 96));
         fonts.put("skins/jaini.ttf", Arrays.asList(16, 20, 26));
 
         skin = resourceManager.loadSkinSynchronously("skins/ttfskin.json", fonts);

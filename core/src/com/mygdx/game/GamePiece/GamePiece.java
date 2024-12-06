@@ -62,7 +62,8 @@ public class GamePiece extends Actor {
     public float preDragXPosition;
     public float preDragYPosition;
 
-    Skin skin = new Skin(Gdx.files.internal("skins/testskin.json"));
+    //Skin skin = new Skin(Gdx.files.internal("skins/testskin.json"));
+    Skin skin = Helpers.getGameSkin();
 
     public GamePiece(Board board, BattleManager battleManager, int gamePieceID, IntPair coordinates, Team team, boolean isKing, int health, int attack) {
         //metadata
