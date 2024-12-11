@@ -16,6 +16,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.JsonReader;
+import com.badlogic.gdx.utils.JsonValue;
 import com.mygdx.game.Actions.HoverInPlaceAction;
 import com.mygdx.game.Actions.MoveActionFactory;
 import com.mygdx.game.Board.Board;
@@ -47,6 +49,7 @@ public class GamePiece extends Actor {
     public boolean isAlive;
 
     //stats
+    private JsonValue gamePieceData;
     private final Group statsLabels;
     private int hitPoints;
     private int attackPoints;
@@ -54,6 +57,7 @@ public class GamePiece extends Actor {
     private Label attackPointsLabel;
     private boolean displayInfoShowing = false;
     private AbilityComponent.AbilityType abilityType;
+    private String typeName;
 
 
     //drag and drop
@@ -68,8 +72,8 @@ public class GamePiece extends Actor {
         //metadata
         this.battleManager = battleManager;
         this.gamePieceID = gamePieceID;
-        GamePieceData gamePieceData = new GamePieceData(gamePieceID);
-        this.textureRegion = battleManager.GetAssetManager().get("texturePacks/battleTextures.atlas", TextureAtlas.class).findRegion(gamePieceData.getTextureName());
+        gamePieceData = new JsonReader().parse(Gdx.files.internal("JSONs/GamePiece.json")).get(String.valueOf(gamePieceID));
+        this.textureRegion = battleManager.GetAssetManager().get("texturePacks/battleTextures.atlas", TextureAtlas.class).findRegion(gamePieceData.getString("texture name"));
         this.setBounds(textureRegion.getRegionX(), textureRegion.getRegionY(),
                 textureRegion.getRegionWidth(), textureRegion.getRegionHeight());
         this.setPosition(board.GetBoardTilePosition(coordinates).x, board.GetBoardTilePosition(coordinates).y);
@@ -88,7 +92,7 @@ public class GamePiece extends Actor {
         addHpAndAttackLabels();
 
         //components
-        this.abilityType = gamePieceData.getAbility();
+        this.abilityType = AbilityComponent.AbilityType.fromString(gamePieceData.getString("ability"));
 
         //drag and drop
         this.dragAndDrop = new DragAndDrop();
@@ -163,11 +167,19 @@ public class GamePiece extends Actor {
         Gdx.app.log("GamePiece", "GamePiece " + this.getName() + "created.");
     }
 
+
+    /**
+     * @param board
+     * @param battleManager
+     * @param gamePieceID hit points and attack set from default in GamePiece.json
+     * @param coordinates
+     * @param team
+     * @param isKing
+     */
     public GamePiece (Board board, BattleManager battleManager, int gamePieceID, IntPair coordinates, Team team, boolean isKing) {
         this(board, battleManager, gamePieceID, coordinates, team, isKing, 0, 0);
-        GamePieceData gamePieceData = new GamePieceData(gamePieceID);
-        setHitPoints(gamePieceData.getHitPoints());
-        setAttackPoints(gamePieceData.getAttackPoints());
+        setHitPoints(this.gamePieceData.getInt("hit points"));
+        setAttackPoints(this.gamePieceData.getInt("attack"));
     }
 
     private final InputListener gamePieceInputListener = new InputListener() {
@@ -335,10 +347,11 @@ public class GamePiece extends Actor {
     public void DisplayGamePieceInfo() {
         TextButton gamePieceInfo = new TextButton("", skin);
 
+        //did I put this here so you could click game piece to close pop up?
         RemoveGamePieceInfo();
 
         gamePieceInfo.setName("gamePieceInfo");
-        gamePieceInfo.setText("NAME: " + this.getName());
+        gamePieceInfo.setText("NAME: " + this.typeName + "\n" + "ABILITY:" + this.abilityType);
         Helpers.keepPopUpOverBoard(gamePieceInfo, this.getX() + this.getWidth() / 2 - 125, this.getY() + this.getWidth() + 10, 250, 250);
         gamePieceInfo.addListener(new InputListener() {
             @Override
